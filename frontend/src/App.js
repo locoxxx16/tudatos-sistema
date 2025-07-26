@@ -308,77 +308,134 @@ const ConsultationInterface = () => {
   const renderPersonDetails = (data, type) => {
     if (type === 'fisica') {
       return (
-        <div className="bg-blue-50 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-blue-800 mb-4">👤 Persona Física</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <strong>Cédula:</strong> {data.cedula}
+        <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+          <h3 className="text-2xl font-bold text-blue-800 mb-6 flex items-center">
+            👤 <span className="ml-2">Persona Física Encontrada</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Número de Cédula:</strong>
+                <p className="text-xl font-mono text-gray-800">{data.cedula}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Nombre Completo:</strong>
+                <p className="text-xl text-gray-800">
+                  {`${data.nombre} ${data.primer_apellido} ${data.segundo_apellido || ''}`.trim()}
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Fecha de Nacimiento:</strong>
+                <p className="text-lg text-gray-800">
+                  {data.fecha_nacimiento ? new Date(data.fecha_nacimiento).toLocaleDateString('es-CR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'No disponible'}
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Ocupación:</strong>
+                <p className="text-lg text-gray-800">{data.ocupacion || 'No especificada'}</p>
+              </div>
             </div>
-            <div>
-              <strong>Nombre Completo:</strong><br />
-              {`${data.nombre} ${data.primer_apellido} ${data.segundo_apellido || ''}`.trim()}
-            </div>
-            <div>
-              <strong>Fecha de Nacimiento:</strong><br />
-              {data.fecha_nacimiento ? new Date(data.fecha_nacimiento).toLocaleDateString('es-CR') : 'N/A'}
-            </div>
-            <div>
-              <strong>Ocupación:</strong> {data.ocupacion || 'N/A'}
-            </div>
-            <div>
-              <strong>Teléfono:</strong> {data.telefono || 'N/A'}
-            </div>
-            <div>
-              <strong>Email:</strong> {data.email || 'N/A'}
-            </div>
-            <div className="md:col-span-2">
-              <strong>Ubicación:</strong><br />
-              {data.direccion_exacta || 'N/A'}<br />
-              {data.distrito_nombre}, {data.canton_nombre}, {data.provincia_nombre}
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Teléfono:</strong>
+                <p className="text-lg text-gray-800 font-mono">{data.telefono || 'No disponible'}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Correo Electrónico:</strong>
+                <p className="text-lg text-gray-800">{data.email || 'No disponible'}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Ubicación Geográfica:</strong>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">Provincia:</p>
+                  <p className="text-lg text-gray-800">{data.provincia_nombre}</p>
+                  <p className="text-sm text-gray-600">Cantón:</p>
+                  <p className="text-lg text-gray-800">{data.canton_nombre}</p>
+                  <p className="text-sm text-gray-600">Distrito:</p>
+                  <p className="text-lg text-gray-800">{data.distrito_nombre}</p>
+                </div>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-blue-700">Dirección Exacta:</strong>
+                <p className="text-lg text-gray-800">{data.direccion_exacta || 'No especificada'}</p>
+              </div>
             </div>
           </div>
         </div>
       );
     } else if (type === 'juridica') {
       return (
-        <div className="bg-green-50 p-6 rounded-lg">
-          <h3 className="text-xl font-bold text-green-800 mb-4">🏢 Persona Jurídica</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <strong>Cédula Jurídica:</strong> {data.cedula_juridica}
+        <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+          <h3 className="text-2xl font-bold text-green-800 mb-6 flex items-center">
+            🏢 <span className="ml-2">Persona Jurídica Encontrada</span>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Cédula Jurídica:</strong>
+                <p className="text-xl font-mono text-gray-800">{data.cedula_juridica}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Nombre Comercial:</strong>
+                <p className="text-xl text-gray-800">{data.nombre_comercial}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Razón Social:</strong>
+                <p className="text-lg text-gray-800">{data.razon_social}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Sector de Negocio:</strong>
+                <p className="text-lg text-gray-800 uppercase tracking-wider">
+                  <span className="bg-green-100 px-3 py-1 rounded-full text-green-800 font-semibold">
+                    {data.sector_negocio}
+                  </span>
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Número de Empleados:</strong>
+                <p className="text-lg text-gray-800">{data.numero_empleados || 'No especificado'}</p>
+              </div>
             </div>
-            <div>
-              <strong>Nombre Comercial:</strong><br />
-              {data.nombre_comercial}
-            </div>
-            <div>
-              <strong>Razón Social:</strong><br />
-              {data.razon_social}
-            </div>
-            <div>
-              <strong>Sector de Negocio:</strong><br />
-              {data.sector_negocio?.toUpperCase()}
-            </div>
-            <div>
-              <strong>Número de Empleados:</strong> {data.numero_empleados || 'N/A'}
-            </div>
-            <div>
-              <strong>Fecha de Constitución:</strong><br />
-              {data.fecha_constitucion ? new Date(data.fecha_constitucion).toLocaleDateString('es-CR') : 'N/A'}
-            </div>
-            <div>
-              <strong>Teléfono:</strong> {data.telefono || 'N/A'}
-            </div>
-            <div>
-              <strong>Email:</strong> {data.email || 'N/A'}
-            </div>
-            <div>
-              <strong>Sitio Web:</strong> {data.website || 'N/A'}
-            </div>
-            <div className="md:col-span-2">
-              <strong>Ubicación:</strong><br />
-              {data.direccion_exacta || 'N/A'}<br />
-              {data.distrito_nombre}, {data.canton_nombre}, {data.provincia_nombre}
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Fecha de Constitución:</strong>
+                <p className="text-lg text-gray-800">
+                  {data.fecha_constitucion ? new Date(data.fecha_constitucion).toLocaleDateString('es-CR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  }) : 'No disponible'}
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Teléfono:</strong>
+                <p className="text-lg text-gray-800 font-mono">{data.telefono || 'No disponible'}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Correo Electrónico:</strong>
+                <p className="text-lg text-gray-800">{data.email || 'No disponible'}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Sitio Web:</strong>
+                <p className="text-lg text-gray-800">{data.website || 'No disponible'}</p>
+              </div>
+              <div className="bg-white p-4 rounded-md">
+                <strong className="text-green-700">Ubicación Geográfica:</strong>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">Provincia:</p>
+                  <p className="text-lg text-gray-800">{data.provincia_nombre}</p>
+                  <p className="text-sm text-gray-600">Cantón:</p>
+                  <p className="text-lg text-gray-800">{data.canton_nombre}</p>
+                  <p className="text-sm text-gray-600">Distrito:</p>
+                  <p className="text-lg text-gray-800">{data.distrito_nombre}</p>
+                  <p className="text-sm text-gray-600 mt-2">Dirección:</p>
+                  <p className="text-lg text-gray-800">{data.direccion_exacta || 'No especificada'}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

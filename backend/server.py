@@ -294,18 +294,209 @@ async def get_sms_campaigns(current_user=Depends(get_current_user)):
     campaigns = await db.sms_campaigns.find().to_list(100)
     return [SMSCampaign(**c) for c in campaigns]
 
-# Data management endpoints (for demo purposes)
-@api_router.post("/data/persona-fisica", response_model=PersonaFisica)
-async def create_persona_fisica(persona: PersonaFisica, current_user=Depends(get_current_user)):
-    persona_dict = persona.dict()
-    await db.personas_fisicas.insert_one(persona_dict)
-    return persona
+# Search endpoints for individual queries
+@api_router.get("/search/cedula/{cedula}")
+async def search_by_cedula(cedula: str, current_user=Depends(get_current_user)):
+    """Search person by cedula (both fisica and juridica)"""
+    
+    # Search in personas fisicas
+    persona_fisica = await db.personas_fisicas.find_one({"cedula": cedula})
+    if persona_fisica:
+        # Get location info
+        distrito = await db.distritos.find_one({"id": persona_fisica["distrito_id"]})
+        canton = await db.cantones.find_one({"id": persona_fisica["canton_id"]})
+        provincia = await db.provincias.find_one({"id": persona_fisica["provincia_id"]})
+        
+        return {
+            "type": "fisica",
+            "found": True,
+            "data": {
+                **persona_fisica,
+                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                "canton_nombre": canton["nombre"] if canton else "N/A", 
+                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+            }
+        }
+    
+    # Search in personas juridicas
+    persona_juridica = await db.personas_juridicas.find_one({"cedula_juridica": cedula})
+    if persona_juridica:
+        # Get location info
+        distrito = await db.distritos.find_one({"id": persona_juridica["distrito_id"]})
+        canton = await db.cantones.find_one({"id": persona_juridica["canton_id"]})
+        provincia = await db.provincias.find_one({"id": persona_juridica["provincia_id"]})
+        
+        return {
+            "type": "juridica", 
+            "found": True,
+            "data": {
+                **persona_juridica,
+                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                "canton_nombre": canton["nombre"] if canton else "N/A",
+                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+            }
+        }
+    
+    return {"found": False, "message": "No se encontró persona con esa cédula"}
 
-@api_router.post("/data/persona-juridica", response_model=PersonaJuridica)
-async def create_persona_juridica(persona: PersonaJuridica, current_user=Depends(get_current_user)):
-    persona_dict = persona.dict()
-    await db.personas_juridicas.insert_one(persona_dict)
-    return persona
+@api_router.get("/search/name/{nombre}")
+async def search_by_name(nombre: str, current_user=Depends(get_current_user)):
+    """Search person by name"""
+    results = []
+    
+    # Search in personas fisicas
+    fisicas = await db.personas_fisicas.find({
+        "$or": [
+            {"nombre": {"$regex": nombre, "$options": "i"}},
+            {"primer_apellido": {"$regex": nombre, "$options": "i"}},
+            {"segundo_apellido": {"$regex": nombre, "$options": "i"}}
+        ]
+    }).limit(50).to_list(50)
+    
+    for persona in fisicas:
+        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
+        canton = await db.cantones.find_one({"id": persona["canton_id"]})
+        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+        
+        results.append({
+            "type": "fisica",
+            "data": {
+                **persona,
+                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                "canton_nombre": canton["nombre"] if canton else "N/A",
+                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+            }
+        })
+    
+    # Search in personas juridicas  
+    juridicas = await db.personas_juridicas.find({
+        "$or": [
+            {"nombre_comercial": {"$regex": nombre, "$options": "i"}},
+            {"razon_social": {"$regex": nombre, "$options": "i"}}
+        ]
+    }).limit(50).to_list(50)
+    
+    for persona in juridicas:
+        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
+        canton = await db.cantones.find_one({"id": persona["canton_id"]})
+        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+        
+        results.append({
+            "type": "juridica",
+            "data": {
+                **persona,
+                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                "canton_nombre": canton["nombre"] if canton else "N/A", 
+                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+            }
+        })
+    
+    return {"results": results, "total": len(results)}
+
+@api_router.get("/search/telefono/{telefono}")
+async def search_by_telefono(telefono: str, current_user=Depends(get_current_user)):
+    """Search person by phone number"""
+    results = []
+    
+    # Search in personas fisicas
+    fisicas = await db.personas_fisicas.find({
+        "telefono": {"$regex": telefono, "$options": "i"}
+    }).limit(50).to_list(50)
+    
+    for persona in fisicas:
+        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
+        canton = await db.cantones.find_one({"id": persona["canton_id"]})
+        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+        
+        results.append({
+            "type": "fisica",
+            "data": {
+                **persona,
+                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                "canton_nombre": canton["nombre"] if canton else "N/A",
+                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+            }
+        })
+    
+    # Search in personas juridicas
+    juridicas = await db.personas_juridicas.find({
+        "telefono": {"$regex": telefono, "$options": "i"}
+    }).limit(50).to_list(50)
+    
+    for persona in juridicas:
+        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
+        canton = await db.cantones.find_one({"id": persona["canton_id"]})
+        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+        
+        results.append({
+            "type": "juridica", 
+            "data": {
+                **persona,
+                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                "canton_nombre": canton["nombre"] if canton else "N/A",
+                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+            }
+        })
+    
+    return {"results": results, "total": len(results)}
+
+@api_router.post("/search/geografica")
+async def search_geografica(query: DemographicQuery, current_user=Depends(get_current_user)):
+    """Geographic search with detailed results"""
+    results = []
+    
+    # Build filter
+    filters = {}
+    if query.provincia_id:
+        filters["provincia_id"] = query.provincia_id
+    if query.canton_id:
+        filters["canton_id"] = query.canton_id  
+    if query.distrito_id:
+        filters["distrito_id"] = query.distrito_id
+    
+    # Search personas fisicas
+    if not query.person_type or query.person_type == PersonType.FISICA:
+        fisicas = await db.personas_fisicas.find(filters).limit(100).to_list(100)
+        
+        for persona in fisicas:
+            distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
+            canton = await db.cantones.find_one({"id": persona["canton_id"]})
+            provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+            
+            results.append({
+                "type": "fisica",
+                "data": {
+                    **persona,
+                    "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                    "canton_nombre": canton["nombre"] if canton else "N/A",
+                    "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                }
+            })
+    
+    # Search personas juridicas
+    if not query.person_type or query.person_type == PersonType.JURIDICA:
+        juridica_filters = filters.copy()
+        if query.business_sector:
+            juridica_filters["sector_negocio"] = query.business_sector
+            
+        juridicas = await db.personas_juridicas.find(juridica_filters).limit(100).to_list(100)
+        
+        for persona in juridicas:
+            distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
+            canton = await db.cantones.find_one({"id": persona["canton_id"]})
+            provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+            
+            results.append({
+                "type": "juridica",
+                "data": {
+                    **persona,
+                    "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                    "canton_nombre": canton["nombre"] if canton else "N/A",
+                    "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                }
+            })
+    
+    return {"results": results, "total": len(results)}
 
 # Include the router in the main app
 app.include_router(api_router)

@@ -799,29 +799,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Create indexes for faster queries
-@app.on_event("startup")
-async def create_indexes():
-    """Create database indexes for better performance"""
-    try:
-        # Indexes for personas_fisicas
-        await db.personas_fisicas.create_index("cedula", unique=True)
-        await db.personas_fisicas.create_index([("nombre", 1), ("primer_apellido", 1), ("segundo_apellido", 1)])
-        await db.personas_fisicas.create_index("telefono")
-        await db.personas_fisicas.create_index([("provincia_id", 1), ("canton_id", 1), ("distrito_id", 1)])
-        
-        # Indexes for personas_juridicas
-        await db.personas_juridicas.create_index("cedula_juridica", unique=True)
-        await db.personas_juridicas.create_index([("nombre_comercial", 1), ("razon_social", 1)])
-        await db.personas_juridicas.create_index("telefono")
-        await db.personas_juridicas.create_index("sector_negocio")
-        await db.personas_juridicas.create_index([("provincia_id", 1), ("canton_id", 1), ("distrito_id", 1)])
-        
-        # Location indexes
-        await db.provincias.create_index("codigo", unique=True)
-        await db.cantones.create_index([("provincia_id", 1), ("codigo", 1)])
-        await db.distritos.create_index([("canton_id", 1), ("codigo", 1)])
-        
-        logger.info("Database indexes created successfully")
-    except Exception as e:
-        logger.error(f"Error creating indexes: {e}")
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    client.close()
+    await costa_rica_integrator.close_session()

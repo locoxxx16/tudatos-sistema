@@ -1504,6 +1504,9 @@ const Dashboard = () => {
       case 'telegram':
         return <TelegramIntegration />;
         
+      case 'admin':
+        return <AdminPanel />;
+        
       case 'ayuda':
         return <AyudaSystem />;
         

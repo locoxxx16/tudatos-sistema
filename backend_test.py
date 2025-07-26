@@ -1,0 +1,503 @@
+#!/usr/bin/env python3
+"""
+Comprehensive Backend Testing for Daticos System
+Tests all API endpoints with real data scenarios
+"""
+
+import requests
+import json
+import sys
+from datetime import datetime
+import time
+
+# Configuration
+BACKEND_URL = "https://e6b5bb82-5eae-4850-8433-4258f7d23194.preview.emergentagent.com/api"
+TEST_CREDENTIALS = {
+    "login": "admin",
+    "password": "admin123"
+}
+
+class DaticosAPITester:
+    def __init__(self):
+        self.base_url = BACKEND_URL
+        self.session = requests.Session()
+        self.auth_token = None
+        self.test_results = []
+        
+    def log_test(self, test_name, success, details="", response_data=None):
+        """Log test results"""
+        result = {
+            "test": test_name,
+            "success": success,
+            "details": details,
+            "timestamp": datetime.now().isoformat(),
+            "response_data": response_data
+        }
+        self.test_results.append(result)
+        
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status} {test_name}")
+        if details:
+            print(f"   Details: {details}")
+        if not success and response_data:
+            print(f"   Response: {response_data}")
+        print()
+    
+    def test_authentication(self):
+        """Test 1: Authentication with admin credentials"""
+        print("🔐 Testing Authentication...")
+        
+        try:
+            response = self.session.post(
+                f"{self.base_url}/auth/login",
+                json=TEST_CREDENTIALS,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "access_token" in data and "user" in data:
+                    self.auth_token = data["access_token"]
+                    self.session.headers.update({
+                        "Authorization": f"Bearer {self.auth_token}"
+                    })
+                    self.log_test(
+                        "Authentication Login", 
+                        True, 
+                        f"Successfully logged in as {data['user']['username']}"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Authentication Login", 
+                        False, 
+                        "Missing access_token or user in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Authentication Login", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Authentication Login", False, f"Exception: {str(e)}")
+            
+        return False
+    
+    def test_location_endpoints(self):
+        """Test location hierarchy endpoints"""
+        print("🌍 Testing Location Endpoints...")
+        
+        # Test provincias
+        try:
+            response = self.session.get(f"{self.base_url}/locations/provincias", timeout=10)
+            if response.status_code == 200:
+                provincias = response.json()
+                if isinstance(provincias, list) and len(provincias) > 0:
+                    self.log_test(
+                        "Get Provincias", 
+                        True, 
+                        f"Retrieved {len(provincias)} provinces"
+                    )
+                    
+                    # Test cantones for first provincia
+                    first_provincia = provincias[0]
+                    provincia_id = first_provincia.get('id')
+                    
+                    if provincia_id:
+                        cantones_response = self.session.get(
+                            f"{self.base_url}/locations/cantones/{provincia_id}", 
+                            timeout=10
+                        )
+                        if cantones_response.status_code == 200:
+                            cantones = cantones_response.json()
+                            self.log_test(
+                                "Get Cantones", 
+                                True, 
+                                f"Retrieved {len(cantones)} cantones for {first_provincia.get('nombre')}"
+                            )
+                            
+                            # Test distritos for first canton
+                            if cantones and len(cantones) > 0:
+                                first_canton = cantones[0]
+                                canton_id = first_canton.get('id')
+                                
+                                if canton_id:
+                                    distritos_response = self.session.get(
+                                        f"{self.base_url}/locations/distritos/{canton_id}", 
+                                        timeout=10
+                                    )
+                                    if distritos_response.status_code == 200:
+                                        distritos = distritos_response.json()
+                                        self.log_test(
+                                            "Get Distritos", 
+                                            True, 
+                                            f"Retrieved {len(distritos)} distritos for {first_canton.get('nombre')}"
+                                        )
+                                    else:
+                                        self.log_test(
+                                            "Get Distritos", 
+                                            False, 
+                                            f"HTTP {distritos_response.status_code}", 
+                                            distritos_response.text
+                                        )
+                        else:
+                            self.log_test(
+                                "Get Cantones", 
+                                False, 
+                                f"HTTP {cantones_response.status_code}", 
+                                cantones_response.text
+                            )
+                else:
+                    self.log_test("Get Provincias", False, "Empty or invalid response", provincias)
+            else:
+                self.log_test(
+                    "Get Provincias", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Location Endpoints", False, f"Exception: {str(e)}")
+    
+    def test_search_by_cedula(self):
+        """Test search by cedula for both fisica and juridica"""
+        print("🔍 Testing Search by Cedula...")
+        
+        # Test cedulas that should exist based on the system description
+        test_cedulas = [
+            "123456789",  # Typical fisica cedula
+            "987654321",  # Another fisica cedula
+            "3101234567", # Juridica cedula (starts with 3)
+            "3109876543"  # Another juridica cedula
+        ]
+        
+        for cedula in test_cedulas:
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/search/cedula/{cedula}", 
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get("found"):
+                        person_type = data.get("type", "unknown")
+                        self.log_test(
+                            f"Search Cedula {cedula}", 
+                            True, 
+                            f"Found {person_type} person"
+                        )
+                    else:
+                        self.log_test(
+                            f"Search Cedula {cedula}", 
+                            True, 
+                            "No person found (valid response)"
+                        )
+                else:
+                    self.log_test(
+                        f"Search Cedula {cedula}", 
+                        False, 
+                        f"HTTP {response.status_code}", 
+                        response.text
+                    )
+                    
+            except Exception as e:
+                self.log_test(f"Search Cedula {cedula}", False, f"Exception: {str(e)}")
+    
+    def test_search_by_name(self):
+        """Test search by name"""
+        print("👤 Testing Search by Name...")
+        
+        # Test common Costa Rican names
+        test_names = [
+            "Maria",
+            "Jose",
+            "Ana",
+            "Carlos",
+            "Restaurant",  # For juridica
+            "Empresa"      # For juridica
+        ]
+        
+        for name in test_names:
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/search/name/{name}", 
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    results = data.get("results", [])
+                    total = data.get("total", 0)
+                    
+                    self.log_test(
+                        f"Search Name '{name}'", 
+                        True, 
+                        f"Found {total} results"
+                    )
+                else:
+                    self.log_test(
+                        f"Search Name '{name}'", 
+                        False, 
+                        f"HTTP {response.status_code}", 
+                        response.text
+                    )
+                    
+            except Exception as e:
+                self.log_test(f"Search Name '{name}'", False, f"Exception: {str(e)}")
+    
+    def test_search_by_telefono(self):
+        """Test search by phone number"""
+        print("📞 Testing Search by Telefono...")
+        
+        # Test various phone formats
+        test_phones = [
+            "88888888",    # 8-digit format
+            "2222-2222",   # Landline format
+            "8888-8888",   # Mobile format
+            "22222222",    # 8-digit landline
+            "1234"         # Partial search
+        ]
+        
+        for phone in test_phones:
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/search/telefono/{phone}", 
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    results = data.get("results", [])
+                    total = data.get("total", 0)
+                    
+                    self.log_test(
+                        f"Search Phone '{phone}'", 
+                        True, 
+                        f"Found {total} results"
+                    )
+                else:
+                    self.log_test(
+                        f"Search Phone '{phone}'", 
+                        False, 
+                        f"HTTP {response.status_code}", 
+                        response.text
+                    )
+                    
+            except Exception as e:
+                self.log_test(f"Search Phone '{phone}'", False, f"Exception: {str(e)}")
+    
+    def test_geographic_search(self):
+        """Test geographic search endpoint"""
+        print("🗺️ Testing Geographic Search...")
+        
+        # First get a provincia to test with
+        try:
+            provincias_response = self.session.get(f"{self.base_url}/locations/provincias", timeout=10)
+            if provincias_response.status_code == 200:
+                provincias = provincias_response.json()
+                if provincias:
+                    test_provincia = provincias[0]
+                    
+                    # Test geographic search with provincia filter
+                    search_payload = {
+                        "provincia_id": test_provincia["id"]
+                    }
+                    
+                    response = self.session.post(
+                        f"{self.base_url}/search/geografica",
+                        json=search_payload,
+                        timeout=10
+                    )
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        results = data.get("results", [])
+                        total = data.get("total", 0)
+                        
+                        self.log_test(
+                            "Geographic Search", 
+                            True, 
+                            f"Found {total} results for {test_provincia['nombre']}"
+                        )
+                    else:
+                        self.log_test(
+                            "Geographic Search", 
+                            False, 
+                            f"HTTP {response.status_code}", 
+                            response.text
+                        )
+                        
+                    # Test with person type filter
+                    search_payload_fisica = {
+                        "provincia_id": test_provincia["id"],
+                        "person_type": "fisica"
+                    }
+                    
+                    response_fisica = self.session.post(
+                        f"{self.base_url}/search/geografica",
+                        json=search_payload_fisica,
+                        timeout=10
+                    )
+                    
+                    if response_fisica.status_code == 200:
+                        data_fisica = response_fisica.json()
+                        results_fisica = data_fisica.get("results", [])
+                        
+                        self.log_test(
+                            "Geographic Search (Fisica)", 
+                            True, 
+                            f"Found {len(results_fisica)} fisica results"
+                        )
+                    else:
+                        self.log_test(
+                            "Geographic Search (Fisica)", 
+                            False, 
+                            f"HTTP {response_fisica.status_code}", 
+                            response_fisica.text
+                        )
+                        
+        except Exception as e:
+            self.log_test("Geographic Search", False, f"Exception: {str(e)}")
+    
+    def test_demographics_query(self):
+        """Test demographics statistics endpoint"""
+        print("📊 Testing Demographics Query...")
+        
+        try:
+            # Test basic demographics query
+            demo_payload = {}
+            
+            response = self.session.post(
+                f"{self.base_url}/demographics/query",
+                json=demo_payload,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                required_fields = [
+                    "total_personas_fisicas", 
+                    "total_personas_juridicas", 
+                    "by_provincia", 
+                    "by_sector"
+                ]
+                
+                all_fields_present = all(field in data for field in required_fields)
+                
+                if all_fields_present:
+                    self.log_test(
+                        "Demographics Query", 
+                        True, 
+                        f"Fisica: {data['total_personas_fisicas']}, Juridica: {data['total_personas_juridicas']}"
+                    )
+                else:
+                    missing_fields = [field for field in required_fields if field not in data]
+                    self.log_test(
+                        "Demographics Query", 
+                        False, 
+                        f"Missing fields: {missing_fields}", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Demographics Query", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Demographics Query", False, f"Exception: {str(e)}")
+    
+    def test_api_root(self):
+        """Test API root endpoint"""
+        print("🏠 Testing API Root...")
+        
+        try:
+            response = self.session.get(f"{self.base_url}/", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "version" in data:
+                    self.log_test(
+                        "API Root", 
+                        True, 
+                        f"API Version: {data['version']}"
+                    )
+                else:
+                    self.log_test("API Root", False, "Missing message or version", data)
+            else:
+                self.log_test(
+                    "API Root", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("API Root", False, f"Exception: {str(e)}")
+    
+    def run_all_tests(self):
+        """Run all tests in sequence"""
+        print("🚀 Starting Daticos Backend API Tests")
+        print(f"Backend URL: {self.base_url}")
+        print("=" * 60)
+        
+        # Test API root first
+        self.test_api_root()
+        
+        # Authentication is required for most endpoints
+        if self.test_authentication():
+            self.test_location_endpoints()
+            self.test_search_by_cedula()
+            self.test_search_by_name()
+            self.test_search_by_telefono()
+            self.test_geographic_search()
+            self.test_demographics_query()
+        else:
+            print("❌ Authentication failed - skipping authenticated tests")
+        
+        # Print summary
+        print("=" * 60)
+        print("📋 TEST SUMMARY")
+        print("=" * 60)
+        
+        passed = sum(1 for result in self.test_results if result["success"])
+        total = len(self.test_results)
+        
+        print(f"Total Tests: {total}")
+        print(f"Passed: {passed}")
+        print(f"Failed: {total - passed}")
+        print(f"Success Rate: {(passed/total)*100:.1f}%")
+        
+        print("\n📝 DETAILED RESULTS:")
+        for result in self.test_results:
+            status = "✅" if result["success"] else "❌"
+            print(f"{status} {result['test']}")
+            if result["details"]:
+                print(f"   {result['details']}")
+        
+        return passed, total
+
+def main():
+    """Main test execution"""
+    tester = DaticosAPITester()
+    passed, total = tester.run_all_tests()
+    
+    # Exit with appropriate code
+    if passed == total:
+        print("\n🎉 All tests passed!")
+        sys.exit(0)
+    else:
+        print(f"\n⚠️  {total - passed} tests failed")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

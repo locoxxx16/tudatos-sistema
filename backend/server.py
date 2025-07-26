@@ -991,6 +991,11 @@ async def create_indexes():
         await db.distritos.create_index([("canton_id", 1), ("codigo", 1)])
         
         logger.info("Database indexes created successfully")
+        
+        # Start the data updater service
+        start_data_updater()
+        logger.info("Data updater service started")
+        
     except Exception as e:
         logger.error(f"Error creating indexes: {e}")
 

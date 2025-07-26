@@ -642,33 +642,116 @@ const ConsultationInterface = () => {
   );
 };
 
-// Advanced Search Interface
+// Advanced Search Interface with Filters
 const AdvancedSearch = () => {
-  const [searchType, setSearchType] = useState('name');
+  const [searchType, setSearchType] = useState('cedula');
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    provincia_id: '',
+    canton_id: '',
+    distrito_id: '',
+    person_type: '',
+    business_sector: ''
+  });
+  const [provincias, setProvincias] = useState([]);
+  const [cantones, setCantones] = useState([]);
+  const [distritos, setDistritos] = useState([]);
+
+  useEffect(() => {
+    loadProvincias();
+  }, []);
+
+  useEffect(() => {
+    if (filters.provincia_id) {
+      loadCantones(filters.provincia_id);
+    } else {
+      setCantones([]);
+      setDistritos([]);
+    }
+  }, [filters.provincia_id]);
+
+  useEffect(() => {
+    if (filters.canton_id) {
+      loadDistritos(filters.canton_id);
+    } else {
+      setDistritos([]);
+    }
+  }, [filters.canton_id]);
+
+  const loadProvincias = async () => {
+    try {
+      const data = await apiCall('/locations/provincias');
+      setProvincias(data);
+    } catch (error) {
+      console.error('Error loading provinces:', error);
+    }
+  };
+
+  const loadCantones = async (provinciaId) => {
+    try {
+      const data = await apiCall(`/locations/cantones/${provinciaId}`);
+      setCantones(data);
+    } catch (error) {
+      console.error('Error loading cantons:', error);
+    }
+  };
+
+  const loadDistritos = async (cantonId) => {
+    try {
+      const data = await apiCall(`/locations/distritos/${cantonId}`);
+      setDistritos(data);
+    } catch (error) {
+      console.error('Error loading districts:', error);
+    }
+  };
 
   const handleAdvancedSearch = async (e) => {
     e.preventDefault();
-    if (!searchTerm.trim()) return;
-
     setLoading(true);
+    
     try {
       let endpoint = '';
+      let payload = {};
+      
       switch (searchType) {
+        case 'cedula':
+          if (searchTerm.trim()) {
+            endpoint = `/search/cedula/${encodeURIComponent(searchTerm)}?enrich=true`;
+            const data = await apiCall(endpoint);
+            setResults(data.found ? [data] : []);
+          }
+          break;
+          
         case 'name':
           endpoint = `/search/name/${encodeURIComponent(searchTerm)}`;
+          const nameData = await apiCall(endpoint);
+          setResults(nameData.results || []);
           break;
+          
         case 'phone':
           endpoint = `/search/telefono/${encodeURIComponent(searchTerm)}`;
+          const phoneData = await apiCall(endpoint);
+          setResults(phoneData.results || []);
           break;
+          
+        case 'geographic':
+          endpoint = '/search/geografica';
+          payload = {
+            provincia_id: filters.provincia_id || null,
+            canton_id: filters.canton_id || null,
+            distrito_id: filters.distrito_id || null,
+            person_type: filters.person_type || null,
+            business_sector: filters.business_sector || null
+          };
+          const geoData = await apiCall(endpoint, 'POST', payload);
+          setResults(geoData.results || []);
+          break;
+          
         default:
-          endpoint = `/search/name/${encodeURIComponent(searchTerm)}`;
+          setResults([]);
       }
-      
-      const data = await apiCall(endpoint);
-      setResults(data.results || []);
     } catch (error) {
       console.error('Error in advanced search:', error);
       setResults([]);
@@ -676,49 +759,352 @@ const AdvancedSearch = () => {
     setLoading(false);
   };
 
+  const clearFilters = () => {
+    setFilters({
+      provincia_id: '',
+      canton_id: '',
+      distrito_id: '',
+      person_type: '',
+      business_sector: ''
+    });
+    setSearchTerm('');
+    setResults([]);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">🔍 Búsqueda Avanzada</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        🔍 <span className="ml-2">Búsqueda Avanzada con Filtros</span>
+      </h2>
       
       <form onSubmit={handleAdvancedSearch} className="mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <select
-            value={searchType}
-            onChange={(e) => setSearchType(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="name">Por Nombre/Empresa</option>
-            <option value="phone">Por Teléfono</option>
-          </select>
+        {/* Search Type Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div>
+            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Búsqueda</label>
+            <select
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="cedula">Por Cédula</option>
+              <option value="name">Por Nombre/Empresa</option>
+              <option value="phone">Por Teléfono</option>
+              <option value="geographic">Por Ubicación Geográfica</option>
+            </select>
+          </div>
           
-          <input
-            type="text"
-            placeholder={searchType === 'name' ? 'Nombre o empresa' : 'Número de teléfono'}
-            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          {searchType !== 'geographic' && (
+            <div className="md:col-span-2">
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                {searchType === 'cedula' ? 'Número de Cédula' : 
+                 searchType === 'name' ? 'Nombre o Empresa' : 
+                 'Número de Teléfono'}
+              </label>
+              <input
+                type="text"
+                placeholder={
+                  searchType === 'cedula' ? '123456789 o 3-101-123456' :
+                  searchType === 'name' ? 'Nombre, apellido o nombre comercial' :
+                  '+506 2222-3333 o 8888-9999'
+                }
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          )}
           
           <button
             type="submit"
             disabled={loading}
-            className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 disabled:opacity-50"
+            className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 disabled:opacity-50 font-semibold"
           >
-            {loading ? 'Buscando...' : 'Buscar'}
+            {loading ? 'Buscando...' : 'BUSCAR'}
+          </button>
+        </div>
+
+        {/* Geographic Filters */}
+        {searchType === 'geographic' && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h4 className="font-semibold text-gray-700 mb-3">🗺️ Filtros Geográficos</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <select
+                value={filters.provincia_id}
+                onChange={(e) => setFilters({...filters, provincia_id: e.target.value, canton_id: '', distrito_id: ''})}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Todas las provincias</option>
+                {provincias.map(provincia => (
+                  <option key={provincia.id} value={provincia.id}>{provincia.nombre}</option>
+                ))}
+              </select>
+
+              <select
+                value={filters.canton_id}
+                onChange={(e) => setFilters({...filters, canton_id: e.target.value, distrito_id: ''})}
+                disabled={!filters.provincia_id}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+              >
+                <option value="">Todos los cantones</option>
+                {cantones.map(canton => (
+                  <option key={canton.id} value={canton.id}>{canton.nombre}</option>
+                ))}
+              </select>
+
+              <select
+                value={filters.distrito_id}
+                onChange={(e) => setFilters({...filters, distrito_id: e.target.value})}
+                disabled={!filters.canton_id}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50"
+              >
+                <option value="">Todos los distritos</option>
+                {distritos.map(distrito => (
+                  <option key={distrito.id} value={distrito.id}>{distrito.nombre}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <select
+                value={filters.person_type}
+                onChange={(e) => setFilters({...filters, person_type: e.target.value})}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Físicas y Jurídicas</option>
+                <option value="fisica">Solo Personas Físicas</option>
+                <option value="juridica">Solo Personas Jurídicas</option>
+              </select>
+
+              <select
+                value={filters.business_sector}
+                onChange={(e) => setFilters({...filters, business_sector: e.target.value})}
+                className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Todos los sectores</option>
+                <option value="comercio">Comercio</option>
+                <option value="servicios">Servicios</option>
+                <option value="industria">Industria</option>
+                <option value="tecnologia">Tecnología</option>
+                <option value="educacion">Educación</option>
+                <option value="salud">Salud</option>
+                <option value="construccion">Construcción</option>
+                <option value="turismo">Turismo</option>
+                <option value="agricultura">Agricultura</option>
+                <option value="otros">Otros</option>
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Clear Filters Button */}
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="text-gray-600 hover:text-gray-800 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+          >
+            🗑️ Limpiar Filtros
           </button>
         </div>
       </form>
 
+      {/* Results Display */}
       {results.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            Resultados: {results.length} registros encontrados
-          </h3>
-          <ResultsTable results={results} loading={false} />
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-700">
+              📊 Resultados: {results.length} registro(s) encontrado(s)
+            </h3>
+            <button
+              onClick={() => {/* Implementar exportación */}}
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm"
+            >
+              📥 Exportar CSV
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            {results.map((result, index) => (
+              <div key={index} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                {result.found ? 
+                  renderPersonDetails(result.data, result.type) :
+                  <div className="bg-gray-50 p-4 rounded">
+                    <div className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      result.type === 'fisica' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                    }`}>
+                      {result.type === 'fisica' ? 'Persona Física' : 'Persona Jurídica'}
+                    </div>
+                    <div className="mt-2">
+                      {/* Renderizar datos básicos para resultados de listas */}
+                      <p className="font-semibold text-gray-800">
+                        {result.data?.cedula || result.data?.cedula_juridica} - {' '}
+                        {result.data?.nombre ? 
+                          `${result.data.nombre} ${result.data.primer_apellido || ''}` : 
+                          result.data?.nombre_comercial
+                        }
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        {result.data?.provincia_nombre}, {result.data?.canton_nombre}, {result.data?.distrito_nombre}
+                      </p>
+                    </div>
+                  </div>
+                }
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {results.length === 0 && searchTerm && !loading && (
+        <div className="text-center py-8 bg-yellow-50 rounded-lg">
+          <div className="text-4xl mb-4">🔍</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No se encontraron resultados</h3>
+          <p className="text-gray-600">Intente con diferentes términos de búsqueda o filtros</p>
         </div>
       )}
     </div>
   );
+};
+
+// Helper function to render person details for both components
+const renderPersonDetails = (data, type) => {
+  if (type === 'fisica') {
+    return (
+      <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+        <h3 className="text-2xl font-bold text-blue-800 mb-6 flex items-center">
+          👤 <span className="ml-2">Persona Física Encontrada</span>
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Número de Cédula:</strong>
+              <p className="text-xl font-mono text-gray-800">{data.cedula}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Nombre Completo:</strong>
+              <p className="text-xl text-gray-800">
+                {`${data.nombre} ${data.primer_apellido} ${data.segundo_apellido || ''}`.trim()}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Fecha de Nacimiento:</strong>
+              <p className="text-lg text-gray-800">
+                {data.fecha_nacimiento ? new Date(data.fecha_nacimiento).toLocaleDateString('es-CR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                }) : 'No disponible'}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Ocupación:</strong>
+              <p className="text-lg text-gray-800">{data.ocupacion || 'No especificada'}</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Teléfono:</strong>
+              <p className="text-lg text-gray-800 font-mono">{data.telefono || 'No disponible'}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Correo Electrónico:</strong>
+              <p className="text-lg text-gray-800">{data.email || 'No disponible'}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Ubicación Geográfica:</strong>
+              <div className="space-y-1">
+                <p className="text-sm text-gray-600">Provincia:</p>
+                <p className="text-lg text-gray-800">{data.provincia_nombre}</p>
+                <p className="text-sm text-gray-600">Cantón:</p>
+                <p className="text-lg text-gray-800">{data.canton_nombre}</p>
+                <p className="text-sm text-gray-600">Distrito:</p>
+                <p className="text-lg text-gray-800">{data.distrito_nombre}</p>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-blue-700">Dirección Exacta:</strong>
+              <p className="text-lg text-gray-800">{data.direccion_exacta || 'No especificada'}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (type === 'juridica') {
+    return (
+      <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+        <h3 className="text-2xl font-bold text-green-800 mb-6 flex items-center">
+          🏢 <span className="ml-2">Persona Jurídica Encontrada</span>
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Cédula Jurídica:</strong>
+              <p className="text-xl font-mono text-gray-800">{data.cedula_juridica}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Nombre Comercial:</strong>
+              <p className="text-xl text-gray-800">{data.nombre_comercial}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Razón Social:</strong>
+              <p className="text-lg text-gray-800">{data.razon_social}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Sector de Negocio:</strong>
+              <p className="text-lg text-gray-800 uppercase tracking-wider">
+                <span className="bg-green-100 px-3 py-1 rounded-full text-green-800 font-semibold">
+                  {data.sector_negocio}
+                </span>
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Número de Empleados:</strong>
+              <p className="text-lg text-gray-800">{data.numero_empleados || 'No especificado'}</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Fecha de Constitución:</strong>
+              <p className="text-lg text-gray-800">
+                {data.fecha_constitucion ? new Date(data.fecha_constitucion).toLocaleDateString('es-CR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                }) : 'No disponible'}
+              </p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Teléfono:</strong>
+              <p className="text-lg text-gray-800 font-mono">{data.telefono || 'No disponible'}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Correo Electrónico:</strong>
+              <p className="text-lg text-gray-800">{data.email || 'No disponible'}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Sitio Web:</strong>
+              <p className="text-lg text-gray-800">{data.website || 'No disponible'}</p>
+            </div>
+            <div className="bg-white p-4 rounded-md">
+              <strong className="text-green-700">Ubicación Geográfica:</strong>
+              <div className="space-y-1">
+                <p className="text-sm text-gray-600">Provincia:</p>
+                <p className="text-lg text-gray-800">{data.provincia_nombre}</p>
+                <p className="text-sm text-gray-600">Cantón:</p>
+                <p className="text-lg text-gray-800">{data.canton_nombre}</p>
+                <p className="text-sm text-gray-600">Distrito:</p>
+                <p className="text-lg text-gray-800">{data.distrito_nombre}</p>
+                <p className="text-sm text-gray-600 mt-2">Dirección:</p>
+                <p className="text-lg text-gray-800">{data.direccion_exacta || 'No especificada'}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
 };
 
 // Geographic Search Component

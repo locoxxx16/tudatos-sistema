@@ -11,6 +11,7 @@ from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime
 from enum import Enum
+from external_apis import costa_rica_integrator, DataCleaner
 
 
 ROOT_DIR = Path(__file__).parent

@@ -2076,164 +2076,128 @@ const TelegramIntegration = () => {
   );
 };
 
-// Help System Component
+// Ayuda and Support Component (sin información de contacto de Daticos)
 const AyudaSystem = () => {
-  const [selectedTopic, setSelectedTopic] = useState('general');
-
-  const helpTopics = {
-    general: {
-      title: "Información General",
-      content: (
-        <div className="space-y-4">
-          <p>Daticos es el sistema más completo de consulta de datos de Costa Rica. Permite acceder a información de personas físicas y jurídicas de manera rápida y confiable.</p>
-          
-          <h4 className="font-semibold text-gray-800">🎯 ¿Qué puedo consultar?</h4>
-          <ul className="list-disc list-inside text-gray-700 space-y-1">
-            <li>Información personal de personas físicas</li>
-            <li>Datos comerciales de empresas</li>
-            <li>Ubicación geográfica detallada</li>
-            <li>Información de contacto</li>
-            <li>Datos actualizados mensualmente</li>
-          </ul>
-        </div>
-      )
-    },
-    consultas: {
-      title: "Cómo Hacer Consultas",
-      content: (
-        <div className="space-y-4">
-          <h4 className="font-semibold text-gray-800">📝 Pasos para consultar:</h4>
-          <ol className="list-decimal list-inside text-gray-700 space-y-2">
-            <li>Haga clic en cualquier tipo de consulta en el menú principal</li>
-            <li>Ingrese el número de cédula en el campo correspondiente</li>
-            <li>Presione el botón "CONSULTAR"</li>
-            <li>Revise la información encontrada</li>
-          </ol>
-          
-          <h4 className="font-semibold text-gray-800">🔍 Tipos de cédula:</h4>
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <strong>Personas Físicas:</strong><br />
-                <code>123456789</code> (9 dígitos)
-              </div>
-              <div>
-                <strong>Personas Jurídicas:</strong><br />
-                <code>3-101-123456</code> (con guiones)
-              </div>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    precios: {
-      title: "Precios y Planes",
-      content: (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">Plan Básico</h4>
-              <div className="text-2xl font-bold text-blue-600 mb-2">₡15,000</div>
-              <ul className="text-sm text-blue-700 space-y-1">
-                <li>• 500 consultas/mes</li>
-                <li>• Datos básicos</li>
-                <li>• Soporte por email</li>
-              </ul>
-            </div>
-            
-            <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
-              <h4 className="font-semibold text-green-800 mb-2">Plan Profesional</h4>
-              <div className="text-2xl font-bold text-green-600 mb-2">₡35,000</div>
-              <ul className="text-sm text-green-700 space-y-1">
-                <li>• 2,000 consultas/mes</li>
-                <li>• Datos enriquecidos</li>
-                <li>• Exportación CSV</li>
-                <li>• Telegram Bot</li>
-              </ul>
-            </div>
-            
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-purple-800 mb-2">Plan Empresarial</h4>
-              <div className="text-2xl font-bold text-purple-600 mb-2">₡75,000</div>
-              <ul className="text-sm text-purple-700 space-y-1">
-                <li>• Consultas ilimitadas</li>
-                <li>• API personalizada</li>
-                <li>• Soporte prioritario</li>
-                <li>• Integraciones custom</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      )
-    },
-    contacto: {
-      title: "Información de Contacto",
-      content: (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-3">📞 Contactos</h4>
-              <div className="space-y-2 text-gray-700">
-                <div><strong>Teléfono:</strong> +506 8701-2461</div>
-                <div><strong>WhatsApp:</strong> +506 8371-3030</div>
-                <div><strong>Email:</strong> info@daticos.com</div>
-                <div><strong>Sitio Web:</strong> www.daticos.com</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-3">🕒 Horario de Atención</h4>
-              <div className="space-y-2 text-gray-700">
-                <div><strong>Lunes a Viernes:</strong> 8:00 AM - 5:00 PM</div>
-                <div><strong>Sábados:</strong> 9:00 AM - 1:00 PM</div>
-                <div><strong>Domingos:</strong> Cerrado</div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-yellow-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-yellow-800 mb-2">⚡ Soporte Técnico</h4>
-            <p className="text-sm text-yellow-700">
-              Para problemas técnicos urgentes, contacte directamente a Wendel al WhatsApp 
-              <strong> +506 8701-2461</strong>. Respuesta garantizada en menos de 2 horas 
-              durante horario laboral.
-            </p>
-          </div>
-        </div>
-      )
-    }
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">❓ Centro de Ayuda</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Temas de Ayuda</h3>
-          <div className="space-y-2">
-            {Object.entries(helpTopics).map(([key, topic]) => (
-              <button
-                key={key}
-                onClick={() => setSelectedTopic(key)}
-                className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
-                  selectedTopic === key
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                }`}
-              >
-                {topic.title}
-              </button>
-            ))}
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        ❓ <span className="ml-2">Centro de Ayuda</span>
+      </h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Guía de Uso */}
+        <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+          <h3 className="text-xl font-bold text-blue-800 mb-4">📘 Guía de Uso</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-blue-700 mb-2">Consultas por Cédula</h4>
+              <p className="text-gray-600 text-sm">
+                Ingrese el número de cédula (física o jurídica) para obtener información detallada 
+                de la persona o empresa registrada en el sistema.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-blue-700 mb-2">Búsquedas Geográficas</h4>
+              <p className="text-gray-600 text-sm">
+                Filtre resultados por provincia, cantón y distrito para encontrar personas 
+                o empresas en ubicaciones específicas.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-blue-700 mb-2">Consultas por Nombre</h4>
+              <p className="text-gray-600 text-sm">
+                Busque personas físicas por nombre y apellidos, o empresas por nombre comercial 
+                o razón social.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-blue-700 mb-2">Búsquedas por Teléfono</h4>
+              <p className="text-gray-600 text-sm">
+                Encuentre registros asociados a números telefónicos específicos.
+                Soporta formatos con y sin guiones.
+              </p>
+            </div>
           </div>
         </div>
+
+        {/* Preguntas Frecuentes */}
+        <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+          <h3 className="text-xl font-bold text-green-800 mb-4">❓ Preguntas Frecuentes</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-green-700 mb-2">¿Cómo buscar una empresa?</h4>
+              <p className="text-gray-600 text-sm">
+                Las empresas se buscan usando su cédula jurídica (formato 3-101-XXXXXX) 
+                o su nombre comercial en la sección de búsqueda correspondiente.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-green-700 mb-2">¿Qué información se muestra?</h4>
+              <p className="text-gray-600 text-sm">
+                Para personas físicas: nombre, cédula, teléfono, dirección, ocupación.
+                Para personas jurídicas: razón social, sector, representantes, ubicación.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-green-700 mb-2">¿Los datos se actualizan?</h4>
+              <p className="text-gray-600 text-sm">
+                Sí, el sistema se actualiza automáticamente con información de fuentes 
+                oficiales y bases de datos verificadas.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-green-700 mb-2">¿Puedo exportar resultados?</h4>
+              <p className="text-gray-600 text-sm">
+                Los resultados pueden exportarse en formato CSV desde la opción 
+                correspondiente en cada búsqueda.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Términos de Uso */}
+      <div className="mt-8 bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Términos de Uso</h3>
+        <div className="space-y-3 text-gray-600 text-sm">
+          <p>• Los datos proporcionados provienen de fuentes públicas y oficiales de Costa Rica.</p>
+          <p>• El uso de la información debe cumplir con la legislación vigente sobre protección de datos.</p>
+          <p>• Este sistema está diseñado para consultas legítimas con fines comerciales, académicos o de investigación.</p>
+          <p>• El usuario es responsable del uso que haga de la información obtenida.</p>
+          <p>• Los datos se actualizan regularmente pero pueden no reflejar cambios recientes.</p>
+        </div>
+      </div>
+
+      {/* Sistema de Soporte */}
+      <div className="mt-8 bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+        <h3 className="text-xl font-bold text-purple-800 mb-4">🛠️ Soporte Técnico</h3>
+        <p className="text-gray-600 mb-4">
+          Para asistencia técnica, consultas sobre funcionalidades o reportar problemas, 
+          utilice las herramientas integradas en el panel de administración.
+        </p>
         
-        <div className="md:col-span-3">
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              {helpTopics[selectedTopic].title}
-            </h3>
-            {helpTopics[selectedTopic].content}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded-md">
+            <h4 className="font-semibold text-purple-700 mb-2">📊 Estado del Sistema</h4>
+            <p className="text-gray-600 text-sm">Consulte el estado de servicios y bases de datos</p>
+          </div>
+          
+          <div className="bg-white p-4 rounded-md">
+            <h4 className="font-semibold text-purple-700 mb-2">📈 Estadísticas</h4>
+            <p className="text-gray-600 text-sm">Vea métricas de uso y rendimiento del sistema</p>
+          </div>
+          
+          <div className="bg-white p-4 rounded-md">
+            <h4 className="font-semibold text-purple-700 mb-2">⚙️ Configuración</h4>
+            <p className="text-gray-600 text-sm">Ajuste configuraciones desde el panel admin</p>
           </div>
         </div>
       </div>

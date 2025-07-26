@@ -1400,6 +1400,7 @@ const NavigationBar = ({ activeSection, setActiveSection }) => {
     },
     { id: 'bitacora', label: 'Bitacora CSV', icon: '📊' },
     { id: 'telegram', label: 'Telegram', icon: '📱' },
+    { id: 'admin', label: 'Administración', icon: '⚙️' },
     { id: 'ayuda', label: 'Ayuda', icon: '❓' }
   ];
 

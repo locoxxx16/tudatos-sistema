@@ -226,11 +226,7 @@ test_plan:
     - "Search by Name"
     - "Search by Phone"
     - "Geographic Search"
-  stuck_tasks:
-    - "Search by Cedula"
-    - "Search by Name"
-    - "Search by Phone"
-    - "Geographic Search"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 

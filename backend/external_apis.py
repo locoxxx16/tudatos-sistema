@@ -185,6 +185,27 @@ class CostaRicaDataIntegrator:
         
         return results
     
+    async def bulk_padron_update(self, cedulas: list, batch_size: int = 100):
+        """
+        Actualizar datos de múltiples cédulas en lotes para mejor rendimiento
+        """
+        results = []
+        
+        for i in range(0, len(cedulas), batch_size):
+            batch = cedulas[i:i + batch_size]
+            batch_results = []
+            
+            # Procesar lote de forma asíncrona
+            tasks = [self.enrich_persona_data(cedula) for cedula in batch]
+            batch_results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            results.extend(batch_results)
+            
+            # Pausa entre lotes para no sobrecargar las APIs
+            await asyncio.sleep(1)
+        
+        return results
+    
     async def search_sugef_entities(self, entity_name: str = None) -> Optional[Dict[str, Any]]:
         """
         Consultar entidades supervisadas por SUGEF

@@ -50,6 +50,27 @@ const AuthProvider = ({ children }) => {
 
 const useAuth = () => useContext(AuthContext);
 
+// API Helper
+const apiCall = async (endpoint, method = 'GET', data = null) => {
+  const token = localStorage.getItem('daticos_token');
+  const config = {
+    method,
+    url: `${API}${endpoint}`,
+    headers: { Authorization: `Bearer ${token}` }
+  };
+  
+  if (data) {
+    config.data = data;
+  }
+  
+  try {
+    const response = await axios(config);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Login Component
 const Login = () => {
   const [credentials, setCredentials] = useState({ login: '', password: '' });
@@ -161,6 +182,405 @@ const Login = () => {
   );
 };
 
+// Results Display Component
+const ResultsTable = ({ results, loading }) => {
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Buscando...</p>
+      </div>
+    );
+  }
+
+  if (!results || results.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        No se encontraron resultados
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white border border-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cédula</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ubicación</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalles</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
+          {results.map((result, index) => (
+            <tr key={index} className="hover:bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                  result.type === 'fisica' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                }`}>
+                  {result.type === 'fisica' ? 'Física' : 'Jurídica'}
+                </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {result.data.cedula || result.data.cedula_juridica}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">
+                  {result.type === 'fisica' 
+                    ? `${result.data.nombre} ${result.data.primer_apellido} ${result.data.segundo_apellido || ''}`
+                    : result.data.nombre_comercial
+                  }
+                </div>
+                {result.type === 'juridica' && (
+                  <div className="text-sm text-gray-500">{result.data.razon_social}</div>
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {result.data.telefono || 'N/A'}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div>{result.data.provincia_nombre}</div>
+                <div>{result.data.canton_nombre}</div>
+                <div>{result.data.distrito_nombre}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm">
+                {result.type === 'fisica' ? (
+                  <div>
+                    <div>Ocupación: {result.data.ocupacion || 'N/A'}</div>
+                    <div>Email: {result.data.email || 'N/A'}</div>
+                  </div>
+                ) : (
+                  <div>
+                    <div>Sector: {result.data.sector_negocio}</div>
+                    <div>Empleados: {result.data.numero_empleados || 'N/A'}</div>
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// Search by Cedula Component
+const CedulaSearch = () => {
+  const [cedula, setCedula] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!cedula.trim()) return;
+
+    setLoading(true);
+    try {
+      const data = await apiCall(`/search/cedula/${cedula}`);
+      setResult(data);
+    } catch (error) {
+      console.error('Error searching by cedula:', error);
+      setResult({ found: false, message: 'Error en la búsqueda' });
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda por Cédula</h2>
+      
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Ingrese número de cédula (ej: 123456789 o 3-101-123456)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={cedula}
+            onChange={(e) => setCedula(e.target.value)}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? 'Buscando...' : 'Buscar'}
+          </button>
+        </div>
+      </form>
+
+      {result && (
+        <div className="mt-6">
+          {result.found ? (
+            <ResultsTable results={[result]} loading={false} />
+          ) : (
+            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded">
+              {result.message}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Geographic Search Component
+const GeograficaSearch = () => {
+  const [provincias, setProvincias] = useState([]);
+  const [cantones, setCantones] = useState([]);
+  const [distritos, setDistritos] = useState([]);
+  const [filters, setFilters] = useState({
+    provincia_id: '',
+    canton_id: '',
+    distrito_id: '',
+    person_type: ''
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadProvincias();
+  }, []);
+
+  useEffect(() => {
+    if (filters.provincia_id) {
+      loadCantones(filters.provincia_id);
+    } else {
+      setCantones([]);
+      setDistritos([]);
+    }
+  }, [filters.provincia_id]);
+
+  useEffect(() => {
+    if (filters.canton_id) {
+      loadDistritos(filters.canton_id);
+    } else {
+      setDistritos([]);
+    }
+  }, [filters.canton_id]);
+
+  const loadProvincias = async () => {
+    try {
+      const data = await apiCall('/locations/provincias');
+      setProvincias(data);
+    } catch (error) {
+      console.error('Error loading provinces:', error);
+    }
+  };
+
+  const loadCantones = async (provinciaId) => {
+    try {
+      const data = await apiCall(`/locations/cantones/${provinciaId}`);
+      setCantones(data);
+    } catch (error) {
+      console.error('Error loading cantons:', error);
+    }
+  };
+
+  const loadDistritos = async (cantonId) => {
+    try {
+      const data = await apiCall(`/locations/distritos/${cantonId}`);
+      setDistritos(data);
+    } catch (error) {
+      console.error('Error loading districts:', error);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    try {
+      const data = await apiCall('/search/geografica', 'POST', filters);
+      setResults(data.results || []);
+    } catch (error) {
+      console.error('Error in geographic search:', error);
+      setResults([]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Consulta Geográfica</h2>
+      
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <select
+            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={filters.provincia_id}
+            onChange={(e) => setFilters({...filters, provincia_id: e.target.value, canton_id: '', distrito_id: ''})}
+          >
+            <option value="">Todas las provincias</option>
+            {provincias.map(provincia => (
+              <option key={provincia.id} value={provincia.id}>{provincia.nombre}</option>
+            ))}
+          </select>
+
+          <select
+            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={filters.canton_id}
+            onChange={(e) => setFilters({...filters, canton_id: e.target.value, distrito_id: ''})}
+            disabled={!filters.provincia_id}
+          >
+            <option value="">Todos los cantones</option>
+            {cantones.map(canton => (
+              <option key={canton.id} value={canton.id}>{canton.nombre}</option>
+            ))}
+          </select>
+
+          <select
+            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={filters.distrito_id}
+            onChange={(e) => setFilters({...filters, distrito_id: e.target.value})}
+            disabled={!filters.canton_id}
+          >
+            <option value="">Todos los distritos</option>
+            {distritos.map(distrito => (
+              <option key={distrito.id} value={distrito.id}>{distrito.nombre}</option>
+            ))}
+          </select>
+
+          <select
+            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={filters.person_type}
+            onChange={(e) => setFilters({...filters, person_type: e.target.value})}
+          >
+            <option value="">Físicas y Jurídicas</option>
+            <option value="fisica">Solo Físicas</option>
+            <option value="juridica">Solo Jurídicas</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-green-600 text-white px-8 py-3 rounded-md hover:bg-green-700 disabled:opacity-50"
+        >
+          {loading ? 'Buscando...' : 'Consultar'}
+        </button>
+      </form>
+
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          Resultados: {results.length} registros encontrados
+        </h3>
+        <ResultsTable results={results} loading={loading} />
+      </div>
+    </div>
+  );
+};
+
+// Search by Name Component  
+const NombresSearch = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+
+    setLoading(true);
+    try {
+      const data = await apiCall(`/search/name/${encodeURIComponent(searchTerm)}`);
+      setResults(data.results || []);
+    } catch (error) {
+      console.error('Error searching by name:', error);
+      setResults([]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda por Nombres</h2>
+      
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Ingrese nombre, apellido o nombre comercial"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-purple-600 text-white px-8 py-3 rounded-md hover:bg-purple-700 disabled:opacity-50"
+          >
+            {loading ? 'Buscando...' : 'Buscar'}
+          </button>
+        </div>
+      </form>
+
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          Resultados: {results.length} registros encontrados
+        </h3>
+        <ResultsTable results={results} loading={loading} />
+      </div>
+    </div>
+  );
+};
+
+// Search by Phone Component
+const TelefonoSearch = () => {
+  const [telefono, setTelefono] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!telefono.trim()) return;
+
+    setLoading(true);
+    try {
+      const data = await apiCall(`/search/telefono/${encodeURIComponent(telefono)}`);
+      setResults(data.results || []);
+    } catch (error) {
+      console.error('Error searching by phone:', error);
+      setResults([]);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda por Teléfono</h2>
+      
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="Ingrese número telefónico (ej: 2222-3333, +506 8888-9999)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-orange-600 text-white px-8 py-3 rounded-md hover:bg-orange-700 disabled:opacity-50"
+          >
+            {loading ? 'Buscando...' : 'Buscar'}
+          </button>
+        </div>
+      </form>
+
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          Resultados: {results.length} registros encontrados
+        </h3>
+        <ResultsTable results={results} loading={loading} />
+      </div>
+    </div>
+  );
+};
+
 // Navigation Bar Component
 const NavigationBar = ({ activeSection, setActiveSection }) => {
   const { user, logout } = useAuth();
@@ -172,8 +592,9 @@ const NavigationBar = ({ activeSection, setActiveSection }) => {
       label: 'Consultas Individuales', 
       icon: '👤',
       submenu: [
-        { id: 'patronos', label: 'Patronos' },
+        { id: 'cedula', label: 'Por Cédula' },
         { id: 'geografica', label: 'Geográfica' },
+        { id: 'patronos', label: 'Patronos' },
         { id: 'colegiados', label: 'Colegiados' },
         { id: 'pensionados', label: 'Pensionados' },
         { id: 'independientes', label: 'Independientes' }
@@ -184,10 +605,10 @@ const NavigationBar = ({ activeSection, setActiveSection }) => {
       label: 'Consultas Masivas', 
       icon: '🏢',
       submenu: [
-        { id: 'foto', label: 'Foto' },
         { id: 'global', label: 'Global' },
-        { id: 'telefono', label: 'Telefono' },
-        { id: 'nombres', label: 'Nombres' }
+        { id: 'telefono', label: 'Teléfono' },
+        { id: 'nombres', label: 'Nombres' },
+        { id: 'foto', label: 'Foto' }
       ]
     },
     { 
@@ -259,11 +680,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem('daticos_token');
-        const response = await axios.post(`${API}/demographics/query`, {}, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setStats(response.data);
+        const data = await apiCall('/demographics/query', 'POST', {});
+        setStats(data);
       } catch (error) {
         console.error('Error fetching stats:', error);
       }
@@ -276,14 +694,18 @@ const Dashboard = () => {
     switch (activeSection) {
       case 'home':
         return <HomePage stats={stats} />;
-      case 'patronos':
-        return <PatronosSearch />;
+      case 'cedula':
+        return <CedulaSearch />;
       case 'geografica':
         return <GeograficaSearch />;
-      case 'global':
-        return <GlobalSearch />;
+      case 'nombres':
+        return <NombresSearch />;
       case 'telefono':
         return <TelefonoSearch />;
+      case 'global':
+        return <GlobalSearch />;
+      case 'patronos':
+        return <PatronosSearch />;
       default:
         return <HomePage stats={stats} />;
     }
@@ -337,12 +759,12 @@ const HomePage = ({ stats }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-blue-100 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-blue-800">Personas Físicas</h3>
-            <p className="text-3xl font-bold text-blue-600">{stats.total_personas_fisicas.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-blue-600">{stats.total_personas_fisicas?.toLocaleString()}</p>
           </div>
           
           <div className="bg-green-100 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-green-800">Personas Jurídicas</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.total_personas_juridicas.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-green-600">{stats.total_personas_juridicas?.toLocaleString()}</p>
           </div>
           
           <div className="bg-purple-100 p-6 rounded-lg">
@@ -353,7 +775,7 @@ const HomePage = ({ stats }) => {
           <div className="bg-orange-100 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-orange-800">Total Registros</h3>
             <p className="text-3xl font-bold text-orange-600">
-              {(stats.total_personas_fisicas + stats.total_personas_juridicas).toLocaleString()}
+              {((stats.total_personas_fisicas || 0) + (stats.total_personas_juridicas || 0)).toLocaleString()}
             </p>
           </div>
         </div>
@@ -365,71 +787,58 @@ const HomePage = ({ stats }) => {
           Sistema completo de base de datos para Costa Rica. Realice consultas de personas físicas y jurídicas, 
           estadísticas demográficas y prospectación de clientes.
         </p>
-        <ul className="list-disc list-inside text-gray-600 space-y-2">
-          <li>Consultas por ubicación geográfica</li>
-          <li>Búsquedas individuales y masivas</li>
-          <li>Estadísticas poblacionales</li>
-          <li>Herramientas de prospectación</li>
-          <li>Exportación de datos CSV</li>
-        </ul>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div>
+            <h4 className="font-semibold text-gray-800 mb-2">Consultas Disponibles:</h4>
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li>Búsqueda por número de cédula</li>
+              <li>Consultas geográficas por ubicación</li>
+              <li>Búsquedas por nombre y apellidos</li>
+              <li>Consultas por número telefónico</li>
+              <li>Búsquedas masivas y globales</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-gray-800 mb-2">Datos Incluidos:</h4>
+            <ul className="list-disc list-inside text-gray-600 space-y-2">
+              <li>Información demográfica completa</li>
+              <li>Datos de contacto y ubicación</li>
+              <li>Información empresarial y comercial</li>
+              <li>Sectores de negocio y empleados</li>
+              <li>Estadísticas poblacionales</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-// Search Components
-const PatronosSearch = () => {
-  const [searchResults, setSearchResults] = useState([]);
-  const [filters, setFilters] = useState({
-    provincia_id: '',
-    canton_id: '',
-    distrito_id: ''
-  });
-
-  return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda de Patronos</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <select className="px-4 py-2 border border-gray-300 rounded-md">
-          <option value="">Seleccionar Provincia</option>
-        </select>
-        <select className="px-4 py-2 border border-gray-300 rounded-md">
-          <option value="">Seleccionar Cantón</option>
-        </select>
-        <select className="px-4 py-2 border border-gray-300 rounded-md">
-          <option value="">Seleccionar Distrito</option>
-        </select>
-      </div>
-      <button className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-        Buscar
-      </button>
-    </div>
-  );
-};
-
-const GeograficaSearch = () => {
-  return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Consulta Geográfica</h2>
-      <p className="text-gray-600">Búsquedas por ubicación geográfica específica.</p>
-    </div>
-  );
-};
-
+// Additional Search Components
 const GlobalSearch = () => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Consulta Global</h2>
-      <p className="text-gray-600">Búsquedas masivas en toda la base de datos.</p>
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-xl mb-4">🔍</p>
+        <p>Función de búsqueda global en desarrollo</p>
+        <p className="text-sm">Esta función permitirá realizar consultas masivas en toda la base de datos.</p>
+      </div>
     </div>
   );
 };
 
-const TelefonoSearch = () => {
+const PatronosSearch = () => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda por Teléfono</h2>
-      <p className="text-gray-600">Buscar por número telefónico.</p>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda de Patronos</h2>
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-xl mb-4">🏭</p>
+        <p>Búsqueda de patronos y empleadores</p>
+        <p className="text-sm">Esta función mostrará información de empresas registradas como patronos.</p>
+      </div>
     </div>
   );
 };

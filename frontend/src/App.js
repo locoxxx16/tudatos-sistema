@@ -1988,90 +1988,345 @@ const AdminPanel = () => {
   );
 };
 
-// Telegram Integration Component
-const TelegramIntegration = () => {
-  const [telegramConnected, setTelegramConnected] = useState(false);
-  const [botToken, setBotToken] = useState('');
+// Panel de Administración Completo
+const AdminPanel = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [stats, setStats] = useState(null);
+  const [extractionTasks, setExtractionTasks] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'dashboard') {
+      loadDashboardStats();
+    } else if (activeTab === 'extraction') {
+      loadExtractionTasks();
+    }
+  }, [activeTab]);
+
+  const loadDashboardStats = async () => {
+    try {
+      const data = await apiCall('/admin/dashboard/stats');
+      setStats(data);
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error);
+    }
+  };
+
+  const loadExtractionTasks = async () => {
+    try {
+      const data = await apiCall('/admin/extraction/tasks');
+      setExtractionTasks(data);
+    } catch (error) {
+      console.error('Error loading extraction tasks:', error);
+    }
+  };
+
+  const testDaticosConnection = async () => {
+    setLoading(true);
+    try {
+      const result = await apiCall('/admin/daticos/test-connection');
+      setConnectionStatus(result);
+    } catch (error) {
+      console.error('Error testing connection:', error);
+      setConnectionStatus({
+        connection_status: 'error',
+        message: 'Error en la prueba de conexión'
+      });
+    }
+    setLoading(false);
+  };
+
+  const startExtraction = async () => {
+    if (!window.confirm('¿Está seguro de iniciar la extracción masiva de datos de Daticos? Este proceso puede tomar varios minutos.')) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await apiCall('/admin/extraction/start', 'POST', {
+        source: 'daticos_original',
+        limit: 1000,
+        extraction_type: 'full'
+      });
+      alert('Extracción iniciada exitosamente');
+      loadExtractionTasks();
+    } catch (error) {
+      console.error('Error starting extraction:', error);
+      alert('Error iniciando extracción: ' + error.message);
+    }
+    setLoading(false);
+  };
+
+  const cleanupDatabase = async () => {
+    if (!window.confirm('¿Está seguro de limpiar registros duplicados? Esta acción no se puede deshacer.')) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await apiCall('/admin/database/cleanup', 'POST');
+      alert(`Limpieza completada: ${result.total_removed} registros eliminados`);
+      loadDashboardStats();
+    } catch (error) {
+      console.error('Error cleaning database:', error);
+      alert('Error en limpieza: ' + error.message);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">📱 Integración con Telegram</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Configuración del Bot</h3>
-          
-          {!telegramConnected ? (
-            <div className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-800 mb-2">🤖 Cómo configurar:</h4>
-                <ol className="text-sm text-blue-700 space-y-2">
-                  <li>1. Contacte a @BotFather en Telegram</li>
-                  <li>2. Cree un nuevo bot con /newbot</li>
-                  <li>3. Copie el token que le proporcione</li>
-                  <li>4. Pegue el token aquí abajo</li>
-                </ol>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        ⚙️ <span className="ml-2">Panel de Administración</span>
+      </h2>
+
+      {/* Navigation Tabs */}
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="flex space-x-8">
+          {[
+            { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+            { id: 'extraction', label: 'Extracción de Datos', icon: '🔄' },
+            { id: 'database', label: 'Gestión BD', icon: '💾' },
+            { id: 'users', label: 'Usuarios', icon: '👥' },
+            { id: 'settings', label: 'Configuración', icon: '⚙️' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`py-2 px-4 border-b-2 font-medium text-sm ${
+                activeTab === tab.id
+                  ? 'border-purple-500 text-purple-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* Dashboard Tab */}
+      {activeTab === 'dashboard' && (
+        <div className="space-y-6">
+          {stats && (
+            <>
+              {/* System Statistics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-blue-100 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-blue-800">Personas Físicas</h3>
+                  <p className="text-2xl font-bold text-blue-600">{stats.total_personas_fisicas?.toLocaleString()}</p>
+                </div>
+                
+                <div className="bg-green-100 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-green-800">Personas Jurídicas</h3>
+                  <p className="text-2xl font-bold text-green-600">{stats.total_personas_juridicas?.toLocaleString()}</p>
+                </div>
+                
+                <div className="bg-purple-100 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-purple-800">Ubicaciones</h3>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {(stats.total_provincias + stats.total_cantones + stats.total_distritos).toLocaleString()}
+                  </p>
+                </div>
+                
+                <div className="bg-orange-100 p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold text-orange-800">Tamaño BD (MB)</h3>
+                  <p className="text-2xl font-bold text-orange-600">{stats.database_size_mb}</p>
+                </div>
               </div>
-              
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-2">Token del Bot</label>
-                <input
-                  type="text"
-                  placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  value={botToken}
-                  onChange={(e) => setBotToken(e.target.value)}
-                />
+
+              {/* Data Sources Summary */}
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">📈 Fuentes de Datos</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {Object.entries(stats.data_sources_summary).map(([source, count]) => (
+                    <div key={source} className="bg-white p-4 rounded-md">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-700 font-medium">{source.replace('_', ' ').toUpperCase()}</span>
+                        <span className="text-xl font-bold text-gray-800">{count.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              
-              <button
-                onClick={() => setTelegramConnected(true)}
-                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 font-semibold"
-              >
-                🔗 Conectar Bot
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-800 mb-2">✅ Bot Conectado</h4>
-                <p className="text-sm text-green-700">Su bot de Telegram está funcionando correctamente.</p>
-              </div>
-              
-              <button
-                onClick={() => setTelegramConnected(false)}
-                className="w-full bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 font-semibold"
-              >
-                🔌 Desconectar Bot
-              </button>
-            </div>
+            </>
           )}
         </div>
-        
-        <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Funcionalidades</h3>
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-800 mb-2">📋 Comandos Disponibles</h4>
-              <div className="text-sm text-gray-700 space-y-1">
-                <div><code>/consulta [cédula]</code> - Consultar persona</div>
-                <div><code>/stats</code> - Estadísticas del sistema</div>
-                <div><code>/help</code> - Mostrar ayuda</div>
-              </div>
-            </div>
+      )}
+
+      {/* Data Extraction Tab */}
+      {activeTab === 'extraction' && (
+        <div className="space-y-6">
+          {/* Connection Test */}
+          <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+            <h3 className="text-lg font-semibold text-blue-800 mb-4">🔗 Prueba de Conexión con Daticos</h3>
             
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-purple-800 mb-2">🚀 Características</h4>
-              <ul className="text-sm text-purple-700 space-y-1">
-                <li>• Consultas rápidas por cédula</li>
-                <li>• Notificaciones automáticas</li>
-                <li>• Reportes programados</li>
-                <li>• Integración con WhatsApp Business</li>
-              </ul>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={testDaticosConnection}
+                disabled={loading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {loading ? 'Probando...' : 'Probar Conexión'}
+              </button>
+              
+              {connectionStatus && (
+                <div className={`px-4 py-2 rounded-md ${
+                  connectionStatus.connection_status === 'success' 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}>
+                  {connectionStatus.message}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Extraction Controls */}
+          <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+            <h3 className="text-lg font-semibold text-green-800 mb-4">🚀 Extracción Masiva de Datos</h3>
+            
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={startExtraction}
+                disabled={loading}
+                className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 disabled:opacity-50"
+              >
+                {loading ? 'Iniciando...' : 'Iniciar Extracción'}
+              </button>
+              
+              <span className="text-gray-600">
+                Extraerá hasta 1,000 registros del sistema Daticos original
+              </span>
+            </div>
+          </div>
+
+          {/* Extraction Tasks List */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">📋 Historial de Extracciones</h3>
+            
+            {extractionTasks.length > 0 ? (
+              <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Tarea
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Estado
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Registros
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Progreso
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Fecha
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {extractionTasks.map((task) => (
+                      <tr key={task.task_id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {task.task_id}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            task.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            task.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                            task.status === 'failed' ? 'bg-red-100 text-red-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {task.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {task.records_extracted}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {task.progress_percentage}%
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(task.created_at).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="text-center py-8 bg-gray-50 rounded-lg">
+                <p className="text-gray-600">No hay tareas de extracción registradas</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Database Management Tab */}
+      {activeTab === 'database' && (
+        <div className="space-y-6">
+          <div className="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-500">
+            <h3 className="text-lg font-semibold text-yellow-800 mb-4">🧹 Limpieza de Base de Datos</h3>
+            
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={cleanupDatabase}
+                disabled={loading}
+                className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 disabled:opacity-50"
+              >
+                {loading ? 'Limpiando...' : 'Eliminar Duplicados'}
+              </button>
+              
+              <span className="text-gray-600">
+                Removerá registros duplicados basados en número de cédula
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-red-50 p-6 rounded-lg border-l-4 border-red-500">
+            <h3 className="text-lg font-semibold text-red-800 mb-4">⚠️ Acciones Peligrosas</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <button
+                  className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                  onClick={() => alert('Funcionalidad en desarrollo')}
+                >
+                  Resetear Base de Datos
+                </button>
+                <p className="text-sm text-red-700 mt-2">
+                  Elimina todos los datos y reinicia la base de datos desde cero
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Users Tab */}
+      {activeTab === 'users' && (
+        <div className="space-y-6">
+          <div className="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
+            <h3 className="text-lg font-semibold text-purple-800 mb-4">👥 Gestión de Usuarios</h3>
+            <p className="text-purple-700">Funcionalidad de gestión de usuarios en desarrollo</p>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === 'settings' && (
+        <div className="space-y-6">
+          <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-gray-500">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">⚙️ Configuración del Sistema</h3>
+            <p className="text-gray-700">Configuraciones del sistema en desarrollo</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

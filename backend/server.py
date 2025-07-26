@@ -601,44 +601,135 @@ async def search_by_telefono(telefono: str, current_user=Depends(get_current_use
     if not search_conditions:
         return {"results": [], "total": 0}
     
-    # Search in personas fisicas
-    fisicas = await db.personas_fisicas.find({
-        "$or": search_conditions
-    }).limit(25).to_list(25)
+    # Search in personas fisicas with aggregation
+    fisica_pipeline = [
+        {"$match": {"$or": search_conditions}},
+        {
+            "$addFields": {
+                "id": {"$toString": "$_id"}
+            }
+        },
+        {
+            "$lookup": {
+                "from": "distritos",
+                "localField": "distrito_id",
+                "foreignField": "id",
+                "as": "distrito_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "cantones",
+                "localField": "canton_id",
+                "foreignField": "id",
+                "as": "canton_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "provincias",
+                "localField": "provincia_id",
+                "foreignField": "id",
+                "as": "provincia_info"
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,  # Remove ObjectId
+                "id": 1,
+                "cedula": 1,
+                "nombre": 1,
+                "primer_apellido": 1,
+                "segundo_apellido": 1,
+                "fecha_nacimiento": 1,
+                "telefono": 1,
+                "email": 1,
+                "provincia_id": 1,
+                "canton_id": 1,
+                "distrito_id": 1,
+                "direccion_exacta": 1,
+                "ocupacion": 1,
+                "created_at": 1,
+                "distrito_nombre": {"$arrayElemAt": ["$distrito_info.nombre", 0]},
+                "canton_nombre": {"$arrayElemAt": ["$canton_info.nombre", 0]},
+                "provincia_nombre": {"$arrayElemAt": ["$provincia_info.nombre", 0]}
+            }
+        },
+        {"$limit": 25}
+    ]
+    
+    fisicas = await db.personas_fisicas.aggregate(fisica_pipeline).to_list(25)
     
     for persona in fisicas:
-        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
-        canton = await db.cantones.find_one({"id": persona["canton_id"]})
-        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
-        
         results.append({
             "type": "fisica",
-            "data": {
-                **persona,
-                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                "canton_nombre": canton["nombre"] if canton else "N/A",
-                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
-            }
+            "data": persona
         })
     
-    # Search in personas juridicas
-    juridicas = await db.personas_juridicas.find({
-        "$or": search_conditions
-    }).limit(25).to_list(25)
+    # Search in personas juridicas with aggregation
+    juridica_pipeline = [
+        {"$match": {"$or": search_conditions}},
+        {
+            "$addFields": {
+                "id": {"$toString": "$_id"}
+            }
+        },
+        {
+            "$lookup": {
+                "from": "distritos",
+                "localField": "distrito_id",
+                "foreignField": "id",
+                "as": "distrito_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "cantones",
+                "localField": "canton_id",
+                "foreignField": "id",
+                "as": "canton_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "provincias",
+                "localField": "provincia_id",
+                "foreignField": "id",
+                "as": "provincia_info"
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,  # Remove ObjectId
+                "id": 1,
+                "cedula_juridica": 1,
+                "nombre_comercial": 1,
+                "razon_social": 1,
+                "sector_negocio": 1,
+                "telefono": 1,
+                "email": 1,
+                "website": 1,
+                "provincia_id": 1,
+                "canton_id": 1,
+                "distrito_id": 1,
+                "direccion_exacta": 1,
+                "numero_empleados": 1,
+                "fecha_constitucion": 1,
+                "created_at": 1,
+                "distrito_nombre": {"$arrayElemAt": ["$distrito_info.nombre", 0]},
+                "canton_nombre": {"$arrayElemAt": ["$canton_info.nombre", 0]},
+                "provincia_nombre": {"$arrayElemAt": ["$provincia_info.nombre", 0]}
+            }
+        },
+        {"$limit": 25}
+    ]
+    
+    juridicas = await db.personas_juridicas.aggregate(juridica_pipeline).to_list(25)
     
     for persona in juridicas:
-        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
-        canton = await db.cantones.find_one({"id": persona["canton_id"]})
-        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
-        
         results.append({
             "type": "juridica", 
-            "data": {
-                **persona,
-                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                "canton_nombre": canton["nombre"] if canton else "N/A",
-                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
-            }
+            "data": persona
         })
     
     return {"results": results, "total": len(results)}

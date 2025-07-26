@@ -185,24 +185,184 @@ class CostaRicaDataIntegrator:
         
         return results
     
-    async def bulk_padron_update(self, cedulas: list, batch_size: int = 100):
+    async def search_sugef_entities(self, entity_name: str = None) -> Optional[Dict[str, Any]]:
         """
-        Actualizar datos de múltiples cédulas en lotes para mejor rendimiento
+        Consultar entidades supervisadas por SUGEF
         """
-        results = []
+        try:
+            session = await self.get_session()
+            # URL de ejemplo para SUGEF
+            url = "https://www.sugef.fi.cr/api/entidades-supervisadas"
+            
+            params = {}
+            if entity_name:
+                params['nombre'] = entity_name
+            
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return {
+                        'source': 'SUGEF_Entidades_Supervisadas',
+                        'entidades': data.get('entidades', []),
+                        'total': data.get('total', 0)
+                    }
+        except Exception as e:
+            logger.warning(f"Error consultando SUGEF: {e}")
         
-        for i in range(0, len(cedulas), batch_size):
-            batch = cedulas[i:i + batch_size]
-            batch_results = []
+        return None
+    
+    async def search_sicop_contracts(self, cedula_juridica: str) -> Optional[Dict[str, Any]]:
+        """
+        Buscar contratos públicos en SICOP por cédula jurídica
+        """
+        try:
+            session = await self.get_session()
+            # URL de ejemplo para SICOP datos abiertos
+            url = "https://www.sicop.go.cr/api/datos-abiertos/contratos"
             
-            # Procesar lote de forma asíncrona
-            tasks = [self.enrich_persona_data(cedula) for cedula in batch]
-            batch_results = await asyncio.gather(*tasks, return_exceptions=True)
+            params = {
+                'cedula_adjudicatario': cedula_juridica,
+                'formato': 'json'
+            }
             
-            results.extend(batch_results)
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return {
+                        'source': 'SICOP_Contratos_Publicos',
+                        'cedula_juridica': cedula_juridica,
+                        'contratos': data.get('contratos', []),
+                        'total_contratos': len(data.get('contratos', [])),
+                        'monto_total': sum(float(c.get('monto_adjudicado', 0)) for c in data.get('contratos', []))
+                    }
+        except Exception as e:
+            logger.warning(f"Error consultando SICOP: {e}")
+        
+        return None
+    
+    async def search_sinpe_statistics(self, entity_code: str = None) -> Optional[Dict[str, Any]]:
+        """
+        Consultar estadísticas de SINPE del BCCR
+        """
+        try:
+            session = await self.get_session()
+            # URL de ejemplo para estadísticas SINPE
+            url = "https://www.bccr.fi.cr/api/sinpe/estadisticas"
             
-            # Pausa entre lotes para no sobrecargar las APIs
-            await asyncio.sleep(1)
+            params = {}
+            if entity_code:
+                params['codigo_entidad'] = entity_code
+            
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return {
+                        'source': 'BCCR_SINPE_Estadisticas',
+                        'estadisticas': data.get('estadisticas', {}),
+                        'periodo': data.get('periodo'),
+                        'entidad': entity_code
+                    }
+        except Exception as e:
+            logger.warning(f"Error consultando SINPE: {e}")
+        
+        return None
+    
+    async def search_hacienda_tributarios(self, cedula: str) -> Optional[Dict[str, Any]]:
+        """
+        Consultar información tributaria del Ministerio de Hacienda
+        """
+        try:
+            session = await self.get_session()
+            # URL de ejemplo para datos tributarios
+            url = f"https://www.hacienda.go.cr/api/tributarios/{cedula}"
+            
+            async with session.get(url) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return {
+                        'source': 'Ministerio_Hacienda_Tributarios',
+                        'cedula': cedula,
+                        'estado_tributario': data.get('estado'),
+                        'regimen_fiscal': data.get('regimen'),
+                        'actividades_economicas': data.get('actividades', [])
+                    }
+        except Exception as e:
+            logger.warning(f"Error consultando Hacienda: {e}")
+        
+        return None
+    
+    async def search_sfe_organicos(self, empresa: str = None) -> Optional[Dict[str, Any]]:
+        """
+        Consultar certificaciones orgánicas del SFE
+        """
+        try:
+            session = await self.get_session()
+            # URL de ejemplo para datos del SFE
+            url = "https://www.sfe.go.cr/api/certificaciones-organicas"
+            
+            params = {}
+            if empresa:
+                params['empresa'] = empresa
+            
+            async with session.get(url, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return {
+                        'source': 'SFE_Certificaciones_Organicas',
+                        'certificaciones': data.get('certificaciones', []),
+                        'areas_certificadas': data.get('areas_certificadas', 0)
+                    }
+        except Exception as e:
+            logger.warning(f"Error consultando SFE: {e}")
+        
+        return None
+    
+    async def comprehensive_business_lookup(self, cedula_juridica: str) -> Dict[str, Any]:
+        """
+        Búsqueda comprehensiva de una empresa en múltiples fuentes gubernamentales
+        """
+        results = {
+            'cedula_juridica': cedula_juridica,
+            'sources_consulted': [],
+            'data_found': {},
+            'errors': []
+        }
+        
+        # SUGEF - Entidades financieras supervisadas
+        try:
+            sugef_data = await self.search_sugef_entities(cedula_juridica)
+            results['sources_consulted'].append('SUGEF')
+            if sugef_data:
+                results['data_found']['sugef'] = sugef_data
+        except Exception as e:
+            results['errors'].append(f"Error en SUGEF: {str(e)}")
+        
+        # SICOP - Contratos públicos
+        try:
+            sicop_data = await self.search_sicop_contracts(cedula_juridica)
+            results['sources_consulted'].append('SICOP')
+            if sicop_data:
+                results['data_found']['sicop'] = sicop_data
+        except Exception as e:
+            results['errors'].append(f"Error en SICOP: {str(e)}")
+        
+        # Hacienda - Información tributaria
+        try:
+            hacienda_data = await self.search_hacienda_tributarios(cedula_juridica)
+            results['sources_consulted'].append('Hacienda')
+            if hacienda_data:
+                results['data_found']['hacienda'] = hacienda_data
+        except Exception as e:
+            results['errors'].append(f"Error en Hacienda: {str(e)}")
+        
+        # SFE - Certificaciones orgánicas
+        try:
+            sfe_data = await self.search_sfe_organicos()
+            results['sources_consulted'].append('SFE')
+            if sfe_data:
+                results['data_found']['sfe'] = sfe_data
+        except Exception as e:
+            results['errors'].append(f"Error en SFE: {str(e)}")
         
         return results
 

@@ -997,6 +997,133 @@ async def system_health_check():
 # Include the router in the main app
 app.include_router(api_router)
 
+# Admin Panel Endpoints
+@api_router.get("/admin/dashboard/stats", response_model=AdminPanelModels.SystemStats)
+async def get_admin_dashboard_stats(current_user=Depends(get_current_user)):
+    """Obtener estadísticas completas para el panel de administración"""
+    admin_manager = get_admin_manager(db)
+    return await admin_manager.get_system_statistics()
+
+@api_router.post("/admin/extraction/start")
+async def start_data_extraction(
+    request: AdminPanelModels.StartExtractionRequest,
+    current_user=Depends(get_current_user)
+):
+    """Iniciar extracción de datos desde Daticos original"""
+    admin_manager = get_admin_manager(db)
+    task_id = await admin_manager.start_daticos_extraction(request)
+    return {"task_id": task_id, "message": "Extracción iniciada", "status": "started"}
+
+@api_router.get("/admin/extraction/tasks", response_model=List[AdminPanelModels.ExtractionTaskModel])
+async def get_extraction_tasks(current_user=Depends(get_current_user)):
+    """Obtener lista de tareas de extracción"""
+    admin_manager = get_admin_manager(db)
+    return await admin_manager.get_extraction_tasks()
+
+@api_router.delete("/admin/extraction/tasks/{task_id}")
+async def cancel_extraction_task(task_id: str, current_user=Depends(get_current_user)):
+    """Cancelar tarea de extracción en curso"""
+    admin_manager = get_admin_manager(db)
+    success = await admin_manager.cancel_extraction_task(task_id)
+    if success:
+        return {"message": "Tarea cancelada exitosamente"}
+    raise HTTPException(status_code=404, detail="Tarea no encontrada o no se puede cancelar")
+
+@api_router.get("/admin/database/analysis", response_model=AdminPanelModels.DatabaseAnalysis)
+async def analyze_database_quality(current_user=Depends(get_current_user)):
+    """Realizar análisis de calidad de la base de datos"""
+    admin_manager = get_admin_manager(db)
+    return await admin_manager.analyze_database_quality()
+
+@api_router.post("/admin/database/cleanup")
+async def cleanup_database(current_user=Depends(get_current_user)):
+    """Limpiar registros duplicados de la base de datos"""
+    admin_manager = get_admin_manager(db)
+    results = await admin_manager.clean_duplicate_records()
+    return {
+        "message": "Limpieza completada",
+        "removed_records": results,
+        "total_removed": results['fisica_removed'] + results['juridica_removed']
+    }
+
+@api_router.get("/admin/daticos/test-connection")
+async def test_daticos_connection(current_user=Depends(get_current_user)):
+    """Probar conexión con Daticos original"""
+    try:
+        login_success = await daticos_extractor.login()
+        if login_success:
+            # Obtener estructura del sistema
+            structure = await daticos_extractor.discover_system_structure()
+            await daticos_extractor.close_session()
+            
+            return {
+                "connection_status": "success",
+                "message": "Conexión exitosa con Daticos",
+                "system_structure": structure,
+                "credentials_valid": True
+            }
+        else:
+            return {
+                "connection_status": "failed",
+                "message": "No se pudo conectar con Daticos - credenciales inválidas",
+                "credentials_valid": False
+            }
+    except Exception as e:
+        logger.error(f"Error testing Daticos connection: {e}")
+        return {
+            "connection_status": "error",
+            "message": f"Error en la conexión: {str(e)}",
+            "error": str(e)
+        }
+
+@api_router.post("/admin/daticos/extract-sample")
+async def extract_daticos_sample(
+    cedula: str,
+    current_user=Depends(get_current_user)
+):
+    """Extraer datos de muestra de una cédula específica desde Daticos original"""
+    try:
+        if not await daticos_extractor.login():
+            raise HTTPException(status_code=401, detail="No se pudo conectar con Daticos")
+        
+        result = await daticos_extractor.extract_consultation_by_cedula(cedula)
+        await daticos_extractor.close_session()
+        
+        return {
+            "extraction_successful": result.get('found', False),
+            "cedula": cedula,
+            "data": result,
+            "message": "Extracción de muestra completada"
+        }
+    except Exception as e:
+        logger.error(f"Error extracting sample from Daticos: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en extracción: {str(e)}")
+
+# Endpoint para obtener representantes legales (nueva funcionalidad solicitada)
+@api_router.get("/search/cedula/{cedula}/representantes")
+async def get_legal_representatives(cedula: str, current_user=Depends(get_current_user)):
+    """Obtener representantes legales de una persona jurídica"""
+    try:
+        # Buscar persona jurídica
+        persona_juridica = await db.personas_juridicas.find_one({"cedula_juridica": cedula})
+        
+        if not persona_juridica:
+            raise HTTPException(status_code=404, detail="Persona jurídica no encontrada")
+        
+        # Buscar representantes legales en una colección específica o datos enriquecidos
+        representantes = await db.representantes_legales.find({"cedula_juridica": cedula}).to_list(100)
+        
+        return {
+            "cedula_juridica": cedula,
+            "nombre_comercial": persona_juridica.get("nombre_comercial", "N/A"),
+            "representantes": representantes or [],
+            "total_representantes": len(representantes) if representantes else 0
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting legal representatives: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo representantes: {str(e)}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

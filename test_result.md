@@ -158,7 +158,7 @@ backend:
 
   - task: "Search by Name"
     implemented: true
-    working: false
+    working: true
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
@@ -167,6 +167,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "CRITICAL: Search by name endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Same root cause as cedula search - aggregation pipelines return non-serializable ObjectId objects."
+      - working: true
+        agent: "testing"
+        comment: "RESOLVED: Name search endpoint working correctly. Tested with common names like Maria (12 results), Jose (26 results), Ana (37 results), Carlos (7 results), and business terms like Empresa (25 results). All searches return proper results with correct response format."
 
   - task: "Search by Phone"
     implemented: true

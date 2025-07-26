@@ -295,6 +295,19 @@ async def get_sms_campaigns(current_user=Depends(get_current_user)):
     campaigns = await db.sms_campaigns.find().to_list(100)
     return [SMSCampaign(**c) for c in campaigns]
 
+# Helper function to convert ObjectId to string
+def convert_objectid_to_string(data):
+    """Convert MongoDB ObjectId to string for JSON serialization"""
+    if isinstance(data, dict):
+        if "_id" in data:
+            data["id"] = str(data["_id"])
+            del data["_id"]
+        for key, value in data.items():
+            data[key] = convert_objectid_to_string(value)
+    elif isinstance(data, list):
+        return [convert_objectid_to_string(item) for item in data]
+    return data
+
 # Enhanced Search endpoints with external data integration
 @api_router.get("/search/cedula/{cedula}")
 async def search_by_cedula(cedula: str, enrich: bool = True, current_user=Depends(get_current_user)):
@@ -306,6 +319,9 @@ async def search_by_cedula(cedula: str, enrich: bool = True, current_user=Depend
     # Search in personas fisicas
     persona_fisica = await db.personas_fisicas.find_one({"cedula": cedula})
     if persona_fisica:
+        # Convert ObjectId to string
+        persona_fisica = convert_objectid_to_string(persona_fisica)
+        
         # Get location info
         distrito = await db.distritos.find_one({"id": persona_fisica["distrito_id"]})
         canton = await db.cantones.find_one({"id": persona_fisica["canton_id"]})
@@ -326,6 +342,9 @@ async def search_by_cedula(cedula: str, enrich: bool = True, current_user=Depend
     if not local_result:
         persona_juridica = await db.personas_juridicas.find_one({"cedula_juridica": cedula})
         if persona_juridica:
+            # Convert ObjectId to string
+            persona_juridica = convert_objectid_to_string(persona_juridica)
+            
             # Get location info
             distrito = await db.distritos.find_one({"id": persona_juridica["distrito_id"]})
             canton = await db.cantones.find_one({"id": persona_juridica["canton_id"]})

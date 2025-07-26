@@ -1002,4 +1002,5 @@ async def create_indexes():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
+    data_updater.stop_scheduler()
     await costa_rica_integrator.close_session()

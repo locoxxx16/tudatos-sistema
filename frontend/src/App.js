@@ -464,6 +464,25 @@ const ConsultationInterface = () => {
         </div>
       </form>
 
+      {/* Quick Test Buttons */}
+      <div className="mb-6 bg-gray-50 p-4 rounded-lg">
+        <h4 className="font-semibold text-gray-700 mb-3">🧪 Prueba Rápida - Cédulas de Ejemplo</h4>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {['692785539', '410197954', '903153808', '3-101-629135', '3-101-587436'].map((testCedula, index) => (
+            <button
+              key={index}
+              onClick={() => setCedula(testCedula)}
+              className="p-2 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded text-sm font-mono transition-colors"
+            >
+              {testCedula}
+            </button>
+          ))}
+        </div>
+        <p className="text-xs text-gray-600 mt-2">
+          Haz clic en cualquier cédula de ejemplo para probar el sistema
+        </p>
+      </div>
+
       {/* Search History */}
       {searchHistory.length > 0 && (
         <div className="mb-8 bg-gray-50 p-4 rounded-lg">

@@ -1010,23 +1010,42 @@ const Dashboard = () => {
   }, []);
 
   const renderMainContent = () => {
+    // All consultation types redirect to main consultation interface
     switch (activeSection) {
       case 'home':
         return <HomePage stats={stats} />;
+      
+      // All individual consultations go to main consultation
       case 'cedula':
-        return <CedulaSearch />;
-      case 'geografica':
-        return <GeograficaSearch />;
-      case 'nombres':
-        return <NombresSearch />;
-      case 'telefono':
-        return <TelefonoSearch />;
-      case 'global':
-        return <GlobalSearch />;
       case 'patronos':
-        return <PatronosSearch />;
+      case 'geografica':
+      case 'colegiados':
+      case 'pensionados':
+      case 'independientes':
+        return <ConsultationInterface />;
+      
+      // All massive consultations go to main consultation  
+      case 'global':
+      case 'telefono':
+      case 'nombres':
+      case 'foto':
+        return <ConsultationInterface />;
+      
+      // Advanced features
+      case 'consultas-especiales':
+        return <AdvancedSearch />;
+      
+      case 'bitacora':
+        return <BitacoraCSV />;
+        
+      case 'telegram':
+        return <TelegramIntegration />;
+        
+      case 'ayuda':
+        return <AyudaSystem />;
+        
       default:
-        return <HomePage stats={stats} />;
+        return <ConsultationInterface />;
     }
   };
 

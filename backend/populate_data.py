@@ -209,7 +209,7 @@ async def populate_personas_fisicas(count=1000):
             "nombre": fake.first_name(),
             "primer_apellido": fake.last_name(),
             "segundo_apellido": fake.last_name() if random.choice([True, False]) else None,
-            "fecha_nacimiento": fake.date_of_birth(minimum_age=18, maximum_age=80),
+            "fecha_nacimiento": fake.date_time_between(start_date='-80y', end_date='-18y'),
             "telefono": f"+506 {random.randint(2000, 9999)}-{random.randint(1000, 9999)}",
             "email": fake.email() if random.choice([True, False, False]) else None,
             "provincia_id": provincia["id"],

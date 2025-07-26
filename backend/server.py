@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime
 from enum import Enum
 from external_apis import costa_rica_integrator, DataCleaner
+from data_updater import data_updater, start_data_updater, run_manual_update
 
 
 ROOT_DIR = Path(__file__).parent

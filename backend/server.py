@@ -911,43 +911,86 @@ async def search_geografica(query: DemographicQuery, current_user=Depends(get_cu
     
     return {"results": results, "total": len(results)}
 
-# Bulk data enrichment endpoint
-@api_router.post("/admin/enrich-database")
-async def enrich_database(
-    start_index: int = 0, 
-    batch_size: int = 100, 
-    neodatos_api_key: Optional[str] = None,
-    current_user=Depends(get_current_user)
-):
-    """Enrich existing database with external data sources (Admin only)"""
-    
-    # Get cedulas to enrich
-    personas_fisicas = await db.personas_fisicas.find({}).skip(start_index).limit(batch_size).to_list(batch_size)
-    personas_juridicas = await db.personas_juridicas.find({}).skip(start_index).limit(batch_size).to_list(batch_size)
-    
-    cedulas_to_enrich = []
-    cedulas_to_enrich.extend([p["cedula"] for p in personas_fisicas])
-    cedulas_to_enrich.extend([p["cedula_juridica"] for p in personas_juridicas])
-    
-    if not cedulas_to_enrich:
-        return {"message": "No hay más registros para enriquecer"}
-    
-    # Enrich data
-    enrichment_results = await costa_rica_integrator.bulk_padron_update(cedulas_to_enrich, batch_size=10)
-    
-    # Process results and update database
-    updated_count = 0
-    for result in enrichment_results:
-        if isinstance(result, dict) and result.get("data_found"):
-            await update_local_data_with_external(result["cedula"], result["data_found"])
-            updated_count += 1
-    
-    return {
-        "processed": len(cedulas_to_enrich),
-        "updated": updated_count,
-        "start_index": start_index,
-        "batch_size": batch_size
-    }
+# Data Update Management endpoints
+@api_router.post("/admin/trigger-update")
+async def trigger_manual_update(current_user=Depends(get_current_user)):
+    """Trigger manual data update (Admin only)"""
+    try:
+        # Run update in background
+        import asyncio
+        asyncio.create_task(run_manual_update())
+        
+        return {
+            "message": "Data update initiated",
+            "status": "started",
+            "timestamp": datetime.utcnow()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error starting update: {str(e)}")
+
+@api_router.get("/admin/update-stats")
+async def get_update_statistics(current_user=Depends(get_current_user)):
+    """Get data update statistics"""
+    try:
+        # Get latest update statistics
+        latest_stats = await db.update_statistics.find().sort("timestamp", -1).limit(10).to_list(10)
+        
+        # Get system statistics
+        system_stats = {
+            "total_personas_fisicas": await db.personas_fisicas.count_documents({}),
+            "total_personas_juridicas": await db.personas_juridicas.count_documents({}),
+            "total_provincias": await db.provincias.count_documents({}),
+            "last_enrichment": await db.personas_fisicas.count_documents({"last_enriched": {"$exists": True}}),
+            "data_sources": [
+                {"name": "TSE_PADRON", "count": await db.personas_fisicas.count_documents({"fuente_datos": "TSE_PADRON"})},
+                {"name": "REGISTRO_NACIONAL", "count": await db.personas_juridicas.count_documents({"fuente_datos": "REGISTRO_NACIONAL"})},
+                {"name": "LOCAL_DATABASE", "count": await db.personas_fisicas.count_documents({"fuente_datos": {"$exists": False}})}
+            ]
+        }
+        
+        return {
+            "system_stats": system_stats,
+            "update_history": latest_stats,
+            "updater_status": "running" if data_updater.is_running else "stopped"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching stats: {str(e)}")
+
+@api_router.get("/system/health")
+async def system_health_check():
+    """System health check endpoint"""
+    try:
+        # Check database connectivity
+        db_status = "healthy"
+        try:
+            await db.admin.command("ping")
+        except Exception as e:
+            db_status = f"unhealthy: {str(e)}"
+        
+        # Check external API integrator
+        integrator_status = "healthy" if costa_rica_integrator.session is None or not costa_rica_integrator.session.closed else "session_active"
+        
+        # Check data updater
+        updater_status = "running" if data_updater.is_running else "stopped"
+        
+        return {
+            "status": "healthy" if db_status == "healthy" else "degraded",
+            "timestamp": datetime.utcnow(),
+            "services": {
+                "database": db_status,
+                "external_integrator": integrator_status,
+                "data_updater": updater_status
+            },
+            "version": "2.0.0"
+        }
+        
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.utcnow(),
+            "error": str(e)
+        }
 
 # Include the router in the main app
 app.include_router(api_router)

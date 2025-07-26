@@ -295,10 +295,13 @@ async def get_sms_campaigns(current_user=Depends(get_current_user)):
     campaigns = await db.sms_campaigns.find().to_list(100)
     return [SMSCampaign(**c) for c in campaigns]
 
-# Search endpoints for individual queries
+# Enhanced Search endpoints with external data integration
 @api_router.get("/search/cedula/{cedula}")
-async def search_by_cedula(cedula: str, current_user=Depends(get_current_user)):
-    """Search person by cedula (both fisica and juridica)"""
+async def search_by_cedula(cedula: str, enrich: bool = True, current_user=Depends(get_current_user)):
+    """Search person by cedula with optional data enrichment from external sources"""
+    
+    # First, search in local database
+    local_result = None
     
     # Search in personas fisicas
     persona_fisica = await db.personas_fisicas.find_one({"cedula": cedula})
@@ -308,7 +311,7 @@ async def search_by_cedula(cedula: str, current_user=Depends(get_current_user)):
         canton = await db.cantones.find_one({"id": persona_fisica["canton_id"]})
         provincia = await db.provincias.find_one({"id": persona_fisica["provincia_id"]})
         
-        return {
+        local_result = {
             "type": "fisica",
             "found": True,
             "data": {
@@ -320,75 +323,233 @@ async def search_by_cedula(cedula: str, current_user=Depends(get_current_user)):
         }
     
     # Search in personas juridicas
-    persona_juridica = await db.personas_juridicas.find_one({"cedula_juridica": cedula})
-    if persona_juridica:
-        # Get location info
-        distrito = await db.distritos.find_one({"id": persona_juridica["distrito_id"]})
-        canton = await db.cantones.find_one({"id": persona_juridica["canton_id"]})
-        provincia = await db.provincias.find_one({"id": persona_juridica["provincia_id"]})
-        
-        return {
-            "type": "juridica", 
-            "found": True,
-            "data": {
-                **persona_juridica,
-                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                "canton_nombre": canton["nombre"] if canton else "N/A",
-                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+    if not local_result:
+        persona_juridica = await db.personas_juridicas.find_one({"cedula_juridica": cedula})
+        if persona_juridica:
+            # Get location info
+            distrito = await db.distritos.find_one({"id": persona_juridica["distrito_id"]})
+            canton = await db.cantones.find_one({"id": persona_juridica["canton_id"]})
+            provincia = await db.provincias.find_one({"id": persona_juridica["provincia_id"]})
+            
+            local_result = {
+                "type": "juridica", 
+                "found": True,
+                "data": {
+                    **persona_juridica,
+                    "distrito_nombre": distrito["nombre"] if distrito else "N/A",
+                    "canton_nombre": canton["nombre"] if canton else "N/A",
+                    "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                }
             }
-        }
+    
+    # If enrichment is requested and we have local data, try to enrich with external sources
+    if enrich and local_result:
+        try:
+            external_data = await costa_rica_integrator.enrich_persona_data(cedula)
+            local_result["external_data"] = external_data
+            local_result["data_enhanced"] = True
+            
+            # Update local data with enriched information if available
+            if external_data.get("data_found"):
+                await update_local_data_with_external(cedula, external_data["data_found"])
+                
+        except Exception as e:
+            logger.warning(f"Error enriching data for cedula {cedula}: {e}")
+            local_result["enrichment_error"] = str(e)
+    
+    if local_result:
+        return local_result
+    
+    # If not found locally but enrichment is enabled, try external sources only
+    if enrich:
+        try:
+            external_data = await costa_rica_integrator.enrich_persona_data(cedula)
+            if external_data.get("data_found"):
+                return {
+                    "found": True,
+                    "type": "external",
+                    "data": external_data["data_found"],
+                    "sources": external_data["sources_consulted"],
+                    "note": "Data found only in external sources - not in local database"
+                }
+        except Exception as e:
+            logger.warning(f"Error in external search for cedula {cedula}: {e}")
     
     return {"found": False, "message": "No se encontró persona con esa cédula"}
 
+async def update_local_data_with_external(cedula: str, external_data: dict):
+    """Update local database with enriched external data"""
+    try:
+        # Extract useful information from external sources
+        updates = {}
+        
+        # From electoral registry
+        if "padron_electoral" in external_data:
+            padron_data = external_data["padron_electoral"]
+            if padron_data.get("provincia"):
+                # Try to match province name to ID
+                provincia = await db.provincias.find_one({"nombre": {"$regex": padron_data["provincia"], "$options": "i"}})
+                if provincia:
+                    updates["provincia_id"] = provincia["id"]
+        
+        # From Neodatos API
+        if "neodatos" in external_data:
+            neodatos_data = external_data["neodatos"]
+            registro_civil = neodatos_data.get("datos_registro_civil", {})
+            
+            # Update phone if available and clean
+            if registro_civil.get("telefono"):
+                clean_phone = DataCleaner.clean_phone_number(registro_civil["telefono"])
+                if clean_phone:
+                    updates["telefono"] = clean_phone
+            
+            # Update email if valid
+            if registro_civil.get("email") and DataCleaner.validate_email(registro_civil["email"]):
+                updates["email"] = registro_civil["email"]
+        
+        # Apply updates if any
+        if updates:
+            updates["last_enriched"] = datetime.utcnow()
+            
+            # Update persona fisica or juridica accordingly
+            if not cedula.startswith('3'):
+                await db.personas_fisicas.update_one(
+                    {"cedula": cedula},
+                    {"$set": updates}
+                )
+            else:
+                await db.personas_juridicas.update_one(
+                    {"cedula_juridica": cedula},
+                    {"$set": updates}
+                )
+                
+    except Exception as e:
+        logger.error(f"Error updating local data: {e}")
+
 @api_router.get("/search/name/{nombre}")
-async def search_by_name(nombre: str, current_user=Depends(get_current_user)):
-    """Search person by name"""
+async def search_by_name(nombre: str, limit: int = 50, current_user=Depends(get_current_user)):
+    """Search person by name with improved performance"""
     results = []
     
-    # Search in personas fisicas
-    fisicas = await db.personas_fisicas.find({
-        "$or": [
-            {"nombre": {"$regex": nombre, "$options": "i"}},
-            {"primer_apellido": {"$regex": nombre, "$options": "i"}},
-            {"segundo_apellido": {"$regex": nombre, "$options": "i"}}
-        ]
-    }).limit(50).to_list(50)
+    # Use text index for better performance
+    search_regex = {"$regex": nombre, "$options": "i"}
+    
+    # Search in personas fisicas with aggregation for better performance
+    fisica_pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {"nombre": search_regex},
+                    {"primer_apellido": search_regex},
+                    {"segundo_apellido": search_regex}
+                ]
+            }
+        },
+        {
+            "$lookup": {
+                "from": "distritos",
+                "localField": "distrito_id",
+                "foreignField": "id",
+                "as": "distrito_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "cantones",
+                "localField": "canton_id",
+                "foreignField": "id",
+                "as": "canton_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "provincias",
+                "localField": "provincia_id",
+                "foreignField": "id",
+                "as": "provincia_info"
+            }
+        },
+        {"$limit": limit // 2}
+    ]
+    
+    fisicas = await db.personas_fisicas.aggregate(fisica_pipeline).to_list(limit // 2)
     
     for persona in fisicas:
-        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
-        canton = await db.cantones.find_one({"id": persona["canton_id"]})
-        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+        distrito_info = persona.get("distrito_info", [{}])[0]
+        canton_info = persona.get("canton_info", [{}])[0]
+        provincia_info = persona.get("provincia_info", [{}])[0]
+        
+        # Remove lookup fields
+        persona.pop("distrito_info", None)
+        persona.pop("canton_info", None)
+        persona.pop("provincia_info", None)
         
         results.append({
             "type": "fisica",
             "data": {
                 **persona,
-                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                "canton_nombre": canton["nombre"] if canton else "N/A",
-                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                "distrito_nombre": distrito_info.get("nombre", "N/A"),
+                "canton_nombre": canton_info.get("nombre", "N/A"),
+                "provincia_nombre": provincia_info.get("nombre", "N/A")
             }
         })
     
-    # Search in personas juridicas  
-    juridicas = await db.personas_juridicas.find({
-        "$or": [
-            {"nombre_comercial": {"$regex": nombre, "$options": "i"}},
-            {"razon_social": {"$regex": nombre, "$options": "i"}}
-        ]
-    }).limit(50).to_list(50)
+    # Search in personas juridicas with aggregation
+    juridica_pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {"nombre_comercial": search_regex},
+                    {"razon_social": search_regex}
+                ]
+            }
+        },
+        {
+            "$lookup": {
+                "from": "distritos",
+                "localField": "distrito_id",
+                "foreignField": "id",
+                "as": "distrito_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "cantones",
+                "localField": "canton_id",
+                "foreignField": "id",
+                "as": "canton_info"
+            }
+        },
+        {
+            "$lookup": {
+                "from": "provincias",
+                "localField": "provincia_id",
+                "foreignField": "id",
+                "as": "provincia_info"
+            }
+        },
+        {"$limit": limit // 2}
+    ]
+    
+    juridicas = await db.personas_juridicas.aggregate(juridica_pipeline).to_list(limit // 2)
     
     for persona in juridicas:
-        distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
-        canton = await db.cantones.find_one({"id": persona["canton_id"]})
-        provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+        distrito_info = persona.get("distrito_info", [{}])[0]
+        canton_info = persona.get("canton_info", [{}])[0]
+        provincia_info = persona.get("provincia_info", [{}])[0]
+        
+        # Remove lookup fields
+        persona.pop("distrito_info", None)
+        persona.pop("canton_info", None)
+        persona.pop("provincia_info", None)
         
         results.append({
             "type": "juridica",
             "data": {
                 **persona,
-                "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                "canton_nombre": canton["nombre"] if canton else "N/A", 
-                "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                "distrito_nombre": distrito_info.get("nombre", "N/A"),
+                "canton_nombre": canton_info.get("nombre", "N/A"),
+                "provincia_nombre": provincia_info.get("nombre", "N/A")
             }
         })
     
@@ -396,13 +557,27 @@ async def search_by_name(nombre: str, current_user=Depends(get_current_user)):
 
 @api_router.get("/search/telefono/{telefono}")
 async def search_by_telefono(telefono: str, current_user=Depends(get_current_user)):
-    """Search person by phone number"""
+    """Search person by phone number with improved cleaning"""
     results = []
+    
+    # Clean the phone number for better matching
+    clean_phone = DataCleaner.clean_phone_number(telefono)
+    search_patterns = [telefono, clean_phone]
+    
+    # Add partial matches
+    if len(telefono) >= 4:
+        partial = telefono[-4:]  # Last 4 digits
+        search_patterns.append(partial)
+    
+    search_conditions = [{"telefono": {"$regex": pattern, "$options": "i"}} for pattern in search_patterns if pattern]
+    
+    if not search_conditions:
+        return {"results": [], "total": 0}
     
     # Search in personas fisicas
     fisicas = await db.personas_fisicas.find({
-        "telefono": {"$regex": telefono, "$options": "i"}
-    }).limit(50).to_list(50)
+        "$or": search_conditions
+    }).limit(25).to_list(25)
     
     for persona in fisicas:
         distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
@@ -421,8 +596,8 @@ async def search_by_telefono(telefono: str, current_user=Depends(get_current_use
     
     # Search in personas juridicas
     juridicas = await db.personas_juridicas.find({
-        "telefono": {"$regex": telefono, "$options": "i"}
-    }).limit(50).to_list(50)
+        "$or": search_conditions
+    }).limit(25).to_list(25)
     
     for persona in juridicas:
         distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
@@ -443,61 +618,168 @@ async def search_by_telefono(telefono: str, current_user=Depends(get_current_use
 
 @api_router.post("/search/geografica")
 async def search_geografica(query: DemographicQuery, current_user=Depends(get_current_user)):
-    """Geographic search with detailed results"""
+    """Geographic search with improved performance using aggregation"""
+    
+    # Build match conditions
+    match_conditions = {}
+    if query.provincia_id:
+        match_conditions["provincia_id"] = query.provincia_id
+    if query.canton_id:
+        match_conditions["canton_id"] = query.canton_id  
+    if query.distrito_id:
+        match_conditions["distrito_id"] = query.distrito_id
+    
     results = []
     
-    # Build filter
-    filters = {}
-    if query.provincia_id:
-        filters["provincia_id"] = query.provincia_id
-    if query.canton_id:
-        filters["canton_id"] = query.canton_id  
-    if query.distrito_id:
-        filters["distrito_id"] = query.distrito_id
-    
-    # Search personas fisicas
+    # Search personas fisicas if requested
     if not query.person_type or query.person_type == PersonType.FISICA:
-        fisicas = await db.personas_fisicas.find(filters).limit(100).to_list(100)
+        fisica_pipeline = [
+            {"$match": match_conditions},
+            {
+                "$lookup": {
+                    "from": "distritos",
+                    "localField": "distrito_id",
+                    "foreignField": "id",
+                    "as": "distrito_info"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "cantones",
+                    "localField": "canton_id",
+                    "foreignField": "id",
+                    "as": "canton_info"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "provincias",
+                    "localField": "provincia_id",
+                    "foreignField": "id",
+                    "as": "provincia_info"
+                }
+            },
+            {"$limit": 50}
+        ]
+        
+        fisicas = await db.personas_fisicas.aggregate(fisica_pipeline).to_list(50)
         
         for persona in fisicas:
-            distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
-            canton = await db.cantones.find_one({"id": persona["canton_id"]})
-            provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+            distrito_info = persona.get("distrito_info", [{}])[0]
+            canton_info = persona.get("canton_info", [{}])[0]
+            provincia_info = persona.get("provincia_info", [{}])[0]
+            
+            # Clean up lookup fields
+            persona.pop("distrito_info", None)
+            persona.pop("canton_info", None)
+            persona.pop("provincia_info", None)
             
             results.append({
                 "type": "fisica",
                 "data": {
                     **persona,
-                    "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                    "canton_nombre": canton["nombre"] if canton else "N/A",
-                    "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                    "distrito_nombre": distrito_info.get("nombre", "N/A"),
+                    "canton_nombre": canton_info.get("nombre", "N/A"),
+                    "provincia_nombre": provincia_info.get("nombre", "N/A")
                 }
             })
     
-    # Search personas juridicas
+    # Search personas juridicas if requested
     if not query.person_type or query.person_type == PersonType.JURIDICA:
-        juridica_filters = filters.copy()
+        juridica_match = match_conditions.copy()
         if query.business_sector:
-            juridica_filters["sector_negocio"] = query.business_sector
+            juridica_match["sector_negocio"] = query.business_sector
             
-        juridicas = await db.personas_juridicas.find(juridica_filters).limit(100).to_list(100)
+        juridica_pipeline = [
+            {"$match": juridica_match},
+            {
+                "$lookup": {
+                    "from": "distritos",
+                    "localField": "distrito_id",
+                    "foreignField": "id",
+                    "as": "distrito_info"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "cantones",
+                    "localField": "canton_id",
+                    "foreignField": "id",
+                    "as": "canton_info"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "provincias",
+                    "localField": "provincia_id",
+                    "foreignField": "id",
+                    "as": "provincia_info"
+                }
+            },
+            {"$limit": 50}
+        ]
+        
+        juridicas = await db.personas_juridicas.aggregate(juridica_pipeline).to_list(50)
         
         for persona in juridicas:
-            distrito = await db.distritos.find_one({"id": persona["distrito_id"]})
-            canton = await db.cantones.find_one({"id": persona["canton_id"]})
-            provincia = await db.provincias.find_one({"id": persona["provincia_id"]})
+            distrito_info = persona.get("distrito_info", [{}])[0]
+            canton_info = persona.get("canton_info", [{}])[0]
+            provincia_info = persona.get("provincia_info", [{}])[0]
+            
+            # Clean up lookup fields
+            persona.pop("distrito_info", None)
+            persona.pop("canton_info", None)
+            persona.pop("provincia_info", None)
             
             results.append({
                 "type": "juridica",
                 "data": {
                     **persona,
-                    "distrito_nombre": distrito["nombre"] if distrito else "N/A",
-                    "canton_nombre": canton["nombre"] if canton else "N/A",
-                    "provincia_nombre": provincia["nombre"] if provincia else "N/A"
+                    "distrito_nombre": distrito_info.get("nombre", "N/A"),
+                    "canton_nombre": canton_info.get("nombre", "N/A"),
+                    "provincia_nombre": provincia_info.get("nombre", "N/A")
                 }
             })
     
     return {"results": results, "total": len(results)}
+
+# Bulk data enrichment endpoint
+@api_router.post("/admin/enrich-database")
+async def enrich_database(
+    start_index: int = 0, 
+    batch_size: int = 100, 
+    neodatos_api_key: Optional[str] = None,
+    current_user=Depends(get_current_user)
+):
+    """Enrich existing database with external data sources (Admin only)"""
+    
+    # Get cedulas to enrich
+    personas_fisicas = await db.personas_fisicas.find({}).skip(start_index).limit(batch_size).to_list(batch_size)
+    personas_juridicas = await db.personas_juridicas.find({}).skip(start_index).limit(batch_size).to_list(batch_size)
+    
+    cedulas_to_enrich = []
+    cedulas_to_enrich.extend([p["cedula"] for p in personas_fisicas])
+    cedulas_to_enrich.extend([p["cedula_juridica"] for p in personas_juridicas])
+    
+    if not cedulas_to_enrich:
+        return {"message": "No hay más registros para enriquecer"}
+    
+    # Enrich data
+    enrichment_results = await costa_rica_integrator.bulk_padron_update(cedulas_to_enrich, batch_size=10)
+    
+    # Process results and update database
+    updated_count = 0
+    for result in enrichment_results:
+        if isinstance(result, dict) and result.get("data_found"):
+            await update_local_data_with_external(result["cedula"], result["data_found"])
+            updated_count += 1
+    
+    return {
+        "processed": len(cedulas_to_enrich),
+        "updated": updated_count,
+        "start_index": start_index,
+        "batch_size": batch_size
+    }
 
 # Include the router in the main app
 app.include_router(api_router)

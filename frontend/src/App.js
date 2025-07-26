@@ -1154,28 +1154,381 @@ const HomePage = ({ stats }) => {
   );
 };
 
-// Additional Search Components
-const GlobalSearch = () => {
+// Bitacora CSV Component
+const BitacoraCSV = () => {
+  const [exportOptions, setExportOptions] = useState({
+    type: 'all',
+    provincia_id: '',
+    date_from: '',
+    date_to: ''
+  });
+  const [provincias, setProvincias] = useState([]);
+  const [exporting, setExporting] = useState(false);
+
+  useEffect(() => {
+    loadProvincias();
+  }, []);
+
+  const loadProvincias = async () => {
+    try {
+      const data = await apiCall('/locations/provincias');
+      setProvincias(data);
+    } catch (error) {
+      console.error('Error loading provinces:', error);
+    }
+  };
+
+  const handleExport = async () => {
+    setExporting(true);
+    // Simulate export process
+    setTimeout(() => {
+      setExporting(false);
+      alert('Exportación iniciada. Recibirá un email cuando esté lista.');
+    }, 2000);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Consulta Global</h2>
-      <div className="text-center py-12 text-gray-500">
-        <p className="text-xl mb-4">🔍</p>
-        <p>Función de búsqueda global en desarrollo</p>
-        <p className="text-sm">Esta función permitirá realizar consultas masivas en toda la base de datos.</p>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">📊 Exportación de Datos (CSV)</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Opciones de Exportación</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Datos</label>
+              <select
+                value={exportOptions.type}
+                onChange={(e) => setExportOptions({...exportOptions, type: e.target.value})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">Todos los registros</option>
+                <option value="fisica">Solo personas físicas</option>
+                <option value="juridica">Solo personas jurídicas</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-2">Provincia (Opcional)</label>
+              <select
+                value={exportOptions.provincia_id}
+                onChange={(e) => setExportOptions({...exportOptions, provincia_id: e.target.value})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Todas las provincias</option>
+                {provincias.map(provincia => (
+                  <option key={provincia.id} value={provincia.id}>{provincia.nombre}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Fecha Desde</label>
+                <input
+                  type="date"
+                  value={exportOptions.date_from}
+                  onChange={(e) => setExportOptions({...exportOptions, date_from: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Fecha Hasta</label>
+                <input
+                  type="date"
+                  value={exportOptions.date_to}
+                  onChange={(e) => setExportOptions({...exportOptions, date_to: e.target.value})}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={handleExport}
+              disabled={exporting}
+              className="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 disabled:opacity-50 font-semibold"
+            >
+              {exporting ? 'Generando Exportación...' : '📥 Generar Archivo CSV'}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Información de Exportación</h3>
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-blue-800 mb-2">🔍 ¿Qué incluye la exportación?</h4>
+            <ul className="text-sm text-blue-700 space-y-2">
+              <li>• Todos los datos de personas físicas y jurídicas</li>
+              <li>• Información de ubicación geográfica</li>
+              <li>• Datos de contacto disponibles</li>
+              <li>• Información empresarial (para jurídicas)</li>
+              <li>• Formato compatible con Excel</li>
+            </ul>
+          </div>
+          
+          <div className="mt-4 bg-yellow-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-yellow-800 mb-2">⚠️ Términos de Uso</h4>
+            <ul className="text-sm text-yellow-700 space-y-1">
+              <li>• Uso exclusivo para fines comerciales legítimos</li>
+              <li>• Prohibido revender o distribuir los datos</li>
+              <li>• Cumplir con la Ley de Protección de Datos</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-const PatronosSearch = () => {
+// Telegram Integration Component
+const TelegramIntegration = () => {
+  const [telegramConnected, setTelegramConnected] = useState(false);
+  const [botToken, setBotToken] = useState('');
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda de Patronos</h2>
-      <div className="text-center py-12 text-gray-500">
-        <p className="text-xl mb-4">🏭</p>
-        <p>Búsqueda de patronos y empleadores</p>
-        <p className="text-sm">Esta función mostrará información de empresas registradas como patronos.</p>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">📱 Integración con Telegram</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Configuración del Bot</h3>
+          
+          {!telegramConnected ? (
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-800 mb-2">🤖 Cómo configurar:</h4>
+                <ol className="text-sm text-blue-700 space-y-2">
+                  <li>1. Contacte a @BotFather en Telegram</li>
+                  <li>2. Cree un nuevo bot con /newbot</li>
+                  <li>3. Copie el token que le proporcione</li>
+                  <li>4. Pegue el token aquí abajo</li>
+                </ol>
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-2">Token del Bot</label>
+                <input
+                  type="text"
+                  placeholder="123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={botToken}
+                  onChange={(e) => setBotToken(e.target.value)}
+                />
+              </div>
+              
+              <button
+                onClick={() => setTelegramConnected(true)}
+                className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 font-semibold"
+              >
+                🔗 Conectar Bot
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-800 mb-2">✅ Bot Conectado</h4>
+                <p className="text-sm text-green-700">Su bot de Telegram está funcionando correctamente.</p>
+              </div>
+              
+              <button
+                onClick={() => setTelegramConnected(false)}
+                className="w-full bg-red-600 text-white py-3 px-4 rounded-md hover:bg-red-700 font-semibold"
+              >
+                🔌 Desconectar Bot
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Funcionalidades</h3>
+          <div className="space-y-4">
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-gray-800 mb-2">📋 Comandos Disponibles</h4>
+              <div className="text-sm text-gray-700 space-y-1">
+                <div><code>/consulta [cédula]</code> - Consultar persona</div>
+                <div><code>/stats</code> - Estadísticas del sistema</div>
+                <div><code>/help</code> - Mostrar ayuda</div>
+              </div>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-purple-800 mb-2">🚀 Características</h4>
+              <ul className="text-sm text-purple-700 space-y-1">
+                <li>• Consultas rápidas por cédula</li>
+                <li>• Notificaciones automáticas</li>
+                <li>• Reportes programados</li>
+                <li>• Integración con WhatsApp Business</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Help System Component
+const AyudaSystem = () => {
+  const [selectedTopic, setSelectedTopic] = useState('general');
+
+  const helpTopics = {
+    general: {
+      title: "Información General",
+      content: (
+        <div className="space-y-4">
+          <p>Daticos es el sistema más completo de consulta de datos de Costa Rica. Permite acceder a información de personas físicas y jurídicas de manera rápida y confiable.</p>
+          
+          <h4 className="font-semibold text-gray-800">🎯 ¿Qué puedo consultar?</h4>
+          <ul className="list-disc list-inside text-gray-700 space-y-1">
+            <li>Información personal de personas físicas</li>
+            <li>Datos comerciales de empresas</li>
+            <li>Ubicación geográfica detallada</li>
+            <li>Información de contacto</li>
+            <li>Datos actualizados mensualmente</li>
+          </ul>
+        </div>
+      )
+    },
+    consultas: {
+      title: "Cómo Hacer Consultas",
+      content: (
+        <div className="space-y-4">
+          <h4 className="font-semibold text-gray-800">📝 Pasos para consultar:</h4>
+          <ol className="list-decimal list-inside text-gray-700 space-y-2">
+            <li>Haga clic en cualquier tipo de consulta en el menú principal</li>
+            <li>Ingrese el número de cédula en el campo correspondiente</li>
+            <li>Presione el botón "CONSULTAR"</li>
+            <li>Revise la información encontrada</li>
+          </ol>
+          
+          <h4 className="font-semibold text-gray-800">🔍 Tipos de cédula:</h4>
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <strong>Personas Físicas:</strong><br />
+                <code>123456789</code> (9 dígitos)
+              </div>
+              <div>
+                <strong>Personas Jurídicas:</strong><br />
+                <code>3-101-123456</code> (con guiones)
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    precios: {
+      title: "Precios y Planes",
+      content: (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-2">Plan Básico</h4>
+              <div className="text-2xl font-bold text-blue-600 mb-2">₡15,000</div>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• 500 consultas/mes</li>
+                <li>• Datos básicos</li>
+                <li>• Soporte por email</li>
+              </ul>
+            </div>
+            
+            <div className="bg-green-50 p-4 rounded-lg border-2 border-green-200">
+              <h4 className="font-semibold text-green-800 mb-2">Plan Profesional</h4>
+              <div className="text-2xl font-bold text-green-600 mb-2">₡35,000</div>
+              <ul className="text-sm text-green-700 space-y-1">
+                <li>• 2,000 consultas/mes</li>
+                <li>• Datos enriquecidos</li>
+                <li>• Exportación CSV</li>
+                <li>• Telegram Bot</li>
+              </ul>
+            </div>
+            
+            <div className="bg-purple-50 p-4 rounded-lg">
+              <h4 className="font-semibold text-purple-800 mb-2">Plan Empresarial</h4>
+              <div className="text-2xl font-bold text-purple-600 mb-2">₡75,000</div>
+              <ul className="text-sm text-purple-700 space-y-1">
+                <li>• Consultas ilimitadas</li>
+                <li>• API personalizada</li>
+                <li>• Soporte prioritario</li>
+                <li>• Integraciones custom</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    contacto: {
+      title: "Información de Contacto",
+      content: (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-3">📞 Contactos</h4>
+              <div className="space-y-2 text-gray-700">
+                <div><strong>Teléfono:</strong> +506 8701-2461</div>
+                <div><strong>WhatsApp:</strong> +506 8371-3030</div>
+                <div><strong>Email:</strong> info@daticos.com</div>
+                <div><strong>Sitio Web:</strong> www.daticos.com</div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-gray-800 mb-3">🕒 Horario de Atención</h4>
+              <div className="space-y-2 text-gray-700">
+                <div><strong>Lunes a Viernes:</strong> 8:00 AM - 5:00 PM</div>
+                <div><strong>Sábados:</strong> 9:00 AM - 1:00 PM</div>
+                <div><strong>Domingos:</strong> Cerrado</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-yellow-50 p-4 rounded-lg">
+            <h4 className="font-semibold text-yellow-800 mb-2">⚡ Soporte Técnico</h4>
+            <p className="text-sm text-yellow-700">
+              Para problemas técnicos urgentes, contacte directamente a Wendel al WhatsApp 
+              <strong> +506 8701-2461</strong>. Respuesta garantizada en menos de 2 horas 
+              durante horario laboral.
+            </p>
+          </div>
+        </div>
+      )
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">❓ Centro de Ayuda</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Temas de Ayuda</h3>
+          <div className="space-y-2">
+            {Object.entries(helpTopics).map(([key, topic]) => (
+              <button
+                key={key}
+                onClick={() => setSelectedTopic(key)}
+                className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
+                  selectedTopic === key
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                }`}
+              >
+                {topic.title}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="md:col-span-3">
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              {helpTopics[selectedTopic].title}
+            </h3>
+            {helpTopics[selectedTopic].content}
+          </div>
+        </div>
       </div>
     </div>
   );

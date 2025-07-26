@@ -279,7 +279,7 @@ async def populate_personas_juridicas(count=500):
             "distrito_id": distrito["id"],
             "direccion_exacta": f"{fake.street_address()}, {distrito['nombre']}",
             "numero_empleados": random.choice([1, 2, 3, 5, 8, 10, 15, 20, 25, 30, 50, 75, 100, 150, 200, 500]),
-            "fecha_constitucion": fake.date_between(start_date='-20y', end_date='now'),
+            "fecha_constitucion": fake.date_time_between(start_date='-20y', end_date='now'),
             "created_at": fake.date_time_between(start_date='-2y', end_date='now')
         }
         personas.append(persona)

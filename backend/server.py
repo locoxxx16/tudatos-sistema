@@ -615,7 +615,10 @@ async def search_by_telefono(telefono: str, current_user=Depends(get_current_use
         partial = telefono[-4:]  # Last 4 digits
         search_patterns.append(partial)
     
-    search_conditions = [{"telefono": {"$regex": pattern, "$options": "i"}} for pattern in search_patterns if pattern]
+    # Escape regex special characters to prevent regex errors
+    import re
+    escaped_patterns = [re.escape(pattern) for pattern in search_patterns if pattern]
+    search_conditions = [{"telefono": {"$regex": pattern, "$options": "i"}} for pattern in escaped_patterns]
     
     if not search_conditions:
         return {"results": [], "total": 0}

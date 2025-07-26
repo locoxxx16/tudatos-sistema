@@ -267,59 +267,378 @@ const ResultsTable = ({ results, loading }) => {
   );
 };
 
-// Search by Cedula Component
-const CedulaSearch = () => {
+// Main Consultation Interface - Daticos Style
+const ConsultationInterface = () => {
   const [cedula, setCedula] = useState('');
-  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [searchHistory, setSearchHistory] = useState([]);
 
-  const handleSearch = async (e) => {
+  const handleConsultation = async (e) => {
     e.preventDefault();
     if (!cedula.trim()) return;
 
     setLoading(true);
+    setResult(null);
+
     try {
-      const data = await apiCall(`/search/cedula/${cedula}`);
+      const data = await apiCall(`/search/cedula/${cedula}?enrich=true`);
       setResult(data);
+      
+      // Add to search history
+      const newSearch = {
+        cedula,
+        timestamp: new Date(),
+        found: data.found,
+        type: data.type
+      };
+      setSearchHistory(prev => [newSearch, ...prev.slice(0, 9)]); // Keep last 10 searches
+      
     } catch (error) {
-      console.error('Error searching by cedula:', error);
-      setResult({ found: false, message: 'Error en la búsqueda' });
+      console.error('Error in consultation:', error);
+      setResult({ 
+        found: false, 
+        message: 'Error en la consulta. Intente nuevamente.',
+        error: true 
+      });
+    }
+    setLoading(false);
+  };
+
+  const renderPersonDetails = (data, type) => {
+    if (type === 'fisica') {
+      return (
+        <div className="bg-blue-50 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-blue-800 mb-4">👤 Persona Física</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <strong>Cédula:</strong> {data.cedula}
+            </div>
+            <div>
+              <strong>Nombre Completo:</strong><br />
+              {`${data.nombre} ${data.primer_apellido} ${data.segundo_apellido || ''}`.trim()}
+            </div>
+            <div>
+              <strong>Fecha de Nacimiento:</strong><br />
+              {data.fecha_nacimiento ? new Date(data.fecha_nacimiento).toLocaleDateString('es-CR') : 'N/A'}
+            </div>
+            <div>
+              <strong>Ocupación:</strong> {data.ocupacion || 'N/A'}
+            </div>
+            <div>
+              <strong>Teléfono:</strong> {data.telefono || 'N/A'}
+            </div>
+            <div>
+              <strong>Email:</strong> {data.email || 'N/A'}
+            </div>
+            <div className="md:col-span-2">
+              <strong>Ubicación:</strong><br />
+              {data.direccion_exacta || 'N/A'}<br />
+              {data.distrito_nombre}, {data.canton_nombre}, {data.provincia_nombre}
+            </div>
+          </div>
+        </div>
+      );
+    } else if (type === 'juridica') {
+      return (
+        <div className="bg-green-50 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-green-800 mb-4">🏢 Persona Jurídica</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <strong>Cédula Jurídica:</strong> {data.cedula_juridica}
+            </div>
+            <div>
+              <strong>Nombre Comercial:</strong><br />
+              {data.nombre_comercial}
+            </div>
+            <div>
+              <strong>Razón Social:</strong><br />
+              {data.razon_social}
+            </div>
+            <div>
+              <strong>Sector de Negocio:</strong><br />
+              {data.sector_negocio?.toUpperCase()}
+            </div>
+            <div>
+              <strong>Número de Empleados:</strong> {data.numero_empleados || 'N/A'}
+            </div>
+            <div>
+              <strong>Fecha de Constitución:</strong><br />
+              {data.fecha_constitucion ? new Date(data.fecha_constitucion).toLocaleDateString('es-CR') : 'N/A'}
+            </div>
+            <div>
+              <strong>Teléfono:</strong> {data.telefono || 'N/A'}
+            </div>
+            <div>
+              <strong>Email:</strong> {data.email || 'N/A'}
+            </div>
+            <div>
+              <strong>Sitio Web:</strong> {data.website || 'N/A'}
+            </div>
+            <div className="md:col-span-2">
+              <strong>Ubicación:</strong><br />
+              {data.direccion_exacta || 'N/A'}<br />
+              {data.distrito_nombre}, {data.canton_nombre}, {data.provincia_nombre}
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderExternalData = (externalData) => {
+    if (!externalData || !externalData.data_found) return null;
+
+    return (
+      <div className="mt-6 bg-yellow-50 p-6 rounded-lg">
+        <h4 className="text-lg font-bold text-yellow-800 mb-4">🔍 Información Adicional de Fuentes Externas</h4>
+        
+        {externalData.data_found.padron_electoral && (
+          <div className="mb-4 p-4 bg-white rounded border">
+            <h5 className="font-semibold text-gray-800 mb-2">📋 Padrón Electoral (TSE)</h5>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+              <div><strong>Nombre Completo:</strong> {externalData.data_found.padron_electoral.nombre_completo}</div>
+              <div><strong>Junta Electoral:</strong> {externalData.data_found.padron_electoral.junta_electoral}</div>
+            </div>
+          </div>
+        )}
+
+        {externalData.data_found.registro_nacional && (
+          <div className="mb-4 p-4 bg-white rounded border">
+            <h5 className="font-semibold text-gray-800 mb-2">🏛️ Registro Nacional</h5>
+            <div className="text-sm">
+              <div><strong>Estado:</strong> {externalData.data_found.registro_nacional.estado}</div>
+              <div><strong>Capital Social:</strong> {externalData.data_found.registro_nacional.capital_social}</div>
+            </div>
+          </div>
+        )}
+
+        <div className="text-xs text-gray-600">
+          <strong>Fuentes consultadas:</strong> {externalData.sources_consulted?.join(', ')}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-2">🔍 Consulta de Personas</h2>
+        <p className="text-gray-600">Ingrese el número de cédula para consultar información</p>
+      </div>
+
+      {/* Main Search Form */}
+      <form onSubmit={handleConsultation} className="mb-8">
+        <div className="flex flex-col md:flex-row gap-4 items-end justify-center">
+          <div className="flex-1 max-w-md">
+            <label className="block text-gray-700 text-sm font-medium mb-2">
+              Número de Cédula
+            </label>
+            <input
+              type="text"
+              placeholder="Ej: 123456789 o 3-101-123456"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg font-mono"
+              value={cedula}
+              onChange={(e) => setCedula(e.target.value.replace(/[^0-9-]/g, ''))}
+              maxLength="12"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Formato: 9 dígitos (física) o 3-XXX-XXXXXX (jurídica)
+            </p>
+          </div>
+          <button
+            type="submit"
+            disabled={loading || !cedula.trim()}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg shadow-lg transform hover:scale-105 transition-all"
+          >
+            {loading ? (
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                Consultando...
+              </div>
+            ) : (
+              'CONSULTAR'
+            )}
+          </button>
+        </div>
+      </form>
+
+      {/* Search History */}
+      {searchHistory.length > 0 && (
+        <div className="mb-8 bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-semibold text-gray-700 mb-3">📊 Historial de Consultas</h4>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            {searchHistory.slice(0, 10).map((search, index) => (
+              <button
+                key={index}
+                onClick={() => setCedula(search.cedula)}
+                className={`p-2 rounded text-sm font-mono ${
+                  search.found 
+                    ? 'bg-green-100 text-green-800 hover:bg-green-200' 
+                    : 'bg-red-100 text-red-800 hover:bg-red-200'
+                }`}
+              >
+                {search.cedula}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Results */}
+      {result && (
+        <div className="mt-8">
+          {result.found ? (
+            <div>
+              {renderPersonDetails(result.data, result.type)}
+              {result.external_data && renderExternalData(result.external_data)}
+              {result.data_enhanced && (
+                <div className="mt-4 p-3 bg-blue-100 text-blue-800 rounded">
+                  ℹ️ Los datos han sido enriquecidos con información de fuentes externas oficiales.
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-6xl mb-4">😔</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">No se encontraron resultados</h3>
+              <p className="text-gray-600 mb-4">{result.message}</p>
+              <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded-lg max-w-md mx-auto">
+                <p className="text-sm">
+                  <strong>Sugerencias:</strong><br />
+                  • Verifique que el número de cédula esté correcto<br />
+                  • Para personas físicas use 9 dígitos<br />
+                  • Para personas jurídicas use formato 3-XXX-XXXXXX
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Quick Stats */}
+      <div className="mt-8 pt-6 border-t border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-800 mb-4">📈 Estadísticas del Sistema</h4>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div className="bg-blue-100 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-blue-600">2,000</div>
+            <div className="text-sm text-blue-800">Personas Físicas</div>
+          </div>
+          <div className="bg-green-100 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-green-600">800</div>
+            <div className="text-sm text-green-800">Personas Jurídicas</div>
+          </div>
+          <div className="bg-purple-100 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-purple-600">7</div>
+            <div className="text-sm text-purple-800">Provincias</div>
+          </div>
+          <div className="bg-orange-100 p-4 rounded-lg">
+            <div className="text-2xl font-bold text-orange-600">{searchHistory.length}</div>
+            <div className="text-sm text-orange-800">Consultas Hoy</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Instructions */}
+      <div className="mt-8 bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+        <h4 className="text-lg font-semibold text-gray-800 mb-3">💡 Cómo usar el sistema</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+          <div>
+            <h5 className="font-semibold mb-2">Para Personas Físicas:</h5>
+            <ul className="space-y-1">
+              <li>• Use el número de cédula de 9 dígitos</li>
+              <li>• Ejemplo: 123456789</li>
+              <li>• Obtendrá: nombre, ocupación, ubicación, contacto</li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="font-semibold mb-2">Para Personas Jurídicas:</h5>
+            <ul className="space-y-1">
+              <li>• Use la cédula jurídica (inicia con 3)</li>
+              <li>• Ejemplo: 3-101-123456</li>
+              <li>• Obtendrá: empresa, sector, empleados, ubicación</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Advanced Search Interface
+const AdvancedSearch = () => {
+  const [searchType, setSearchType] = useState('name');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleAdvancedSearch = async (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+
+    setLoading(true);
+    try {
+      let endpoint = '';
+      switch (searchType) {
+        case 'name':
+          endpoint = `/search/name/${encodeURIComponent(searchTerm)}`;
+          break;
+        case 'phone':
+          endpoint = `/search/telefono/${encodeURIComponent(searchTerm)}`;
+          break;
+        default:
+          endpoint = `/search/name/${encodeURIComponent(searchTerm)}`;
+      }
+      
+      const data = await apiCall(endpoint);
+      setResults(data.results || []);
+    } catch (error) {
+      console.error('Error in advanced search:', error);
+      setResults([]);
     }
     setLoading(false);
   };
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Búsqueda por Cédula</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">🔍 Búsqueda Avanzada</h2>
       
-      <form onSubmit={handleSearch} className="mb-6">
-        <div className="flex gap-4">
+      <form onSubmit={handleAdvancedSearch} className="mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <select
+            value={searchType}
+            onChange={(e) => setSearchType(e.target.value)}
+            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="name">Por Nombre/Empresa</option>
+            <option value="phone">Por Teléfono</option>
+          </select>
+          
           <input
             type="text"
-            placeholder="Ingrese número de cédula (ej: 123456789 o 3-101-123456)"
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={cedula}
-            onChange={(e) => setCedula(e.target.value)}
+            placeholder={searchType === 'name' ? 'Nombre o empresa' : 'Número de teléfono'}
+            className="px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
+          
           <button
             type="submit"
             disabled={loading}
-            className="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50"
+            className="bg-purple-600 text-white px-6 py-3 rounded-md hover:bg-purple-700 disabled:opacity-50"
           >
             {loading ? 'Buscando...' : 'Buscar'}
           </button>
         </div>
       </form>
 
-      {result && (
+      {results.length > 0 && (
         <div className="mt-6">
-          {result.found ? (
-            <ResultsTable results={[result]} loading={false} />
-          ) : (
-            <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-3 rounded">
-              {result.message}
-            </div>
-          )}
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">
+            Resultados: {results.length} registros encontrados
+          </h3>
+          <ResultsTable results={results} loading={false} />
         </div>
       )}
     </div>

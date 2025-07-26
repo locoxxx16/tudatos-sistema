@@ -143,7 +143,7 @@ backend:
 
   - task: "Search by Cedula"
     implemented: true
-    working: false
+    working: true
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
@@ -152,6 +152,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "CRITICAL: Search by cedula endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Database contains valid data but aggregation pipelines return ObjectId objects that can't be JSON serialized by FastAPI."
+      - working: true
+        agent: "testing"
+        comment: "RESOLVED: Cedula search endpoint now working perfectly. Tested with 16 comprehensive tests including 5 fisica cedulas (692785539, 410197954, 903153808, 945985846, 255043829) and 5 juridica cedulas (3-101-629135, 3-101-587436, 3-101-371162, 3-101-296456, 3-101-188515). All tests passed with 100% success rate. Database contains 2000 personas físicas and 800 personas jurídicas. Response format is correct with proper location data, phone numbers, and all required fields."
 
   - task: "Search by Name"
     implemented: true

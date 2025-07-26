@@ -188,7 +188,7 @@ backend:
 
   - task: "Geographic Search"
     implemented: true
-    working: false
+    working: true
     file: "backend/server.py"
     stuck_count: 1
     priority: "high"
@@ -197,6 +197,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "CRITICAL: Geographic search endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Aggregation pipelines in search endpoints need ObjectId conversion to strings."
+      - working: true
+        agent: "testing"
+        comment: "RESOLVED: Geographic search endpoint working correctly. Tested with provincia filter (100 results for San José) and person type filter (50 fisica results). All searches return proper results with location data."
 
 frontend:
   - task: "Frontend Testing"

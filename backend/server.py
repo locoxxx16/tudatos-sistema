@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,9 +7,10 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime
+from enum import Enum
 
 
 ROOT_DIR = Path(__file__).parent
@@ -20,37 +22,290 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(title="Daticos Clone API", version="2.0.0")
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+security = HTTPBearer()
 
-# Define Models
-class StatusCheck(BaseModel):
+# Enums
+class PersonType(str, Enum):
+    FISICA = "fisica"
+    JURIDICA = "juridica"
+
+class BusinessSector(str, Enum):
+    COMERCIO = "comercio"
+    SERVICIOS = "servicios"
+    INDUSTRIA = "industria"
+    TECNOLOGIA = "tecnologia"
+    EDUCACION = "educacion"
+    SALUD = "salud"
+    CONSTRUCCION = "construccion"
+    TURISMO = "turismo"
+    AGRICULTURA = "agricultura"
+    OTROS = "otros"
+
+# Location Models
+class Provincia(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    nombre: str
+    codigo: str
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class Canton(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nombre: str
+    codigo: str
+    provincia_id: str
 
-# Add your routes to the router instead of directly to app
+class Distrito(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    nombre: str
+    codigo: str
+    canton_id: str
+
+# Person/Entity Models
+class PersonaFisica(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    cedula: str
+    nombre: str
+    primer_apellido: str
+    segundo_apellido: Optional[str] = None
+    fecha_nacimiento: Optional[datetime] = None
+    telefono: Optional[str] = None
+    email: Optional[str] = None
+    provincia_id: str
+    canton_id: str
+    distrito_id: str
+    direccion_exacta: Optional[str] = None
+    ocupacion: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class PersonaJuridica(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    cedula_juridica: str
+    nombre_comercial: str
+    razon_social: str
+    sector_negocio: BusinessSector
+    telefono: Optional[str] = None
+    email: Optional[str] = None
+    website: Optional[str] = None
+    provincia_id: str
+    canton_id: str
+    distrito_id: str
+    direccion_exacta: Optional[str] = None
+    numero_empleados: Optional[int] = None
+    fecha_constitucion: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# User and Auth Models
+class User(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    email: str
+    full_name: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class UserLogin(BaseModel):
+    login: str
+    password: str
+
+# Search and Query Models
+class DemographicQuery(BaseModel):
+    provincia_id: Optional[str] = None
+    canton_id: Optional[str] = None
+    distrito_id: Optional[str] = None
+    person_type: Optional[PersonType] = None
+    business_sector: Optional[BusinessSector] = None
+    age_min: Optional[int] = None
+    age_max: Optional[int] = None
+
+class ProspectingQuery(BaseModel):
+    sector_negocio: Optional[BusinessSector] = None
+    provincia_id: Optional[str] = None
+    canton_id: Optional[str] = None
+    distrito_id: Optional[str] = None
+    min_employees: Optional[int] = None
+    max_employees: Optional[int] = None
+
+# SMS Models
+class SMSCampaign(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    message: str
+    target_query: Dict[str, Any]
+    scheduled_date: Optional[datetime] = None
+    status: str = "draft"  # draft, scheduled, sent, failed
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    sent_count: int = 0
+    failed_count: int = 0
+
+# Response Models
+class DemographicStats(BaseModel):
+    total_personas_fisicas: int
+    total_personas_juridicas: int
+    by_provincia: Dict[str, int]
+    by_sector: Dict[str, int]
+    by_age_group: Dict[str, int]
+
+class ProspectResult(BaseModel):
+    total_prospects: int
+    prospects: List[PersonaJuridica]
+    by_sector: Dict[str, int]
+    by_location: Dict[str, int]
+
+# Auth function (simplified for demo)
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    # In real implementation, validate JWT token
+    return {"username": "admin", "is_active": True}
+
+# Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Daticos Clone API - Todo en Base de Datos", "version": "2.0.0"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
+# Authentication
+@api_router.post("/auth/login")
+async def login(user_login: UserLogin):
+    # Simplified auth - in real app, hash passwords and use JWT
+    if user_login.login == "admin" and user_login.password == "admin123":
+        return {
+            "access_token": "demo-token",
+            "token_type": "bearer",
+            "user": {
+                "username": "admin",
+                "full_name": "Administrador Daticos",
+                "is_active": True
+            }
+        }
+    raise HTTPException(status_code=401, detail="Invalid credentials")
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+# Location endpoints
+@api_router.get("/locations/provincias", response_model=List[Provincia])
+async def get_provincias():
+    provincias = await db.provincias.find().to_list(100)
+    return [Provincia(**p) for p in provincias]
+
+@api_router.get("/locations/cantones/{provincia_id}", response_model=List[Canton])
+async def get_cantones(provincia_id: str):
+    cantones = await db.cantones.find({"provincia_id": provincia_id}).to_list(100)
+    return [Canton(**c) for c in cantones]
+
+@api_router.get("/locations/distritos/{canton_id}", response_model=List[Distrito])
+async def get_distritos(canton_id: str):
+    distritos = await db.distritos.find({"canton_id": canton_id}).to_list(100)
+    return [Distrito(**d) for d in distritos]
+
+# Demographics endpoints
+@api_router.post("/demographics/query", response_model=DemographicStats)
+async def query_demographics(query: DemographicQuery, current_user=Depends(get_current_user)):
+    # Build MongoDB query
+    filters_fisica = {}
+    filters_juridica = {}
+    
+    if query.provincia_id:
+        filters_fisica["provincia_id"] = query.provincia_id
+        filters_juridica["provincia_id"] = query.provincia_id
+    if query.canton_id:
+        filters_fisica["canton_id"] = query.canton_id
+        filters_juridica["canton_id"] = query.canton_id
+    if query.distrito_id:
+        filters_fisica["distrito_id"] = query.distrito_id
+        filters_juridica["distrito_id"] = query.distrito_id
+    
+    if query.business_sector:
+        filters_juridica["sector_negocio"] = query.business_sector
+    
+    # Count totals
+    total_fisica = await db.personas_fisicas.count_documents(filters_fisica)
+    total_juridica = await db.personas_juridicas.count_documents(filters_juridica)
+    
+    # Get statistics by province
+    provincia_stats = {}
+    provincias = await db.provincias.find().to_list(100)
+    for prov in provincias:
+        count = await db.personas_fisicas.count_documents({**filters_fisica, "provincia_id": prov["id"]})
+        count += await db.personas_juridicas.count_documents({**filters_juridica, "provincia_id": prov["id"]})
+        provincia_stats[prov["nombre"]] = count
+    
+    # Get statistics by business sector
+    sector_stats = {}
+    for sector in BusinessSector:
+        count = await db.personas_juridicas.count_documents({**filters_juridica, "sector_negocio": sector})
+        sector_stats[sector.value] = count
+    
+    return DemographicStats(
+        total_personas_fisicas=total_fisica,
+        total_personas_juridicas=total_juridica,
+        by_provincia=provincia_stats,
+        by_sector=sector_stats,
+        by_age_group={"18-30": 0, "31-50": 0, "51+": 0}  # Simplified
+    )
+
+# Prospecting endpoints
+@api_router.post("/prospecting/query", response_model=ProspectResult)
+async def query_prospects(query: ProspectingQuery, current_user=Depends(get_current_user)):
+    filters = {}
+    
+    if query.sector_negocio:
+        filters["sector_negocio"] = query.sector_negocio
+    if query.provincia_id:
+        filters["provincia_id"] = query.provincia_id
+    if query.canton_id:
+        filters["canton_id"] = query.canton_id
+    if query.distrito_id:
+        filters["distrito_id"] = query.distrito_id
+    if query.min_employees:
+        filters["numero_empleados"] = {"$gte": query.min_employees}
+    if query.max_employees:
+        if "numero_empleados" in filters:
+            filters["numero_empleados"]["$lte"] = query.max_employees
+        else:
+            filters["numero_empleados"] = {"$lte": query.max_employees}
+    
+    prospects_data = await db.personas_juridicas.find(filters).limit(100).to_list(100)
+    prospects = [PersonaJuridica(**p) for p in prospects_data]
+    
+    # Statistics
+    sector_stats = {}
+    location_stats = {}
+    for prospect in prospects:
+        sector_stats[prospect.sector_negocio] = sector_stats.get(prospect.sector_negocio, 0) + 1
+        location_key = f"{prospect.provincia_id}-{prospect.canton_id}"
+        location_stats[location_key] = location_stats.get(location_key, 0) + 1
+    
+    return ProspectResult(
+        total_prospects=len(prospects),
+        prospects=prospects,
+        by_sector=sector_stats,
+        by_location=location_stats
+    )
+
+# SMS Campaign endpoints
+@api_router.post("/sms/campaigns", response_model=SMSCampaign)
+async def create_sms_campaign(campaign: SMSCampaign, current_user=Depends(get_current_user)):
+    campaign_dict = campaign.dict()
+    await db.sms_campaigns.insert_one(campaign_dict)
+    return campaign
+
+@api_router.get("/sms/campaigns", response_model=List[SMSCampaign])
+async def get_sms_campaigns(current_user=Depends(get_current_user)):
+    campaigns = await db.sms_campaigns.find().to_list(100)
+    return [SMSCampaign(**c) for c in campaigns]
+
+# Data management endpoints (for demo purposes)
+@api_router.post("/data/persona-fisica", response_model=PersonaFisica)
+async def create_persona_fisica(persona: PersonaFisica, current_user=Depends(get_current_user)):
+    persona_dict = persona.dict()
+    await db.personas_fisicas.insert_one(persona_dict)
+    return persona
+
+@api_router.post("/data/persona-juridica", response_model=PersonaJuridica)
+async def create_persona_juridica(persona: PersonaJuridica, current_user=Depends(get_current_user)):
+    persona_dict = persona.dict()
+    await db.personas_juridicas.insert_one(persona_dict)
+    return persona
 
 # Include the router in the main app
 app.include_router(api_router)

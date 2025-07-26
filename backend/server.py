@@ -663,6 +663,11 @@ async def search_geografica(query: DemographicQuery, current_user=Depends(get_cu
         fisica_pipeline = [
             {"$match": match_conditions},
             {
+                "$addFields": {
+                    "id": {"$toString": "$_id"}
+                }
+            },
+            {
                 "$lookup": {
                     "from": "distritos",
                     "localField": "distrito_id",
@@ -686,29 +691,37 @@ async def search_geografica(query: DemographicQuery, current_user=Depends(get_cu
                     "as": "provincia_info"
                 }
             },
+            {
+                "$project": {
+                    "_id": 0,  # Remove ObjectId
+                    "id": 1,
+                    "cedula": 1,
+                    "nombre": 1,
+                    "primer_apellido": 1,
+                    "segundo_apellido": 1,
+                    "fecha_nacimiento": 1,
+                    "telefono": 1,
+                    "email": 1,
+                    "provincia_id": 1,
+                    "canton_id": 1,
+                    "distrito_id": 1,
+                    "direccion_exacta": 1,
+                    "ocupacion": 1,
+                    "created_at": 1,
+                    "distrito_nombre": {"$arrayElemAt": ["$distrito_info.nombre", 0]},
+                    "canton_nombre": {"$arrayElemAt": ["$canton_info.nombre", 0]},
+                    "provincia_nombre": {"$arrayElemAt": ["$provincia_info.nombre", 0]}
+                }
+            },
             {"$limit": 50}
         ]
         
         fisicas = await db.personas_fisicas.aggregate(fisica_pipeline).to_list(50)
         
         for persona in fisicas:
-            distrito_info = persona.get("distrito_info", [{}])[0]
-            canton_info = persona.get("canton_info", [{}])[0]
-            provincia_info = persona.get("provincia_info", [{}])[0]
-            
-            # Clean up lookup fields
-            persona.pop("distrito_info", None)
-            persona.pop("canton_info", None)
-            persona.pop("provincia_info", None)
-            
             results.append({
                 "type": "fisica",
-                "data": {
-                    **persona,
-                    "distrito_nombre": distrito_info.get("nombre", "N/A"),
-                    "canton_nombre": canton_info.get("nombre", "N/A"),
-                    "provincia_nombre": provincia_info.get("nombre", "N/A")
-                }
+                "data": persona
             })
     
     # Search personas juridicas if requested
@@ -720,6 +733,11 @@ async def search_geografica(query: DemographicQuery, current_user=Depends(get_cu
         juridica_pipeline = [
             {"$match": juridica_match},
             {
+                "$addFields": {
+                    "id": {"$toString": "$_id"}
+                }
+            },
+            {
                 "$lookup": {
                     "from": "distritos",
                     "localField": "distrito_id",
@@ -743,29 +761,38 @@ async def search_geografica(query: DemographicQuery, current_user=Depends(get_cu
                     "as": "provincia_info"
                 }
             },
+            {
+                "$project": {
+                    "_id": 0,  # Remove ObjectId
+                    "id": 1,
+                    "cedula_juridica": 1,
+                    "nombre_comercial": 1,
+                    "razon_social": 1,
+                    "sector_negocio": 1,
+                    "telefono": 1,
+                    "email": 1,
+                    "website": 1,
+                    "provincia_id": 1,
+                    "canton_id": 1,
+                    "distrito_id": 1,
+                    "direccion_exacta": 1,
+                    "numero_empleados": 1,
+                    "fecha_constitucion": 1,
+                    "created_at": 1,
+                    "distrito_nombre": {"$arrayElemAt": ["$distrito_info.nombre", 0]},
+                    "canton_nombre": {"$arrayElemAt": ["$canton_info.nombre", 0]},
+                    "provincia_nombre": {"$arrayElemAt": ["$provincia_info.nombre", 0]}
+                }
+            },
             {"$limit": 50}
         ]
         
         juridicas = await db.personas_juridicas.aggregate(juridica_pipeline).to_list(50)
         
         for persona in juridicas:
-            distrito_info = persona.get("distrito_info", [{}])[0]
-            canton_info = persona.get("canton_info", [{}])[0]
-            provincia_info = persona.get("provincia_info", [{}])[0]
-            
-            # Clean up lookup fields
-            persona.pop("distrito_info", None)
-            persona.pop("canton_info", None)
-            persona.pop("provincia_info", None)
-            
             results.append({
                 "type": "juridica",
-                "data": {
-                    **persona,
-                    "distrito_nombre": distrito_info.get("nombre", "N/A"),
-                    "canton_nombre": canton_info.get("nombre", "N/A"),
-                    "provincia_nombre": provincia_info.get("nombre", "N/A")
-                }
+                "data": persona
             })
     
     return {"results": results, "total": len(results)}

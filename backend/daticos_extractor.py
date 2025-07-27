@@ -58,8 +58,9 @@ class DaticosExtractor:
             # Buscar el formulario de login y extraer campos necesarios
             form = soup.find('form')
             form_data = {
-                'usuario': self.credentials['usuario'],
-                'password': self.credentials['password']
+                'login': self.credentials['usuario'],       # Daticos usa 'login' no 'usuario'
+                'password': self.credentials['password'],
+                'submit': 'Ingresar'                       # Botón submit requerido
             }
             
             # Buscar campos hidden adicionales (tokens CSRF, etc.)

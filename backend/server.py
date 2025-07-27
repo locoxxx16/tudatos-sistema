@@ -15,6 +15,7 @@ from external_apis import costa_rica_integrator, DataCleaner
 from data_updater import data_updater, start_data_updater, run_manual_update
 from admin_panel import AdminPanelManager, AdminPanelModels, get_admin_manager
 from daticos_extractor import daticos_extractor
+from daily_auto_updater import start_auto_updater, get_updater_status, force_update, update_config
 
 
 ROOT_DIR = Path(__file__).parent

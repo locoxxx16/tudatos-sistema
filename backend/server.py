@@ -1125,6 +1125,132 @@ async def get_legal_representatives(cedula: str, current_user=Depends(get_curren
         logger.error(f"Error getting legal representatives: {e}")
         raise HTTPException(status_code=500, detail=f"Error obteniendo representantes: {str(e)}")
 
+# Sistema de Actualización Automática Endpoints
+@api_router.get("/admin/auto-updater/status")
+async def get_auto_updater_status(current_user=Depends(get_current_user)):
+    """Obtener estado del sistema de actualización automática"""
+    try:
+        status = get_updater_status()
+        return {
+            "status": "success",
+            "auto_updater": status,
+            "message": "Estado del actualizador obtenido exitosamente"
+        }
+    except Exception as e:
+        logger.error(f"Error getting auto-updater status: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo estado: {str(e)}")
+
+@api_router.post("/admin/auto-updater/force-update")
+async def force_immediate_update(current_user=Depends(get_current_user)):
+    """Forzar actualización inmediata del sistema"""
+    try:
+        logger.info("Iniciando actualización forzada desde endpoint")
+        update_stats = await force_update()
+        return {
+            "status": "success",
+            "message": "Actualización forzada completada",
+            "stats": update_stats,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error in forced update: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en actualización forzada: {str(e)}")
+
+@api_router.post("/admin/auto-updater/config")
+async def update_auto_updater_config(
+    config_update: Dict[str, Any],
+    current_user=Depends(get_current_user)
+):
+    """Actualizar configuración del sistema de actualización automática"""
+    try:
+        updated_config = update_config(config_update)
+        return {
+            "status": "success",
+            "message": "Configuración actualizada exitosamente",
+            "config": updated_config
+        }
+    except Exception as e:
+        logger.error(f"Error updating auto-updater config: {e}")
+        raise HTTPException(status_code=500, detail=f"Error actualizando configuración: {str(e)}")
+
+@api_router.get("/admin/data-integration/summary")
+async def get_data_integration_summary(current_user=Depends(get_current_user)):
+    """Obtener resumen de la integración de datos de Daticos"""
+    try:
+        # Obtener estadísticas de las colecciones creadas por el integrador
+        personas_count = await db.personas.count_documents({})
+        empresas_count = await db.empresas.count_documents({})
+        raw_data_count = await db.daticos_raw.count_documents({})
+        
+        # Obtener último log de extracción
+        latest_log = await db.extraction_logs.find().sort("timestamp", -1).limit(1).to_list(1)
+        
+        # Estadísticas por calidad de datos
+        alta_calidad = await db.personas.count_documents({
+            "enrichment.data_quality_score": {"$gte": 0.7}
+        })
+        
+        media_calidad = await db.personas.count_documents({
+            "enrichment.data_quality_score": {"$gte": 0.4, "$lt": 0.7}
+        })
+        
+        baja_calidad = await db.personas.count_documents({
+            "enrichment.data_quality_score": {"$lt": 0.4}
+        })
+        
+        return {
+            "status": "success",
+            "integration_summary": {
+                "total_personas": personas_count,
+                "total_empresas": empresas_count,
+                "raw_extractions": raw_data_count,
+                "data_quality": {
+                    "alta_calidad": alta_calidad,
+                    "media_calidad": media_calidad,
+                    "baja_calidad": baja_calidad
+                },
+                "last_extraction": latest_log[0] if latest_log else None
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error getting data integration summary: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo resumen: {str(e)}")
+
+@api_router.post("/admin/daticos/run-full-extraction")
+async def run_full_daticos_extraction(current_user=Depends(get_current_user)):
+    """Ejecutar extracción completa de Daticos e integrar datos"""
+    try:
+        from advanced_daticos_extractor import run_complete_extraction
+        from daticos_data_integrator import run_data_integration
+        
+        logger.info("Iniciando extracción completa de Daticos...")
+        
+        # Fase 1: Extracción
+        extraction_result = await run_complete_extraction()
+        if not extraction_result:
+            raise HTTPException(status_code=500, detail="Error en la extracción de datos")
+        
+        # Fase 2: Integración
+        integration_result = await run_data_integration()
+        if not integration_result:
+            raise HTTPException(status_code=500, detail="Error en la integración de datos")
+        
+        return {
+            "status": "success",
+            "message": "Extracción e integración completa finalizada",
+            "extraction_stats": {
+                "total_records": extraction_result.get('total_records', 0),
+                "categories_processed": len(extraction_result.get('endpoints_explored', {}))
+            },
+            "integration_stats": integration_result,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in full Daticos extraction: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en extracción completa: {str(e)}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

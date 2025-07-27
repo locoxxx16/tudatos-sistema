@@ -1,0 +1,371 @@
+
+
+<!doctype html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<title>Daticos v2.0... Todo en Base de Datos en Costa Rica</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/all.css">
+	<link rel="stylesheet" href="/css/idxcss.css">
+    <link rel="stylesheet" href="/css/idxnav.css.php">
+	<link rel="stylesheet" href="/imgmodal/style.css">
+
+    <!--<script src="/js/jquery-3.3.1.slim.min.js"></script> -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/idxnav.js"></script>
+    <script src="/js/idxjs.js"></script>
+    <script src="/js/all.js"></script>
+    <script src="/js/javasrc.js"></script>
+    <script src="/imgmodal/script.js"></script>
+    <script src="/js/bootstrap-maxlength.js"></script>
+    <script src="/js/bootstrap-session-timeout.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q9CNSEQKPC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Q9CNSEQKPC');
+</script>
+
+<script type="text/javascript">
+  $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+</head>
+
+<body>
+  <div class="container-fluid">
+
+    <div id="menu_area" class="menu-area">
+    <div class="container">
+        <div class="row">
+            <nav id="menu" class="navbar navbar-light navbar-expand-lg mainmenu fixed-top">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="bg-success"><a href="/"><span class="fas fa-home" aria-hidden="true"></span></a></li>
+
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Consultas Individuales</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a href="/foto.php">Foto</a></li>                                <li><a href="/buscedglobal.php">Global</a></li>                                <li><a href="/bustel.php">Telefono</a></li>                                <li><a href="/busnom.php">Nombres</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Consultas Masivas</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                <li><a href="/buspat.php">Patronos</a></li>                                <li><a href="/masgeo/index.php">Geografica</a></li>                                <li class="dropdown-divider"></li>
+                                <li><a href="/mascol/index.php">Colegiados</a></li>                                <li><a href="/maspen/index.php">Pensionados</a></li>                                <li><a href="/masind/index.php">Independientes</a></li>                                <!--
+                                <li class="dropdown-divider"></li>
+                                <li><a href="/masemp/index.php">Empresas</a></li>                                                                <li class="dropdown-divider"></li>
+                                                                -->
+                            </ul>
+                        </li>
+
+                        
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Consultas Especiales</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                                                        
+                            <li class="dropdown-divider"></li>
+
+                                                            <li><a href="/bloque/bloquecedulas.php">Bloque Personales</a></li>                                                                                                                            
+
+                            <li class="dropdown-divider"></li>
+
+                            
+                            </ul>
+                        </li>
+
+                        
+                        
+                        <li><a href="/consultasusr.php">Bitacora CSV</a></li>
+                        <li><a href="/telegram.php">Telegram</a></li>                        
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Ayuda</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                            <li><a href="/docs/manualuso.pdf" target="_blank">Manual de Uso</a></li>
+                            <li><a href="/docs/Manual_Bot_Telegram.pdf" target="_blank">Manual Bot de Telegram</a></li>
+                            <li><a href="/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf" target="_blank">Abrir CSV en Excel</a></li>
+                            <!--
+                            <li><a href="#" onclick="$('#msjterminos').modal('show');">Terminos y Condiciones</a></li>
+                            <li><a href="/admin/infotablas.php">Info Bases</a></li>
+                            <li><a href="/docs/acteco.xlsx" target="_blank">Act Eco Excel</a></li>
+                            -->
+                            <li><a href="/infogeo.php">Info Geo</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="bg-warning"><a href="#" onclick="idxmm_modal2('/disponible.php', '0');">saraya</a></li>
+                        <li class="bg-danger"><a href="/logout.php">Salir</a></li>                                            </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div id="idxmm_modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="idxmm_modal_title" class="modal-title text-primary">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="idxmm_modal_body" class="modal-body text-info">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div id="idxmm_modal_footer" class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div><div id="msjmodal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 id="msjmodal_title" class="modal-title text-warning">* * * I M P O R T A N T E * * *</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="msjmodal_body" class="modal-body text-info">
+        <p class="alert alert-danger text-justify">Atención !!<br />
+<br />
+A todos los usuarios que utilicen depositantes nuevos, deberán esperar 72 horas para que la recarga se realice.<br />
+<br />
+El tema de los formularios para acreditar depositantes nuevos no lo vamos a seguir.<br />
+<br />
+Esto aplica solo para usuarios Pre-pago.<br />
+ <br />
+Gracias <br />
+<br />
+Atte.<br />
+Daticos.com </p>
+      </div>
+      <div id="msjmodal_footer" class="modal-footer">
+        <!--<a href="/admin/user_data.php"><button type="button" class="btn btn-success">Llenar Formulario</button></a>-->
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div><div id="msjterminos" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 id="msjterminos_title" class="modal-title text-warning">* * * TERMINOS Y CONDICIONES * * *</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="msjterminos_body" class="modal-body text-info">
+        <p class="alert alert-success text-justify">PRIMERA: De Las Obligaciones De El Cliente y De La Manifestación del CLIENTE.<br />
+<br />
+EL CLIENTE deberá:<br />
+<br />
+A)	Utilizar el sistema de DATICOS únicamente para el acceso, distribución, acopio, e intercambio de la información contratada específicamente.<br />
+<br />
+B)	Utilizar el servicio contratado únicamente para su propia información en el devenir de su oficio.<br />
+<br />
+C)	Impedir que personas ajenas utilicen el sistema por cualquier línea de los puntos terminales a no ser que DATICOS lo autorice expresamente.<br />
+<br />
+D)	Impedir que personas ajenas utilicen la información para propósitos ajenos al presente formulario.<br />
+<br />
+E)	EL CLIENTE será responsable del uso o mal uso que se de a la clave de acceso o las llaves de paso por parte de sus usuarios internos, así como de terceros autorizados por ésta.<br />
+<br />
+F)	El cliente será responsable de informar a DATICOS. sobre el mal uso del sistema por personas ajenas para que DATICOS. pueda suspender el sistema y cambiar las claves.<br />
+<br />
+G)     El Cliente que utilice el usuario para reportajes periodísticos en todos los campos de la prensa, será expuesto a una acción civil por $500.000.00(Quinientos mil dólares estadounidenses).<br />
+<br />
+H)     DATICOS se reserva el derecho de suspender temporalmente por el tiempo que considere necesario o permanente una cuenta de usuario sin tener que dar explicaciones al usuario mismo.  Esto en pro de salvaguardar la seguridad de la información que contiene DATICOS y el cualquier otro proceso que DATICOS considere necesario.<br />
+<br />
+SEGUNDA: De Las Excepciones Y Autorizaciones<br />
+<br />
+DATICOS no se hará responsable:<br />
+<br />
+A)	De la información suministrada directamente por terceros en cuanto a la información de los estudios de sus clientes.<br />
+<br />
+B)	Del uso que EL CLIENTE haga de la información el estudio suministrado.<br />
+<br />
+C)	De los daños, denuncias o demandas que sufra EL CLIENTE por el uso particular que le de a la información suministrada.<br />
+<br />
+D)    El USUARIO es el único responsable por el mal uso que se le de a los datos sustraídos en esta web.<br />
+<br />
+E)    El moderador de Daticos tendrá hasta 24 horas máximo para realizar las recargas de créditos al sistema.<br />
+<br />
+DATICOS queda debidamente autorizado por EL CLIENTE para efectuar en nombre y representación de EL CLIENTE todas las investigaciones de los estudios personalizados, necesarias para garantizar el conocimiento y consecuencias del historial de los clientes que le han solicitado. EL CLIENTE será el único responsable de otorgar o denegar crédito o de la utilización que haga con la información suministrada, eximiendo expresamente a DATICOS  de cualquier responsabilidad directa o solidaria de dichos actos.<br />
+<br />
+Daticos.com podrá tomar el formulario, copia de la cedula y bitácora del Usuario, para presentarlo al Organismo de Investigación Judicial, en caso se este cometiendo un mal uso a los datos brindados por nuestra plataforma.<br />
+<br />
+. </p>
+      </div>
+      <div id="msjterminos_footer" class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+    if (window.innerWidth <= 600) {
+
+      $("#menu").removeClass("fixed-top");
+
+    } else {
+
+      $("#menu").addClass("fixed-top");
+
+    }
+
+</script>
+<script>
+  $.sessionTimeout({
+                title: 'Se va a cerrar su Sesion de Usuario!!!',
+                message: '',
+                keepAliveUrl: '/keep-alive.html',
+                logoutUrl: '/logout.php',
+                redirUrl: '/logout.php',
+                logoutButton: 'Cerrar Sesion',
+                keepAliveButton: 'Permanecer Conectado',
+                warnAfter: 300000,
+                redirAfter: 70000,
+                countdownBar: true
+            });
+</script>
+
+    <main role="main">
+
+      <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="jumbotron bg-dark text-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-auto col-md-6 col-sm-12">
+          <p>&nbsp;</p>
+          <a href="/"><img src="/images/logons.png" class="img-fluid" alt="Responsive image"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <div class="container">
+        <!-- Example row of columns -->
+
+
+          
+
+        <div class="row">
+          <div class="col-12 alert alert-info font-weight-bolder text-justify">
+            <p>PARA RECARGAS AL 83713030 WADVISER. CONSULTAS UNICAMENTE CON WENDEL AL 87012461</p>
+          </div>
+          <div class="col-auto alert alert-warning font-weight-bolder text-justify">
+            <p class="h3">Importante / Novedades</p>
+            <p>24-04-25<br />
+A todos los usuarios que utilicen depositantes nuevos, deberán esperar 72 horas para que la recarga se realice.<br />
+El tema de los formularios para acreditar depositantes nuevos no lo vamos a seguir.<br />
+Esto aplica solo para usuarios Pre-pago.<br />
+ <br />
+03-03-25<br />
+En el transcurso de la semana les llegara un formulario, para autorizar hasta 2 números para sinpe movil, debe llenarlo obligatoriamente de lo contrario el usuario sera bloqueado, NO se podrán realizar depósitos de sinpe móvil desde otros números que NO estén autorizados, no se realizaran devoluciones de los dineros y el usuario quedara bajo investigación en un estatus de BLOQUEO.<br />
+<br />
+Esto aplica solo para usuarios Pre-pago.<br />
+ <br />
+01-03-25<br />
+Le recordamos nuestro horario,<br />
+<br />
+De lunes a viernes de 8am a 5pm<br />
+Sábados de 8am a 12 md<br />
+<br />
+Después de ese horario queda a disposición del moderador.  <br />
+<br />
+No llamar para aplicar recargas. <br />
+1. Dejar comprobante<br />
+2. Dejar usuario <br />
+3.Esperar que sea aplicada<br />
+4. El moderador notificará la recarga <br />
+5. El moderador tiene 24 horas para aplicar una recarga.  <br />
+<br />
+ 10-02-25<br />
+Les informamos que nuestro moderador Wendel Arias estará fuera del país del 16  al 26 de febrero, por tal motivo las recargas tomaran un poco mas tiempo para realizar.<br />
+<br />
+<br />
+01-10-23<br />
+Para el Primero de Enero 2024 los créditos tendrán un costo 15 colones, con recargas mínimas 7500 colones. Esto debido alto precio actual de las bases en el mercado y la dificultad de obtenerlas. <br />
+<br />
+25-05-22<br />
+Le recordamos que el número para Sinpe Móvil es 83713030 a nombre de W Adviser, el comprobante deben de enviarlo al moderador al número 87012461. <br />
+<br />
+22-02-22<br />
+El horario de atención al servicio al cliente es el siguiente,<br />
+De Lunes a Viernes de 8 am a 5pm<br />
+Sábados 8 am a 12 md.<br />
+<br />
+05-01-22<br />
+Les recordamos que sus formularios indican que hay un convenio verbal con el OIJ para ayudar en estos casos, pero sus datos nunca serán revelados mientras no tengan ningún movimiento sospechoso.<br />
+<br />
+05-05-21<br />
+Daticos.com ha decidido ayudar a combatir las estafas telefónicas, por ende se realizo un convenio verbal con el Organismo de Investigación Judicial, para facilitar información de los usuarios que sean sospechosos de cometer algún acto indebido.  <br />
+<br />
+02-02-21<br />
+Daticos.com le recuerda que el USUARIO es el único responsable por el mal uso que se le de a los datos sustraídos en esta web. <br />
+<br />
+Le recordamos a nuestros usuarios que los datos brindados NO son verificados, cabe la posibilidad que los datos encontrados NO pertenezcan a la persona buscada.<br />
+<br />
+NO se realizaran reversiones a los saldos por el mal uso del sistema, NI TAMPOCO se realizaran recargas por saldo vencido.<br />
+<br />
+RECUERDEN QUE TIENEN 60 DÍAS NATURALES PARA UTILIZAR EN SU TOTALIDAD LA RECARGA.<br />
+<br />
+Daticos recomienda utilizar el buscador Google Chrome para el uso de esta web.<br />
+<br />
+Bendiciones para cada uno de nuestros clientes !!!!<br />
+<br />
+Gracias por preferirnos...<br />
+<br />
+Atte<br />
+<br />
+La Gerencia Daticos.com</p>
+          </div>     
+
+<!--
+            <div class="col-6">
+              <p class="text-info">Hemos creado este espacio para que pueda comunicarse mas directa y eficientemente con nosotros. Por favor dejenos saber sus dudas, consultas, recomendaciones, que le gustaria que Daticos ofreciese a nuestros clientes, etc.</p>
+              <p class="text-info">Para nosotros sera un placer atenderlas a la mayor brevedad posible en beneficio de ustedes, nuestros clientes.</p>
+              <p class="text-info">GRACIAS!!!</p>    
+              <form id="frmmensaje" name="frmmensaje" method="post" action="">
+                <div class="form-group">
+                  <textarea class="form-control" name="mensaje" rows="5"  required id="mensaje"></textarea>
+                </div>
+                <div class="form-group">
+                  <input class="form-control btn btn-primary" type="submit" name="submit" id="submit" value="Enviar Mensaje" />
+                </div>
+              </form>
+            </div>
+-->
+          </div>
+    <hr>
+
+  </div> <!-- /container -->
+      
+</main>  
+</div>
+
+</body>
+</html>
+ 

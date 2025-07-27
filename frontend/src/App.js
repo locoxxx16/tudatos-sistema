@@ -1362,73 +1362,175 @@ const TelefonoSearch = () => {
   );
 };
 
-// Navigation Bar Component
+// Navigation Bar Component con diseño mejorado
 const NavigationBar = ({ activeSection, setActiveSection }) => {
   const { user, logout } = useAuth();
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const menuItems = [
-    { id: 'home', label: 'Inicio', icon: '🏠' },
+    { 
+      id: 'home', 
+      label: 'Inicio', 
+      icon: '🏠',
+      description: 'Panel principal del sistema'
+    },
     { 
       id: 'consultas-individuales', 
       label: 'Consultas Individuales', 
       icon: '👤',
+      description: 'Búsquedas específicas por persona',
       submenu: [
-        { id: 'cedula', label: 'Por Cédula' },
-        { id: 'geografica', label: 'Geográfica' },
-        { id: 'patronos', label: 'Patronos' },
-        { id: 'colegiados', label: 'Colegiados' },
-        { id: 'pensionados', label: 'Pensionados' },
-        { id: 'independientes', label: 'Independientes' }
+        { id: 'foto', label: 'Consulta con Foto', icon: '📷', description: 'Búsqueda por cédula con foto incluida' },
+        { id: 'cedula-global', label: 'Búsqueda Global', icon: '🌍', description: 'Búsqueda completa por cédula' },
+        { id: 'telefono', label: 'Por Teléfono', icon: '📞', description: 'Búsqueda por número telefónico' },
+        { id: 'nombres', label: 'Por Nombres', icon: '👥', description: 'Búsqueda por nombres y apellidos' }
       ]
     },
     { 
       id: 'consultas-masivas', 
       label: 'Consultas Masivas', 
-      icon: '🏢',
+      icon: '📊',
+      description: 'Búsquedas en gran volumen',
       submenu: [
-        { id: 'global', label: 'Global' },
-        { id: 'telefono', label: 'Teléfono' },
-        { id: 'nombres', label: 'Nombres' },
-        { id: 'foto', label: 'Foto' }
+        { id: 'patronos', label: 'Patronos', icon: '🏢', description: 'Consulta masiva de patronos' },
+        { id: 'geografica', label: 'Geográfica', icon: '🗺️', description: 'Búsqueda por ubicación geográfica' },
+        { id: 'colegiados', label: 'Colegiados', icon: '🎓', description: 'Profesionales colegiados' },
+        { id: 'pensionados', label: 'Pensionados', icon: '👴', description: 'Base de datos de pensionados' },
+        { id: 'independientes', label: 'Independientes', icon: '💼', description: 'Trabajadores independientes' }
       ]
     },
     { 
       id: 'consultas-especiales', 
       label: 'Consultas Especiales', 
-      icon: '⚡',
-      submenu: []
+      icon: '⭐',
+      description: 'Funciones especializadas',
+      submenu: [
+        { id: 'bloque-personales', label: 'Bloque Personales', icon: '🔒', description: 'Consultas en bloque de cédulas' },
+        { id: 'mercantiles', label: 'Datos Mercantiles', icon: '🏬', description: 'Información comercial y mercantil' },
+        { id: 'laborales', label: 'Datos Laborales', icon: '💼', description: 'Información laboral y empleos' },
+        { id: 'matrimonio', label: 'Estado Civil', icon: '💒', description: 'Información matrimonial y civil' }
+      ]
     },
-    { id: 'bitacora', label: 'Bitacora CSV', icon: '📊' },
-    { id: 'telegram', label: 'Telegram', icon: '📱' },
-    { id: 'admin', label: 'Administración', icon: '⚙️' },
-    { id: 'ayuda', label: 'Ayuda', icon: '❓' }
+    { 
+      id: 'reportes', 
+      label: 'Reportes y Estadísticas', 
+      icon: '📈',
+      description: 'Análisis y reportes del sistema',
+      submenu: [
+        { id: 'bitacora', label: 'Bitácora CSV', icon: '📋', description: 'Historial de consultas en CSV' },
+        { id: 'estadisticas', label: 'Estadísticas', icon: '📊', description: 'Estadísticas del sistema' },
+        { id: 'demograficos', label: 'Datos Demográficos', icon: '👥', description: 'Análisis demográfico' }
+      ]
+    },
+    { 
+      id: 'integraciones', 
+      label: 'Integraciones', 
+      icon: '🔗',
+      description: 'Conexiones externas',
+      submenu: [
+        { id: 'telegram', label: 'Telegram Bot', icon: '📱', description: 'Integración con Telegram' },
+        { id: 'sms-masivo', label: 'SMS Masivo', icon: '💬', description: 'Campañas de SMS masivo' },
+        { id: 'exportar', label: 'Exportar Datos', icon: '📤', description: 'Exportar datos a diferentes formatos' }
+      ]
+    },
+    { 
+      id: 'admin', 
+      label: 'Administración', 
+      icon: '⚙️',
+      description: 'Panel de administración del sistema'
+    }
   ];
 
+  const handleMenuClick = (item) => {
+    if (item.submenu) {
+      setActiveDropdown(activeDropdown === item.id ? null : item.id);
+    } else {
+      setActiveSection(item.id);
+      setActiveDropdown(null);
+    }
+  };
+
+  const handleSubmenuClick = (submenuItem) => {
+    setActiveSection(submenuItem.id);
+    setActiveDropdown(null);
+  };
+
   return (
-    <nav className="bg-gradient-to-r from-green-500 via-blue-600 to-purple-600 text-white shadow-lg">
-      <div className="flex items-center justify-between px-4 py-2">
-        <div className="flex items-center space-x-2">
+    <div className="bg-gradient-to-r from-indigo-900 via-blue-800 to-indigo-900 text-white shadow-2xl">
+      {/* Header principal con logo y usuario */}
+      <div className="bg-black bg-opacity-20 px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="bg-blue-600 rounded-full p-2">
+              <h1 className="text-white text-xl font-bold tracking-wider">DATICOS v2.0</h1>
+            </div>
+            <div className="text-blue-200 text-sm">
+              Sistema de Consultas y Análisis de Datos - Costa Rica
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <span className="text-blue-200">👤 {user?.username || 'Usuario'}</span>
+            <button
+              onClick={logout}
+              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition-colors"
+            >
+              🚪 Salir
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Menú de navegación principal */}
+      <div className="px-6 py-2">
+        <div className="flex flex-wrap gap-2">
           {menuItems.map((item) => (
-            <div key={item.id} className="relative group">
+            <div key={item.id} className="relative">
               <button
-                onClick={() => setActiveSection(item.id)}
-                className={`px-4 py-2 rounded-md transition-colors ${
-                  activeSection === item.id ? 'bg-white bg-opacity-20' : 'hover:bg-white hover:bg-opacity-10'
-                }`}
+                onClick={() => handleMenuClick(item)}
+                className={`
+                  flex items-center space-x-2 px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium
+                  ${activeSection === item.id || activeDropdown === item.id
+                    ? 'bg-white bg-opacity-20 text-white shadow-lg'
+                    : 'hover:bg-white hover:bg-opacity-10 text-blue-100 hover:text-white'
+                  }
+                `}
+                title={item.description}
               >
-                {item.label} {item.submenu && '▼'}
+                <span className="text-lg">{item.icon}</span>
+                <span>{item.label}</span>
+                {item.submenu && (
+                  <span className={`transition-transform duration-200 ${
+                    activeDropdown === item.id ? 'rotate-180' : ''
+                  }`}>
+                    ⌄
+                  </span>
+                )}
               </button>
-              
-              {item.submenu && item.submenu.length > 0 && (
-                <div className="absolute top-full left-0 mt-1 bg-blue-600 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="py-2 min-w-48">
-                    {item.submenu.map((subItem) => (
+
+              {/* Dropdown menu */}
+              {item.submenu && activeDropdown === item.id && (
+                <div className="absolute top-full left-0 mt-2 bg-white rounded-lg shadow-2xl border border-gray-200 min-w-64 z-50">
+                  <div className="py-2">
+                    <div className="px-4 py-2 border-b border-gray-100">
+                      <h3 className="font-semibold text-gray-800 text-sm">{item.label}</h3>
+                      <p className="text-gray-600 text-xs">{item.description}</p>
+                    </div>
+                    {item.submenu.map((submenuItem) => (
                       <button
-                        key={subItem.id}
-                        onClick={() => setActiveSection(subItem.id)}
-                        className="block w-full text-left px-4 py-2 hover:bg-blue-700 transition-colors"
+                        key={submenuItem.id}
+                        onClick={() => handleSubmenuClick(submenuItem)}
+                        className={`
+                          w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors text-sm
+                          ${activeSection === submenuItem.id ? 'bg-blue-100 text-blue-800' : 'text-gray-700'}
+                        `}
                       >
-                        {subItem.label}
+                        <div className="flex items-center space-x-3">
+                          <span className="text-lg">{submenuItem.icon}</span>
+                          <div>
+                            <div className="font-medium">{submenuItem.label}</div>
+                            <div className="text-xs text-gray-500">{submenuItem.description}</div>
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -1437,20 +1539,28 @@ const NavigationBar = ({ activeSection, setActiveSection }) => {
             </div>
           ))}
         </div>
-
-        <div className="flex items-center space-x-4">
-          <span className="bg-yellow-500 text-black px-3 py-1 rounded-md font-semibold">
-            {user?.username || 'Usuario'}
-          </span>
-          <button
-            onClick={logout}
-            className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md transition-colors"
-          >
-            Salir
-          </button>
-        </div>
       </div>
-    </nav>
+
+      {/* Breadcrumb */}
+      {activeSection !== 'home' && (
+        <div className="px-6 py-2 bg-black bg-opacity-10 text-blue-200 text-sm">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setActiveSection('home')}
+              className="hover:text-white transition-colors"
+            >
+              🏠 Inicio
+            </button>
+            <span>›</span>
+            <span className="text-white font-medium">
+              {menuItems.find(item => item.id === activeSection)?.label || 
+               menuItems.flatMap(item => item.submenu || []).find(sub => sub.id === activeSection)?.label ||
+               'Sección Actual'}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

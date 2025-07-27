@@ -81,15 +81,16 @@ class DaticosExtractor:
             
             # Verificar si el login fue exitoso
             if login_response.status_code == 200:
-                # Buscar indicadores de login exitoso
+                # Buscar indicadores de login exitoso más específicos
                 response_text = login_response.text.lower()
-                success_indicators = ['dashboard', 'panel', 'bienvenido', 'consulta', 'logout', 'salir']
-                error_indicators = ['error', 'incorrecto', 'inválido', 'login', 'usuario o contraseña']
+                success_indicators = ['consultas individuales', 'consultas masivas', 'salir', 'logout.php', 'saraya']
+                error_indicators = ['error', 'incorrecto', 'inválido', 'login.php' in str(login_response.url)]
                 
                 has_success = any(indicator in response_text for indicator in success_indicators)
-                has_error = any(indicator in response_text for indicator in error_indicators)
+                # Verificar si hay redirección a index.php (indica login exitoso)
+                successful_url = 'index.php' in str(login_response.url) or 'login.php' not in str(login_response.url)
                 
-                if has_success and not has_error:
+                if has_success and successful_url:
                     self.logged_in = True
                     logger.info("✅ Login exitoso en Daticos")
                     return True

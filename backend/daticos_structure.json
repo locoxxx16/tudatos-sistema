@@ -1,0 +1,521 @@
+{
+  "structure": {
+    "menu_items": [
+      {
+        "text": "Consultas Individuales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Foto",
+        "href": "/foto.php",
+        "full_url": "https://www.daticos.com/foto.php"
+      },
+      {
+        "text": "Global",
+        "href": "/buscedglobal.php",
+        "full_url": "https://www.daticos.com/buscedglobal.php"
+      },
+      {
+        "text": "Telefono",
+        "href": "/bustel.php",
+        "full_url": "https://www.daticos.com/bustel.php"
+      },
+      {
+        "text": "Nombres",
+        "href": "/busnom.php",
+        "full_url": "https://www.daticos.com/busnom.php"
+      },
+      {
+        "text": "Consultas Masivas",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Patronos",
+        "href": "/buspat.php",
+        "full_url": "https://www.daticos.com/buspat.php"
+      },
+      {
+        "text": "Geografica",
+        "href": "/masgeo/index.php",
+        "full_url": "https://www.daticos.com/masgeo/index.php"
+      },
+      {
+        "text": "Colegiados",
+        "href": "/mascol/index.php",
+        "full_url": "https://www.daticos.com/mascol/index.php"
+      },
+      {
+        "text": "Pensionados",
+        "href": "/maspen/index.php",
+        "full_url": "https://www.daticos.com/maspen/index.php"
+      },
+      {
+        "text": "Independientes",
+        "href": "/masind/index.php",
+        "full_url": "https://www.daticos.com/masind/index.php"
+      },
+      {
+        "text": "Consultas Especiales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Bloque Personales",
+        "href": "/bloque/bloquecedulas.php",
+        "full_url": "https://www.daticos.com/bloque/bloquecedulas.php"
+      },
+      {
+        "text": "Bitacora CSV",
+        "href": "/consultasusr.php",
+        "full_url": "https://www.daticos.com/consultasusr.php"
+      },
+      {
+        "text": "Telegram",
+        "href": "/telegram.php",
+        "full_url": "https://www.daticos.com/telegram.php"
+      },
+      {
+        "text": "Ayuda",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Manual de Uso",
+        "href": "/docs/manualuso.pdf",
+        "full_url": "https://www.daticos.com/docs/manualuso.pdf"
+      },
+      {
+        "text": "Manual Bot de Telegram",
+        "href": "/docs/Manual_Bot_Telegram.pdf",
+        "full_url": "https://www.daticos.com/docs/Manual_Bot_Telegram.pdf"
+      },
+      {
+        "text": "Abrir CSV en Excel",
+        "href": "/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf",
+        "full_url": "https://www.daticos.com/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf"
+      },
+      {
+        "text": "Info Geo",
+        "href": "/infogeo.php",
+        "full_url": "https://www.daticos.com/infogeo.php"
+      },
+      {
+        "text": "saraya",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Salir",
+        "href": "/logout.php",
+        "full_url": "https://www.daticos.com/logout.php"
+      },
+      {
+        "text": "Consultas Individuales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Foto",
+        "href": "/foto.php",
+        "full_url": "https://www.daticos.com/foto.php"
+      },
+      {
+        "text": "Global",
+        "href": "/buscedglobal.php",
+        "full_url": "https://www.daticos.com/buscedglobal.php"
+      },
+      {
+        "text": "Telefono",
+        "href": "/bustel.php",
+        "full_url": "https://www.daticos.com/bustel.php"
+      },
+      {
+        "text": "Nombres",
+        "href": "/busnom.php",
+        "full_url": "https://www.daticos.com/busnom.php"
+      },
+      {
+        "text": "Consultas Masivas",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Patronos",
+        "href": "/buspat.php",
+        "full_url": "https://www.daticos.com/buspat.php"
+      },
+      {
+        "text": "Geografica",
+        "href": "/masgeo/index.php",
+        "full_url": "https://www.daticos.com/masgeo/index.php"
+      },
+      {
+        "text": "Colegiados",
+        "href": "/mascol/index.php",
+        "full_url": "https://www.daticos.com/mascol/index.php"
+      },
+      {
+        "text": "Pensionados",
+        "href": "/maspen/index.php",
+        "full_url": "https://www.daticos.com/maspen/index.php"
+      },
+      {
+        "text": "Independientes",
+        "href": "/masind/index.php",
+        "full_url": "https://www.daticos.com/masind/index.php"
+      },
+      {
+        "text": "Consultas Especiales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Bloque Personales",
+        "href": "/bloque/bloquecedulas.php",
+        "full_url": "https://www.daticos.com/bloque/bloquecedulas.php"
+      },
+      {
+        "text": "Bitacora CSV",
+        "href": "/consultasusr.php",
+        "full_url": "https://www.daticos.com/consultasusr.php"
+      },
+      {
+        "text": "Telegram",
+        "href": "/telegram.php",
+        "full_url": "https://www.daticos.com/telegram.php"
+      },
+      {
+        "text": "Ayuda",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Manual de Uso",
+        "href": "/docs/manualuso.pdf",
+        "full_url": "https://www.daticos.com/docs/manualuso.pdf"
+      },
+      {
+        "text": "Manual Bot de Telegram",
+        "href": "/docs/Manual_Bot_Telegram.pdf",
+        "full_url": "https://www.daticos.com/docs/Manual_Bot_Telegram.pdf"
+      },
+      {
+        "text": "Abrir CSV en Excel",
+        "href": "/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf",
+        "full_url": "https://www.daticos.com/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf"
+      },
+      {
+        "text": "Info Geo",
+        "href": "/infogeo.php",
+        "full_url": "https://www.daticos.com/infogeo.php"
+      },
+      {
+        "text": "saraya",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Salir",
+        "href": "/logout.php",
+        "full_url": "https://www.daticos.com/logout.php"
+      },
+      {
+        "text": "Consultas Individuales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Foto",
+        "href": "/foto.php",
+        "full_url": "https://www.daticos.com/foto.php"
+      },
+      {
+        "text": "Global",
+        "href": "/buscedglobal.php",
+        "full_url": "https://www.daticos.com/buscedglobal.php"
+      },
+      {
+        "text": "Telefono",
+        "href": "/bustel.php",
+        "full_url": "https://www.daticos.com/bustel.php"
+      },
+      {
+        "text": "Nombres",
+        "href": "/busnom.php",
+        "full_url": "https://www.daticos.com/busnom.php"
+      },
+      {
+        "text": "Consultas Masivas",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Patronos",
+        "href": "/buspat.php",
+        "full_url": "https://www.daticos.com/buspat.php"
+      },
+      {
+        "text": "Geografica",
+        "href": "/masgeo/index.php",
+        "full_url": "https://www.daticos.com/masgeo/index.php"
+      },
+      {
+        "text": "Colegiados",
+        "href": "/mascol/index.php",
+        "full_url": "https://www.daticos.com/mascol/index.php"
+      },
+      {
+        "text": "Pensionados",
+        "href": "/maspen/index.php",
+        "full_url": "https://www.daticos.com/maspen/index.php"
+      },
+      {
+        "text": "Independientes",
+        "href": "/masind/index.php",
+        "full_url": "https://www.daticos.com/masind/index.php"
+      },
+      {
+        "text": "Consultas Especiales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Bloque Personales",
+        "href": "/bloque/bloquecedulas.php",
+        "full_url": "https://www.daticos.com/bloque/bloquecedulas.php"
+      },
+      {
+        "text": "Bitacora CSV",
+        "href": "/consultasusr.php",
+        "full_url": "https://www.daticos.com/consultasusr.php"
+      },
+      {
+        "text": "Telegram",
+        "href": "/telegram.php",
+        "full_url": "https://www.daticos.com/telegram.php"
+      },
+      {
+        "text": "Ayuda",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Manual de Uso",
+        "href": "/docs/manualuso.pdf",
+        "full_url": "https://www.daticos.com/docs/manualuso.pdf"
+      },
+      {
+        "text": "Manual Bot de Telegram",
+        "href": "/docs/Manual_Bot_Telegram.pdf",
+        "full_url": "https://www.daticos.com/docs/Manual_Bot_Telegram.pdf"
+      },
+      {
+        "text": "Abrir CSV en Excel",
+        "href": "/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf",
+        "full_url": "https://www.daticos.com/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf"
+      },
+      {
+        "text": "Info Geo",
+        "href": "/infogeo.php",
+        "full_url": "https://www.daticos.com/infogeo.php"
+      },
+      {
+        "text": "saraya",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Salir",
+        "href": "/logout.php",
+        "full_url": "https://www.daticos.com/logout.php"
+      },
+      {
+        "text": "Consultas Individuales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Foto",
+        "href": "/foto.php",
+        "full_url": "https://www.daticos.com/foto.php"
+      },
+      {
+        "text": "Global",
+        "href": "/buscedglobal.php",
+        "full_url": "https://www.daticos.com/buscedglobal.php"
+      },
+      {
+        "text": "Telefono",
+        "href": "/bustel.php",
+        "full_url": "https://www.daticos.com/bustel.php"
+      },
+      {
+        "text": "Nombres",
+        "href": "/busnom.php",
+        "full_url": "https://www.daticos.com/busnom.php"
+      },
+      {
+        "text": "Consultas Masivas",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Patronos",
+        "href": "/buspat.php",
+        "full_url": "https://www.daticos.com/buspat.php"
+      },
+      {
+        "text": "Geografica",
+        "href": "/masgeo/index.php",
+        "full_url": "https://www.daticos.com/masgeo/index.php"
+      },
+      {
+        "text": "Colegiados",
+        "href": "/mascol/index.php",
+        "full_url": "https://www.daticos.com/mascol/index.php"
+      },
+      {
+        "text": "Pensionados",
+        "href": "/maspen/index.php",
+        "full_url": "https://www.daticos.com/maspen/index.php"
+      },
+      {
+        "text": "Independientes",
+        "href": "/masind/index.php",
+        "full_url": "https://www.daticos.com/masind/index.php"
+      },
+      {
+        "text": "Consultas Especiales",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Bloque Personales",
+        "href": "/bloque/bloquecedulas.php",
+        "full_url": "https://www.daticos.com/bloque/bloquecedulas.php"
+      },
+      {
+        "text": "Bitacora CSV",
+        "href": "/consultasusr.php",
+        "full_url": "https://www.daticos.com/consultasusr.php"
+      },
+      {
+        "text": "Telegram",
+        "href": "/telegram.php",
+        "full_url": "https://www.daticos.com/telegram.php"
+      },
+      {
+        "text": "Ayuda",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Manual de Uso",
+        "href": "/docs/manualuso.pdf",
+        "full_url": "https://www.daticos.com/docs/manualuso.pdf"
+      },
+      {
+        "text": "Manual Bot de Telegram",
+        "href": "/docs/Manual_Bot_Telegram.pdf",
+        "full_url": "https://www.daticos.com/docs/Manual_Bot_Telegram.pdf"
+      },
+      {
+        "text": "Abrir CSV en Excel",
+        "href": "/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf",
+        "full_url": "https://www.daticos.com/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf"
+      },
+      {
+        "text": "Info Geo",
+        "href": "/infogeo.php",
+        "full_url": "https://www.daticos.com/infogeo.php"
+      },
+      {
+        "text": "saraya",
+        "href": "#",
+        "full_url": "https://www.daticos.com/#"
+      },
+      {
+        "text": "Salir",
+        "href": "/logout.php",
+        "full_url": "https://www.daticos.com/logout.php"
+      },
+      {
+        "text": "Foto",
+        "href": "/foto.php",
+        "full_url": "https://www.daticos.com/foto.php"
+      },
+      {
+        "text": "Global",
+        "href": "/buscedglobal.php",
+        "full_url": "https://www.daticos.com/buscedglobal.php"
+      },
+      {
+        "text": "Telefono",
+        "href": "/bustel.php",
+        "full_url": "https://www.daticos.com/bustel.php"
+      },
+      {
+        "text": "Nombres",
+        "href": "/busnom.php",
+        "full_url": "https://www.daticos.com/busnom.php"
+      },
+      {
+        "text": "Patronos",
+        "href": "/buspat.php",
+        "full_url": "https://www.daticos.com/buspat.php"
+      },
+      {
+        "text": "Geografica",
+        "href": "/masgeo/index.php",
+        "full_url": "https://www.daticos.com/masgeo/index.php"
+      },
+      {
+        "text": "Colegiados",
+        "href": "/mascol/index.php",
+        "full_url": "https://www.daticos.com/mascol/index.php"
+      },
+      {
+        "text": "Pensionados",
+        "href": "/maspen/index.php",
+        "full_url": "https://www.daticos.com/maspen/index.php"
+      },
+      {
+        "text": "Independientes",
+        "href": "/masind/index.php",
+        "full_url": "https://www.daticos.com/masind/index.php"
+      },
+      {
+        "text": "Bloque Personales",
+        "href": "/bloque/bloquecedulas.php",
+        "full_url": "https://www.daticos.com/bloque/bloquecedulas.php"
+      },
+      {
+        "text": "Manual de Uso",
+        "href": "/docs/manualuso.pdf",
+        "full_url": "https://www.daticos.com/docs/manualuso.pdf"
+      },
+      {
+        "text": "Manual Bot de Telegram",
+        "href": "/docs/Manual_Bot_Telegram.pdf",
+        "full_url": "https://www.daticos.com/docs/Manual_Bot_Telegram.pdf"
+      },
+      {
+        "text": "Abrir CSV en Excel",
+        "href": "/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf",
+        "full_url": "https://www.daticos.com/docs/Daticos Importacion de archivos CSV a Excel - Google Docs.pdf"
+      },
+      {
+        "text": "Info Geo",
+        "href": "/infogeo.php",
+        "full_url": "https://www.daticos.com/infogeo.php"
+      }
+    ],
+    "consultation_types": [],
+    "available_endpoints": [],
+    "data_fields": []
+  },
+  "available_sections": [],
+  "test_results": "successful_login"
+}

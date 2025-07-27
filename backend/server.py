@@ -1295,6 +1295,10 @@ async def create_indexes():
         start_data_updater()
         logger.info("Data updater service started")
         
+        # Start the automatic daily updater
+        start_auto_updater()
+        logger.info("Automatic daily updater service started")
+        
     except Exception as e:
         logger.error(f"Error creating indexes: {e}")
 

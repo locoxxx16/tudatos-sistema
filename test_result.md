@@ -102,136 +102,85 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Por favor testea el sistema completo de Daticos que he desarrollado. Realiza las siguientes pruebas: 1. Prueba de autenticación, 2. Prueba de búsqueda por cédula, 3. Prueba de búsqueda geográfica, 4. Prueba de búsqueda por nombres, 5. Prueba de búsqueda por teléfono, 6. Prueba de endpoints de ubicación, 7. Prueba de estadísticas demográficas"
+user_problem_statement: "Implementar sistema completo de extracción masiva de Daticos con credenciales Saraya/12345. Crear extracción de datos mercantiles, laborales, matrimonio. Implementar sistema de actualización diaria automática. Mejorar panel de administración para que cada función tenga acción específica. Replicar funcionalidad de búsqueda de Daticos exactamente."
 
 backend:
-  - task: "Authentication System"
+  - task: "Extracción Masiva Daticos con Nuevas Credenciales"
     implemented: true
     working: true
+    file: "backend/advanced_daticos_extractor.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Implementado extractor avanzado que usa credenciales Saraya/12345. Login exitoso, identificados todos los endpoints disponibles (consultas individuales, masivas, especiales). Extraídos 396 registros en primera ejecución. Sistema identifica formularios y campos automáticamente para cada tipo de consulta."
+
+  - task: "Sistema Actualización Diaria Automática"
+    implemented: false
+    working: false
+    file: "backend/data_updater.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Pendiente implementación de sistema de cron/scheduler que ejecute extracción diaria y enriquezca datos existentes automáticamente."
+
+  - task: "Panel Administración Funcional Completo"
+    implemented: false
+    working: false
+    file: "backend/admin_panel.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Pendiente completar endpoints del panel de administración para que cada opción tenga funcionalidad específica."
+
+  - task: "Integración Base de Datos MongoDB"
+    implemented: false
+    working: false
     file: "backend/server.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
-      - working: true
-        agent: "testing"
-        comment: "Authentication endpoint working correctly. Successfully logged in with admin/admin123 credentials and received valid JWT token."
-
-  - task: "Location Endpoints"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: true
-        agent: "testing"
-        comment: "All location endpoints working correctly. Retrieved 7 provinces, 19 cantones for San José, and 5 distritos for Acosta. Hierarchical data structure is properly implemented."
-
-  - task: "Demographics Query"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: true
-        agent: "testing"
-        comment: "Demographics endpoint working correctly. Returns proper statistics: 2000 personas físicas, 800 personas jurídicas with breakdown by province and sector."
-
-  - task: "Search by Cedula"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 1
-    priority: "high"
-    needs_retesting: false
-    status_history:
       - working: false
-        agent: "testing"
-        comment: "CRITICAL: Search by cedula endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Database contains valid data but aggregation pipelines return ObjectId objects that can't be JSON serialized by FastAPI."
-      - working: true
-        agent: "testing"
-        comment: "RESOLVED: Cedula search endpoint now working perfectly. Tested with 16 comprehensive tests including 5 fisica cedulas (692785539, 410197954, 903153808, 945985846, 255043829) and 5 juridica cedulas (3-101-629135, 3-101-587436, 3-101-371162, 3-101-296456, 3-101-188515). All tests passed with 100% success rate. Database contains 2000 personas físicas and 800 personas jurídicas. Response format is correct with proper location data, phone numbers, and all required fields."
-
-  - task: "Search by Name"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 1
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: false
-        agent: "testing"
-        comment: "CRITICAL: Search by name endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Same root cause as cedula search - aggregation pipelines return non-serializable ObjectId objects."
-      - working: true
-        agent: "testing"
-        comment: "RESOLVED: Name search endpoint working correctly. Tested with common names like Maria (12 results), Jose (26 results), Ana (37 results), Carlos (7 results), and business terms like Empresa (25 results). All searches return proper results with correct response format."
-
-  - task: "Search by Phone"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 1
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: false
-        agent: "testing"
-        comment: "CRITICAL: Search by phone endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Same root cause as other search endpoints."
-      - working: true
-        agent: "testing"
-        comment: "RESOLVED: Phone search endpoint working correctly. Tested with various phone formats including 8-digit (88888888 - 2 results), landline format (2222-2222 - 1 result), mobile format (8888-8888 - 2 results), and partial searches. All return proper results."
-
-  - task: "Geographic Search"
-    implemented: true
-    working: true
-    file: "backend/server.py"
-    stuck_count: 1
-    priority: "high"
-    needs_retesting: false
-    status_history:
-      - working: false
-        agent: "testing"
-        comment: "CRITICAL: Geographic search endpoint returns HTTP 500 errors due to MongoDB ObjectId serialization issues. Aggregation pipelines in search endpoints need ObjectId conversion to strings."
-      - working: true
-        agent: "testing"
-        comment: "RESOLVED: Geographic search endpoint working correctly. Tested with provincia filter (100 results for San José) and person type filter (50 fisica results). All searches return proper results with location data."
+        agent: "main"
+        comment: "Pendiente integrar los 396 registros extraídos de Daticos en la base de datos MongoDB y crear sistema de enriquecimiento de datos."
 
 frontend:
-  - task: "Frontend Testing"
-    implemented: true
-    working: "NA"
+  - task: "Replicación Funcionalidad Búsqueda Daticos"
+    implemented: false
+    working: false
     file: "frontend/src/App.js"
     stuck_count: 0
-    priority: "low"
+    priority: "medium"
     needs_retesting: false
     status_history:
-      - working: "NA"
-        agent: "testing"
-        comment: "Frontend testing not performed as per testing agent limitations."
+      - working: false
+        agent: "main"
+        comment: "Pendiente replicar exactamente las opciones de búsqueda identificadas en Daticos: consultas individuales (cédula, foto, teléfono, nombres), masivas (patronos, geográficas, colegiados, pensionados), y especiales (bloque personales)."
 
 metadata:
-  created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
+  created_by: "main_agent"
+  version: "1.1"
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Search by Cedula"
-    - "Search by Name"
-    - "Search by Phone"
-    - "Geographic Search"
+    - "Extracción Masiva Daticos con Nuevas Credenciales"
+    - "Sistema Actualización Diaria Automática"
+    - "Integración Base de Datos MongoDB"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
-  - agent: "testing"
-    message: "Completed comprehensive backend testing. Found critical MongoDB ObjectId serialization issue affecting all search endpoints. Database contains proper data (2000 personas físicas, 800 personas jurídicas) but aggregation pipelines return ObjectId objects that FastAPI cannot serialize to JSON. Authentication, location endpoints, and demographics work correctly. Search endpoints need ObjectId to string conversion in aggregation pipelines."
-  - agent: "testing"
-    message: "RESOLVED: All search endpoints now working perfectly after ObjectId serialization fixes. Comprehensive testing completed with 100% success rate. Cedula search tested with 16 test cases including 5 fisica cedulas and 5 juridica cedulas - all working correctly. Database verified with 2800 total records. Response format is correct with proper location data and all required fields. Working cedulas for testing: Física (692785539, 410197954, 903153808, 945985846, 255043829) and Jurídica (3-101-629135, 3-101-587436, 3-101-371162, 3-101-296456, 3-101-188515)."
+  - agent: "main"
+    message: "Completada primera fase de extracción masiva de Daticos. Login exitoso con credenciales Saraya/12345. Identificados y analizados todos los endpoints disponibles. Sistema extrajo 396 registros en primera ejecución. Próximos pasos: integrar datos en MongoDB, crear sistema de actualización automática, y completar panel de administración funcional."

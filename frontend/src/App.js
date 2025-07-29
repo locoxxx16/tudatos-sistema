@@ -182,6 +182,522 @@ const Login = () => {
   );
 };
 
+// Componente para Consulta con Foto
+const ConsultaFoto = () => {
+  const [cedula, setCedula] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!cedula.trim()) {
+      setError('Por favor ingrese una cédula');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      const data = await apiCall(`/search/cedula/${cedula}?enrich=true`);
+      setResult(data);
+    } catch (error) {
+      setError('Error al buscar la cédula: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">📷</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Consulta con Foto</h2>
+          <p className="text-gray-600">Búsqueda por cédula con imagen incluida</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={cedula}
+            onChange={(e) => setCedula(e.target.value)}
+            placeholder="Ingrese número de cédula (ej: 1-0234-0567)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            maxLength="12"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Buscando...' : '📷 Buscar con Foto'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-4">
+          {result.found ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+              <div className="flex justify-between items-start">
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-green-800 mb-4">✅ Persona Encontrada</h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-2">Información Personal:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Cédula:</strong> {result.data.cedula || 'N/A'}</div>
+                        <div><strong>Nombre:</strong> {result.data.nombre || 'N/A'}</div>
+                        <div><strong>Apellidos:</strong> {result.data.primer_apellido} {result.data.segundo_apellido}</div>
+                        <div><strong>Teléfono:</strong> {result.data.telefono || 'N/A'}</div>
+                        <div><strong>Email:</strong> {result.data.email || 'N/A'}</div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-2">Ubicación:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Provincia:</strong> {result.data.provincia_nombre || 'N/A'}</div>
+                        <div><strong>Cantón:</strong> {result.data.canton_nombre || 'N/A'}</div>
+                        <div><strong>Distrito:</strong> {result.data.distrito_nombre || 'N/A'}</div>
+                        <div><strong>Dirección:</strong> {result.data.direccion_exacta || 'N/A'}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Espacio para foto - simulado */}
+                <div className="ml-6 bg-gray-200 border-2 border-dashed border-gray-400 rounded-lg p-4 text-center w-32 h-40 flex flex-col items-center justify-center">
+                  <span className="text-4xl mb-2">📷</span>
+                  <span className="text-xs text-gray-500">Foto no disponible</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+              ❌ No se encontró información para la cédula: {cedula}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente para Búsqueda Global
+const BusquedaGlobal = () => {
+  const [cedula, setCedula] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!cedula.trim()) {
+      setError('Por favor ingrese una cédula');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      const data = await apiCall(`/search/cedula/${cedula}?enrich=true`);
+      setResult(data);
+    } catch (error) {
+      setError('Error al buscar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">🌍</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Búsqueda Global</h2>
+          <p className="text-gray-600">Consulta completa con enriquecimiento de datos</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={cedula}
+            onChange={(e) => setCedula(e.target.value)}
+            placeholder="Número de cédula (física: 1-2345-6789, jurídica: 3-101-123456)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Buscando...' : '🌍 Búsqueda Global'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-6">
+          {result.found ? (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+              <h3 className="text-xl font-semibold text-green-800 mb-4">
+                ✅ {result.type === 'fisica' ? 'Persona Física' : 'Persona Jurídica'} Encontrada
+              </h3>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-white rounded-lg p-4 border">
+                  <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+                    👤 Información Básica
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>Cédula:</strong> {result.data.cedula || result.data.cedula_juridica}</div>
+                    {result.type === 'fisica' ? (
+                      <>
+                        <div><strong>Nombre:</strong> {result.data.nombre}</div>
+                        <div><strong>Apellidos:</strong> {result.data.primer_apellido} {result.data.segundo_apellido}</div>
+                      </>
+                    ) : (
+                      <>
+                        <div><strong>Nombre Comercial:</strong> {result.data.nombre_comercial}</div>
+                        <div><strong>Razón Social:</strong> {result.data.razon_social}</div>
+                        <div><strong>Sector:</strong> {result.data.sector_negocio}</div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border">
+                  <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+                    📞 Contacto
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>Teléfono:</strong> {result.data.telefono || 'N/A'}</div>
+                    <div><strong>Email:</strong> {result.data.email || 'N/A'}</div>
+                    {result.data.website && (
+                      <div><strong>Website:</strong> {result.data.website}</div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border">
+                  <h4 className="font-semibold text-blue-800 mb-3 flex items-center">
+                    🗺️ Ubicación
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>Provincia:</strong> {result.data.provincia_nombre}</div>
+                    <div><strong>Cantón:</strong> {result.data.canton_nombre}</div>
+                    <div><strong>Distrito:</strong> {result.data.distrito_nombre}</div>
+                    {result.data.direccion_exacta && (
+                      <div><strong>Dirección:</strong> {result.data.direccion_exacta}</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {result.external_data && (
+                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-800 mb-2 flex items-center">
+                    🌐 Datos Enriquecidos
+                  </h4>
+                  <p className="text-blue-700 text-sm">
+                    Información adicional obtenida de fuentes externas incluida en los resultados.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+              ❌ No se encontró información para la cédula: {cedula}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente para Búsqueda por Teléfono
+const BusquedaTelefono = () => {
+  const [telefono, setTelefono] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!telefono.trim()) {
+      setError('Por favor ingrese un número de teléfono');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await apiCall(`/search/telefono/${telefono}`);
+      setResults(data.results || []);
+    } catch (error) {
+      setError('Error al buscar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">📞</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Búsqueda por Teléfono</h2>
+          <p className="text-gray-600">Encuentra personas por número telefónico</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            placeholder="Número de teléfono (ej: 8888-8888, 2222-2222, 88888888)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Buscando...' : '📞 Buscar Teléfono'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-700">
+            📊 Resultados encontrados: {results.length}
+          </h3>
+          
+          <div className="grid gap-4">
+            {results.map((result, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <span className="text-lg mr-2">
+                        {result.type === 'fisica' ? '👤' : '🏢'}
+                      </span>
+                      <h4 className="font-semibold text-gray-800">
+                        {result.type === 'fisica' 
+                          ? `${result.data.nombre} ${result.data.primer_apellido} ${result.data.segundo_apellido || ''}`
+                          : result.data.nombre_comercial || result.data.razon_social
+                        }
+                      </h4>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div><strong>Cédula:</strong> {result.data.cedula || result.data.cedula_juridica}</div>
+                        <div><strong>Teléfono:</strong> {result.data.telefono}</div>
+                        {result.data.email && (
+                          <div><strong>Email:</strong> {result.data.email}</div>
+                        )}
+                      </div>
+                      <div>
+                        <div><strong>Provincia:</strong> {result.data.provincia_nombre}</div>
+                        <div><strong>Cantón:</strong> {result.data.canton_nombre}</div>
+                        <div><strong>Distrito:</strong> {result.data.distrito_nombre}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && results.length === 0 && telefono && !error && (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+          ❌ No se encontraron registros para el teléfono: {telefono}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente para Búsqueda por Nombres
+const BusquedaNombres = () => {
+  const [nombre, setNombre] = useState('');
+  const [apellido1, setApellido1] = useState('');
+  const [apellido2, setApellido2] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    const searchTerm = [nombre, apellido1, apellido2].filter(Boolean).join(' ');
+    
+    if (!searchTerm.trim()) {
+      setError('Por favor ingrese al menos un nombre o apellido');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await apiCall(`/search/name/${encodeURIComponent(searchTerm)}`);
+      setResults(data.results || []);
+    } catch (error) {
+      setError('Error al buscar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">👥</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Búsqueda por Nombres</h2>
+          <p className="text-gray-600">Encuentra personas por nombres y apellidos</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="grid md:grid-cols-4 gap-4 mb-4">
+          <input
+            type="text"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Nombre"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            value={apellido1}
+            onChange={(e) => setApellido1(e.target.value)}
+            placeholder="Primer Apellido"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="text"
+            value={apellido2}
+            onChange={(e) => setApellido2(e.target.value)}
+            placeholder="Segundo Apellido (opcional)"
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Buscando...' : '👥 Buscar'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-700">
+            📊 Resultados encontrados: {results.length}
+          </h3>
+          
+          <div className="grid gap-4">
+            {results.map((result, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center mb-2">
+                      <span className="text-lg mr-2">
+                        {result.type === 'fisica' ? '👤' : '🏢'}
+                      </span>
+                      <h4 className="font-semibold text-gray-800">
+                        {result.type === 'fisica' 
+                          ? `${result.data.nombre} ${result.data.primer_apellido} ${result.data.segundo_apellido || ''}`
+                          : result.data.nombre_comercial || result.data.razon_social
+                        }
+                      </h4>
+                      <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                        {result.type === 'fisica' ? 'Física' : 'Jurídica'}
+                      </span>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <div><strong>Cédula:</strong> {result.data.cedula || result.data.cedula_juridica}</div>
+                        {result.data.telefono && (
+                          <div><strong>Teléfono:</strong> {result.data.telefono}</div>
+                        )}
+                      </div>
+                      <div>
+                        <div><strong>Provincia:</strong> {result.data.provincia_nombre}</div>
+                        <div><strong>Cantón:</strong> {result.data.canton_nombre}</div>
+                      </div>
+                      <div>
+                        <div><strong>Distrito:</strong> {result.data.distrito_nombre}</div>
+                        {result.data.email && (
+                          <div><strong>Email:</strong> {result.data.email}</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && results.length === 0 && (nombre || apellido1 || apellido2) && !error && (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+          ❌ No se encontraron registros para: {[nombre, apellido1, apellido2].filter(Boolean).join(' ')}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Results Display Component
 const ResultsTable = ({ results, loading }) => {
   if (loading) {

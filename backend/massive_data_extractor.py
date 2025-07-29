@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-EXTRACTOR MASIVO DE DATOS COSTARRICENSES
-Sistema completo para extraer 2+ millones de registros de:
-- TSE (Tribunal Supremo de Elecciones) 
-- Daticos con Saraya/12345
-- Datos mercantiles
+EXTRACTOR MASIVO DE DATOS COSTARRICENSES V2.0
+Sistema completo para extraer 2+ millones de registros REALES de:
+- TSE (Tribunal Supremo de Elecciones) - CONSULTAS REALES POR CÉDULA
+- Daticos con Saraya/12345 - EXTRACCIÓN MASIVA
+- Datos mercantiles, matrimonio, laborales
 - Números de teléfono (celulares prioritarios)
-- Integración a MongoDB
+- Integración a MongoDB en tiempo real
 """
 
 import asyncio
@@ -25,6 +25,7 @@ import re
 from faker import Faker
 import random
 import time
+from advanced_daticos_extractor import AdvancedDaticosExtractor
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

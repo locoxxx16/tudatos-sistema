@@ -1062,10 +1062,10 @@ class MassiveDataExtractor:
         await self.initialize()
         
         try:
-            # FASE 1: Extracción masiva del TSE (1,000,000 cédulas)
-            logger.info("1️⃣ FASE 1: Extracción masiva TSE (1M cédulas)")
-            tse_records = await self.extract_tse_real_data(
-                cedula_batch_size=2000, 
+            # FASE 1: Extracción híbrida del TSE (1,000,000 cédulas)
+            logger.info("1️⃣ FASE 1: Extracción híbrida TSE (1M cédulas)")
+            tse_records = await self.extract_tse_hybrid_data(
+                cedula_batch_size=5000, 
                 max_cedulas=1000000
             )
             

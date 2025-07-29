@@ -698,6 +698,502 @@ const BusquedaNombres = () => {
   );
 };
 
+// Componente para Consultas Masivas - Patronos
+const ConsultaPatronos = () => {
+  const [filtros, setFiltros] = useState({
+    provincia: '',
+    canton: '',
+    distrito: '',
+    sector: '',
+    empleados_min: '',
+    empleados_max: ''
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [provincias, setProvincias] = useState([]);
+
+  useEffect(() => {
+    loadProvincias();
+  }, []);
+
+  const loadProvincias = async () => {
+    try {
+      const data = await apiCall('/locations/provincias');
+      setProvincias(data);
+    } catch (error) {
+      console.error('Error loading provincias:', error);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await apiCall('/prospecting/query', 'POST', {
+        provincia_id: filtros.provincia || null,
+        canton_id: filtros.canton || null,
+        distrito_id: filtros.distrito || null,
+        sector_negocio: filtros.sector || null,
+        min_employees: filtros.empleados_min ? parseInt(filtros.empleados_min) : null,
+        max_employees: filtros.empleados_max ? parseInt(filtros.empleados_max) : null
+      });
+      setResults(data.prospects || []);
+    } catch (error) {
+      setError('Error en la búsqueda: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">🏢</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Consulta Masiva de Patronos</h2>
+          <p className="text-gray-600">Búsqueda avanzada de empresas y patronos por criterios múltiples</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="grid md:grid-cols-3 gap-4 mb-4">
+          <select
+            value={filtros.provincia}
+            onChange={(e) => setFiltros({...filtros, provincia: e.target.value})}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Todas las provincias</option>
+            {provincias.map(prov => (
+              <option key={prov.id} value={prov.id}>{prov.nombre}</option>
+            ))}
+          </select>
+
+          <select
+            value={filtros.sector}
+            onChange={(e) => setFiltros({...filtros, sector: e.target.value})}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Todos los sectores</option>
+            <option value="comercio">Comercio</option>
+            <option value="servicios">Servicios</option>
+            <option value="industria">Industria</option>
+            <option value="tecnologia">Tecnología</option>
+            <option value="educacion">Educación</option>
+            <option value="salud">Salud</option>
+            <option value="construccion">Construcción</option>
+            <option value="turismo">Turismo</option>
+            <option value="agricultura">Agricultura</option>
+          </select>
+
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={filtros.empleados_min}
+              onChange={(e) => setFiltros({...filtros, empleados_min: e.target.value})}
+              placeholder="Min empleados"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              type="number"
+              value={filtros.empleados_max}
+              onChange={(e) => setFiltros({...filtros, empleados_max: e.target.value})}
+              placeholder="Max empleados"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+        >
+          {loading ? '🔍 Consultando...' : '🏢 Consultar Patronos'}
+        </button>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-700">
+              📊 Patronos encontrados: {results.length}
+            </h3>
+            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+              📤 Exportar CSV
+            </button>
+          </div>
+          
+          <div className="grid gap-4">
+            {results.map((patron, index) => (
+              <div key={index} className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center mb-3">
+                      <span className="text-xl mr-3">🏢</span>
+                      <div>
+                        <h4 className="font-semibold text-gray-800">{patron.nombre_comercial}</h4>
+                        <p className="text-sm text-gray-600">{patron.razon_social}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <div><strong>Cédula Jurídica:</strong> {patron.cedula_juridica}</div>
+                        <div><strong>Sector:</strong> {patron.sector_negocio}</div>
+                      </div>
+                      <div>
+                        <div><strong>Empleados:</strong> {patron.numero_empleados || 'N/A'}</div>
+                        <div><strong>Teléfono:</strong> {patron.telefono || 'N/A'}</div>
+                      </div>
+                      <div>
+                        <div><strong>Provincia:</strong> {patron.provincia_nombre}</div>
+                        <div><strong>Cantón:</strong> {patron.canton_nombre}</div>
+                      </div>
+                      <div>
+                        <div><strong>Email:</strong> {patron.email || 'N/A'}</div>
+                        <div><strong>Website:</strong> {patron.website || 'N/A'}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && results.length === 0 && !error && (
+        <div className="text-center py-8 text-gray-500">
+          🔍 Use los filtros para buscar patronos y empresas
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente para Búsqueda Geográfica Masiva
+const BusquedaGeograficaMasiva = () => {
+  const [filtros, setFiltros] = useState({
+    provincia: '',
+    canton: '',
+    distrito: '',
+    tipo_persona: ''
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [provincias, setProvincias] = useState([]);
+  const [cantones, setCantones] = useState([]);
+
+  useEffect(() => {
+    loadProvincias();
+  }, []);
+
+  useEffect(() => {
+    if (filtros.provincia) {
+      loadCantones(filtros.provincia);
+    } else {
+      setCantones([]);
+    }
+  }, [filtros.provincia]);
+
+  const loadProvincias = async () => {
+    try {
+      const data = await apiCall('/locations/provincias');
+      setProvincias(data);
+    } catch (error) {
+      console.error('Error loading provincias:', error);
+    }
+  };
+
+  const loadCantones = async (provinciaId) => {
+    try {
+      const data = await apiCall(`/locations/cantones/${provinciaId}`);
+      setCantones(data);
+    } catch (error) {
+      console.error('Error loading cantones:', error);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const data = await apiCall('/search/geografica', 'POST', {
+        provincia_id: filtros.provincia || null,
+        canton_id: filtros.canton || null,
+        distrito_id: filtros.distrito || null,
+        person_type: filtros.tipo_persona || null
+      });
+      setResults(data.results || []);
+    } catch (error) {
+      setError('Error en la búsqueda: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">🗺️</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Búsqueda Geográfica Masiva</h2>
+          <p className="text-gray-600">Consulta masiva por ubicación geográfica de Costa Rica</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="grid md:grid-cols-4 gap-4 mb-4">
+          <select
+            value={filtros.provincia}
+            onChange={(e) => setFiltros({...filtros, provincia: e.target.value, canton: ''})}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Seleccionar provincia</option>
+            {provincias.map(prov => (
+              <option key={prov.id} value={prov.id}>{prov.nombre}</option>
+            ))}
+          </select>
+
+          <select
+            value={filtros.canton}
+            onChange={(e) => setFiltros({...filtros, canton: e.target.value})}
+            disabled={!filtros.provincia}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+          >
+            <option value="">Seleccionar cantón</option>
+            {cantones.map(canton => (
+              <option key={canton.id} value={canton.id}>{canton.nombre}</option>
+            ))}
+          </select>
+
+          <select
+            value={filtros.tipo_persona}
+            onChange={(e) => setFiltros({...filtros, tipo_persona: e.target.value})}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Físicas y Jurídicas</option>
+            <option value="fisica">Solo Personas Físicas</option>
+            <option value="juridica">Solo Personas Jurídicas</option>
+          </select>
+
+          <button
+            type="submit"
+            disabled={loading || !filtros.provincia}
+            className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Buscando...' : '🗺️ Buscar'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-700">
+              📊 Registros encontrados: {results.length}
+            </h3>
+            <div className="flex gap-2">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                📤 Exportar CSV
+              </button>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                📊 Estadísticas
+              </button>
+            </div>
+          </div>
+          
+          <div className="grid gap-3 max-h-96 overflow-y-auto">
+            {results.map((result, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <span className="text-lg mr-3">
+                      {result.type === 'fisica' ? '👤' : '🏢'}
+                    </span>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 text-sm">
+                        {result.type === 'fisica' 
+                          ? `${result.data.nombre} ${result.data.primer_apellido} ${result.data.segundo_apellido || ''}`
+                          : result.data.nombre_comercial
+                        }
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        {result.data.provincia_nombre} › {result.data.canton_nombre}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right text-xs text-gray-600">
+                    <div>📄 {result.data.cedula || result.data.cedula_juridica}</div>
+                    {result.data.telefono && <div>📞 {result.data.telefono}</div>}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && results.length === 0 && !error && filtros.provincia && (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+          🔍 No se encontraron registros para los criterios seleccionados
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente para otras consultas masivas (Colegiados, Pensionados, Independientes)
+const ConsultaMasivaTipo = ({ tipo, titulo, descripcion, icono, color }) => {
+  const [filtros, setFiltros] = useState({
+    provincia: '',
+    profesion: '',
+    activo: 'todos'
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    // Simular consulta (implementar según endpoint específico)
+    try {
+      // Placeholder - implementar endpoints específicos
+      setTimeout(() => {
+        setResults([
+          { nombre: 'Ejemplo 1', cedula: '1-1234-5678', profesion: 'Ingeniero', estado: 'Activo' },
+          { nombre: 'Ejemplo 2', cedula: '2-2345-6789', profesion: 'Médico', estado: 'Activo' }
+        ]);
+        setLoading(false);
+      }, 1000);
+    } catch (error) {
+      setError('Error en la búsqueda: ' + error.message);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">{icono}</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">{titulo}</h2>
+          <p className="text-gray-600">{descripcion}</p>
+        </div>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="font-semibold text-blue-800 mb-2">🚧 Función en Desarrollo</h3>
+        <p className="text-blue-700 text-sm">
+          Esta funcionalidad está siendo implementada con datos reales de {tipo}.
+          Pronto estará disponible con consultas masivas completas.
+        </p>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="grid md:grid-cols-3 gap-4 mb-4">
+          <select
+            value={filtros.provincia}
+            onChange={(e) => setFiltros({...filtros, provincia: e.target.value})}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Todas las provincias</option>
+            <option value="san-jose">San José</option>
+            <option value="alajuela">Alajuela</option>
+            <option value="cartago">Cartago</option>
+            <option value="heredia">Heredia</option>
+            <option value="guanacaste">Guanacaste</option>
+            <option value="puntarenas">Puntarenas</option>
+            <option value="limon">Limón</option>
+          </select>
+
+          <input
+            type="text"
+            value={filtros.profesion}
+            onChange={(e) => setFiltros({...filtros, profesion: e.target.value})}
+            placeholder={tipo === 'colegiados' ? 'Profesión o carrera' : tipo === 'pensionados' ? 'Tipo de pensión' : 'Actividad laboral'}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+
+          <select
+            value={filtros.activo}
+            onChange={(e) => setFiltros({...filtros, activo: e.target.value})}
+            className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="todos">Todos los estados</option>
+            <option value="activo">Solo activos</option>
+            <option value="inactivo">Solo inactivos</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className={`${color} text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50`}
+        >
+          {loading ? '🔍 Consultando...' : `${icono} Consultar ${tipo}`}
+        </button>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-700">
+            📊 {tipo} encontrados: {results.length}
+          </h3>
+          
+          <div className="grid gap-3">
+            {results.map((result, index) => (
+              <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-semibold text-gray-800">{result.nombre}</h4>
+                    <p className="text-sm text-gray-600">{result.cedula} • {result.profesion}</p>
+                  </div>
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    result.estado === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {result.estado}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Results Display Component
 const ResultsTable = ({ results, loading }) => {
   if (loading) {

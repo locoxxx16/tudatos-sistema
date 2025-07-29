@@ -2595,42 +2595,93 @@ const Dashboard = () => {
   }, []);
 
   const renderMainContent = () => {
-    // All consultation types redirect to main consultation interface
     switch (activeSection) {
       case 'home':
         return <HomePage stats={stats} />;
       
-      // All individual consultations go to main consultation
-      case 'cedula':
-      case 'patronos':
-      case 'geografica':
-      case 'colegiados':
-      case 'pensionados':
-      case 'independientes':
-        return <ConsultationInterface />;
-      
-      // All massive consultations go to main consultation  
-      case 'global':
-      case 'telefono':
-      case 'nombres':
+      // Consultas Individuales con componentes específicos
       case 'foto':
-        return <ConsultationInterface />;
+        return <ConsultaFoto />;
+        
+      case 'cedula-global':
+        return <BusquedaGlobal />;
+        
+      case 'telefono':
+        return <BusquedaTelefono />;
+        
+      case 'nombres':
+        return <BusquedaNombres />;
       
-      // Advanced features
-      case 'consultas-especiales':
-        return <AdvancedSearch />;
+      // Consultas Masivas con componentes específicos
+      case 'patronos':
+        return <ConsultaPatronos />;
+        
+      case 'geografica':
+        return <BusquedaGeograficaMasiva />;
+        
+      case 'colegiados':
+        return <ConsultaMasivaTipo 
+          tipo="colegiados" 
+          titulo="Consulta Masiva de Colegiados"
+          descripcion="Búsqueda de profesionales colegiados de Costa Rica"
+          icono="🎓"
+          color="bg-indigo-600 hover:bg-indigo-700"
+        />;
+        
+      case 'pensionados':
+        return <ConsultaMasivaTipo 
+          tipo="pensionados" 
+          titulo="Consulta Masiva de Pensionados"
+          descripcion="Búsqueda de personas pensionadas por diferentes regímenes"
+          icono="👴"
+          color="bg-gray-600 hover:bg-gray-700"
+        />;
+        
+      case 'independientes':
+        return <ConsultaMasivaTipo 
+          tipo="independientes" 
+          titulo="Consulta Masiva de Independientes"
+          descripcion="Trabajadores independientes y autónomos"
+          icono="💼"
+          color="bg-purple-600 hover:bg-purple-700"
+        />;
       
+      // Consultas Especiales 
+      case 'bloque-personales':
+        return <BloqueCedulas />;
+        
+      case 'mercantiles':
+        return <DatosMercantiles />;
+        
+      case 'laborales':
+        return <DatosLaborales />;
+        
+      case 'matrimonio':
+        return <EstadoCivil />;
+      
+      // Reportes y Estadísticas
       case 'bitacora':
         return <BitacoraCSV />;
         
+      case 'estadisticas':
+        return <EstadisticasSistema />;
+        
+      case 'demograficos':
+        return <DatosDemograficos />;
+      
+      // Integraciones
       case 'telegram':
         return <TelegramIntegration />;
         
+      case 'sms-masivo':
+        return <SMSMasivo />;
+        
+      case 'exportar':
+        return <ExportarDatos />;
+        
+      // Administración
       case 'admin':
         return <AdminPanel />;
-        
-      case 'ayuda':
-        return <AyudaSystem />;
         
       default:
         return <ConsultationInterface />;

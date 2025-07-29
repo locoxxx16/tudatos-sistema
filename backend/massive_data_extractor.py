@@ -1,10 +1,22 @@
+#!/usr/bin/env python3
+"""
+EXTRACTOR MASIVO DE DATOS COSTARRICENSES
+Sistema completo para extraer 2+ millones de registros de:
+- TSE (Tribunal Supremo de Elecciones) 
+- Daticos con Saraya/12345
+- Datos mercantiles
+- Números de teléfono (celulares prioritarios)
+- Integración a MongoDB
+"""
+
 import asyncio
+import httpx
 import aiohttp
 import json
 import logging
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Set
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import uuid
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -15,7 +27,7 @@ import random
 import time
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 fake = Faker('es_ES')

@@ -671,7 +671,7 @@ class MassiveDataExtractor:
         try:
             # Obtener estadísticas de todas las colecciones
             collections = [
-                'tse_datos_reales',
+                'tse_datos_hibridos',
                 'daticos_datos_masivos', 
                 'datos_mercantiles_enhanced'
             ]

@@ -328,6 +328,261 @@ class MassiveDataExtractor:
         logger.info(f"📋 Generadas {len(cedulas)} cédulas para procesamiento")
         return cedulas
     
+    async def extract_daticos_massive_data(self, target_records=500000):
+        """
+        Integrar con Daticos para extracción masiva usando credenciales Saraya/12345
+        """
+        logger.info(f"🏛️ Iniciando extracción masiva de Daticos - Target: {target_records} registros...")
+        
+        try:
+            # Login en Daticos
+            if not await self.daticos_extractor.login():
+                logger.error("❌ No se pudo hacer login en Daticos")
+                return 0
+            
+            logger.info("✅ Login exitoso en Daticos con Saraya/12345")
+            
+            # Extracción completa de todos los endpoints
+            daticos_data = await self.daticos_extractor.extract_all_endpoint_data()
+            
+            if not daticos_data:
+                logger.error("❌ No se obtuvieron datos de Daticos")
+                return 0
+            
+            # Procesar y estructurar datos de Daticos
+            processed_records = []
+            total_daticos_records = 0
+            
+            for category, endpoints in daticos_data['endpoints_explored'].items():
+                logger.info(f"📂 Procesando categoría Daticos: {category}")
+                
+                for endpoint_name, endpoint_data in endpoints.items():
+                    if 'extracted_records' in endpoint_data:
+                        records = endpoint_data['extracted_records']
+                        
+                        for record in records:
+                            # Enriquecer registro con metadatos
+                            processed_record = {
+                                "id": str(uuid.uuid4()),
+                                "fuente": "DATICOS_SARAYA",
+                                "categoria": category,
+                                "endpoint": endpoint_name,
+                                "fecha_extraccion": datetime.utcnow(),
+                                "credencial_usada": "Saraya/12345",
+                                **record  # Incluir todos los datos originales
+                            }
+                            
+                            # Extraer números telefónicos si están disponibles
+                            content_text = str(record)
+                            phones = self.extract_phone_numbers(content_text)
+                            if phones:
+                                processed_record['telefonos_encontrados'] = phones
+                                self.extraction_stats['phone_numbers_found'] += len(phones)
+                            
+                            # Identificar tipo de datos
+                            if 'mercantil' in str(record).lower():
+                                processed_record['tipo_datos'] = 'mercantil'
+                                self.extraction_stats['mercantile_records'] += 1
+                            elif 'matrimonio' in str(record).lower() or 'casad' in str(record).lower():
+                                processed_record['tipo_datos'] = 'matrimonio'
+                                self.extraction_stats['marriage_records'] += 1
+                            elif 'labor' in str(record).lower() or 'trabajo' in str(record).lower():
+                                processed_record['tipo_datos'] = 'laboral'
+                                self.extraction_stats['labor_records'] += 1
+                            else:
+                                processed_record['tipo_datos'] = 'general'
+                            
+                            processed_records.append(processed_record)
+                            total_daticos_records += 1
+            
+            # Insertar datos en MongoDB
+            if processed_records:
+                # Insertar en lotes para optimizar rendimiento
+                batch_size = 1000
+                for i in range(0, len(processed_records), batch_size):
+                    batch = processed_records[i:i + batch_size]
+                    await self.db.daticos_datos_masivos.insert_many(batch)
+                    logger.info(f"💾 Insertado lote Daticos: {len(batch)} registros")
+            
+            self.extraction_stats['daticos_records'] = total_daticos_records
+            logger.info(f"✅ Daticos extracción completada: {total_daticos_records} registros")
+            
+            return total_daticos_records
+            
+        except Exception as e:
+            logger.error(f"❌ Error en extracción Daticos: {e}")
+            self.extraction_stats['errors'] += 1
+            return 0
+    
+    async def extract_mercantile_data_enhanced(self):
+        """
+        Extracción especializada de datos mercantiles
+        Combina TSE + Daticos para obtener información completa de empresas
+        """
+        logger.info("🏢 Iniciando extracción especializada de datos mercantiles...")
+        
+        try:
+            mercantile_records = []
+            
+            # 1. Obtener datos mercantiles de Daticos
+            daticos_mercantile = await self.daticos_extractor.extract_from_endpoint('/buspat.php', 'Patronos')
+            logger.info(f"📊 Daticos mercantiles: {len(daticos_mercantile)} registros")
+            
+            # 2. Para cada registro mercantil, enriquecer con TSE
+            for merc_record in daticos_mercantile:
+                try:
+                    # Buscar cédulas en el registro mercantil
+                    cedulas_found = self.extract_cedulas_from_text(str(merc_record))
+                    
+                    enhanced_record = {
+                        "id": str(uuid.uuid4()),
+                        "tipo": "mercantil_enhanced",
+                        "fecha_extraccion": datetime.utcnow(),
+                        "fuente_principal": "DATICOS_PATRONOS",
+                        "datos_mercantiles": merc_record,
+                        "representantes_legales": []
+                    }
+                    
+                    # Enriquecer con datos del TSE para cada cédula encontrada
+                    for cedula in cedulas_found:
+                        tse_data = await self.consultar_tse_cedula(cedula, asyncio.Semaphore(1))
+                        if tse_data:
+                            enhanced_record['representantes_legales'].append({
+                                "cedula": cedula,
+                                "datos_tse": tse_data
+                            })
+                    
+                    # Extraer números telefónicos del conjunto completo
+                    all_text = str(enhanced_record)
+                    phones = self.extract_phone_numbers(all_text)
+                    if phones:
+                        enhanced_record['telefonos_empresa'] = phones
+                        self.extraction_stats['phone_numbers_found'] += len(phones)
+                    
+                    mercantile_records.append(enhanced_record)
+                    await asyncio.sleep(0.5)  # Rate limiting
+                    
+                except Exception as e:
+                    logger.error(f"❌ Error procesando registro mercantil: {e}")
+                    continue
+            
+            # Insertar datos mercantiles enriquecidos
+            if mercantile_records:
+                await self.db.datos_mercantiles_enhanced.insert_many(mercantile_records)
+                logger.info(f"💾 Datos mercantiles enriquecidos insertados: {len(mercantile_records)}")
+            
+            self.extraction_stats['mercantile_records'] += len(mercantile_records)
+            return len(mercantile_records)
+            
+        except Exception as e:
+            logger.error(f"❌ Error en extracción mercantil: {e}")
+            return 0
+    
+    def extract_cedulas_from_text(self, text: str) -> List[str]:
+        """Extraer números de cédula del texto usando patrones"""
+        cedula_patterns = [
+            re.compile(r'\b([1-9]-\d{4}-\d{4})\b'),  # Formato X-XXXX-XXXX
+            re.compile(r'\b([1-9]\d{8})\b'),         # Formato XXXXXXXXX
+            re.compile(r'\b(3-\d{3}-\d{6})\b')       # Cédulas jurídicas
+        ]
+        
+        cedulas = []
+        for pattern in cedula_patterns:
+            matches = pattern.findall(text)
+            cedulas.extend(matches)
+        
+        return list(set(cedulas))  # Eliminar duplicados
+    
+    async def combine_and_deduplicate_data(self):
+        """
+        Combinar datos de todas las fuentes y eliminar duplicados
+        Crear dataset unificado de 2+ millones de registros
+        """
+        logger.info("🔄 Iniciando combinación y deduplicación de datos...")
+        
+        try:
+            # Obtener estadísticas de todas las colecciones
+            collections = [
+                'tse_datos_reales',
+                'daticos_datos_masivos', 
+                'datos_mercantiles_enhanced'
+            ]
+            
+            total_before = 0
+            for collection_name in collections:
+                count = await self.db[collection_name].count_documents({})
+                total_before += count
+                logger.info(f"📊 {collection_name}: {count:,} registros")
+            
+            logger.info(f"📊 Total de registros antes de unificar: {total_before:,}")
+            
+            # Pipeline de agregación para combinar y deduplicar
+            pipeline = [
+                {
+                    "$unionWith": {
+                        "coll": "daticos_datos_masivos"
+                    }
+                },
+                {
+                    "$unionWith": {
+                        "coll": "datos_mercantiles_enhanced"
+                    }
+                },
+                {
+                    "$group": {
+                        "_id": {
+                            "$ifNull": ["$cedula", "$id"]
+                        },
+                        "record": {"$first": "$$ROOT"},
+                        "fuentes": {"$addToSet": "$fuente"},
+                        "count": {"$sum": 1}
+                    }
+                },
+                {
+                    "$replaceRoot": {
+                        "newRoot": {
+                            "$mergeObjects": [
+                                "$record",
+                                {
+                                    "fuentes_combinadas": "$fuentes",
+                                    "veces_encontrado": "$count",
+                                    "unificado_en": datetime.utcnow()
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+            
+            # Ejecutar pipeline y crear colección unificada
+            unified_records = []
+            async for record in self.db.tse_datos_reales.aggregate(pipeline):
+                unified_records.append(record)
+                
+                # Insertar en lotes
+                if len(unified_records) >= 1000:
+                    await self.db.datos_unificados_cr.insert_many(unified_records)
+                    unified_records = []
+            
+            # Insertar registros restantes
+            if unified_records:
+                await self.db.datos_unificados_cr.insert_many(unified_records)
+            
+            # Estadísticas finales
+            final_count = await self.db.datos_unificados_cr.count_documents({})
+            self.extraction_stats['total_unique_records'] = final_count
+            
+            logger.info(f"✅ Unificación completada:")
+            logger.info(f"   📊 Registros originales: {total_before:,}")  
+            logger.info(f"   📊 Registros únicos: {final_count:,}")
+            logger.info(f"   📊 Duplicados eliminados: {total_before - final_count:,}")
+            
+            return final_count
+            
+        except Exception as e:
+            logger.error(f"❌ Error en unificación: {e}")
+            return 0
+
     async def extract_registro_nacional_societies(self, batch_size=5000):
         """
         Extraer todas las sociedades del Registro Nacional

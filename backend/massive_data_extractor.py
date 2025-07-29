@@ -81,13 +81,25 @@ class MassiveDataExtractor:
         ]
     
     async def initialize(self):
-        """Initialize database and session"""
+        """Initialize database, session and Daticos extractor"""
         self.client = AsyncIOMotorClient(self.mongo_url)
         self.db = self.client[self.db_name]
         self.session = aiohttp.ClientSession(
-            timeout=aiohttp.ClientTimeout(total=30),
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+            timeout=aiohttp.ClientTimeout(total=60),
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'es-ES,es;q=0.8',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive'
+            }
         )
+        
+        # Inicializar extractor de Daticos
+        self.daticos_extractor = AdvancedDaticosExtractor()
+        await self.daticos_extractor.initialize_session()
+        
+        logger.info("✅ Sistema inicializado: MongoDB, Session HTTP y Daticos listos")
     
     async def close(self):
         """Close connections"""
@@ -95,93 +107,226 @@ class MassiveDataExtractor:
             await self.session.close()
         if self.client:
             self.client.close()
+        if self.daticos_extractor:
+            await self.daticos_extractor.close_session()
     
-    async def extract_tse_padron_complete(self, batch_size=10000):
+    async def extract_tse_real_data(self, cedula_batch_size=5000, max_cedulas=100000):
         """
-        Extraer padrón electoral completo del TSE
-        Simula la extracción del archivo completo del padrón electoral
+        Extraer datos REALES del TSE por consulta de cédula
+        Implementa consultas masivas usando números de cédula válidos
         """
-        logger.info("🗳️ Starting complete TSE electoral registry extraction...")
+        logger.info(f"🗳️ Iniciando extracción REAL del TSE - Target: {max_cedulas} cédulas...")
         
         try:
-            # En producción, aquí descargaríamos el archivo completo del padrón del TSE
-            # Para esta demo, vamos a generar muchos más registros realistas
+            extracted_records = []
+            cedulas_to_process = self.generate_real_cedula_ranges(max_cedulas)
             
-            # Obtener ubicaciones reales de la base de datos
-            distritos = await self.db.distritos.find().to_list(1000)
-            cantones_map = {}
-            provincias_map = {}
-            
-            for distrito in distritos:
-                canton = await self.db.cantones.find_one({"id": distrito["canton_id"]})
-                provincia = await self.db.provincias.find_one({"id": canton["provincia_id"]})
-                cantones_map[distrito["id"]] = canton
-                provincias_map[canton["id"]] = provincia
-            
-            # Generar registros del padrón electoral (simulando extracción masiva)
-            total_records = 0
-            batch_count = 0
-            
-            # Generar múltiples lotes de datos
-            for batch_num in range(50):  # 50 lotes de 10,000 = 500,000 registros
-                batch_records = []
+            # Procesar en lotes para optimizar rendimiento
+            for i in range(0, len(cedulas_to_process), cedula_batch_size):
+                batch = cedulas_to_process[i:i + cedula_batch_size]
+                logger.info(f"📊 Procesando lote {i//cedula_batch_size + 1}: {len(batch)} cédulas")
                 
-                for i in range(batch_size):
-                    distrito = random.choice(distritos)
-                    canton = cantones_map[distrito["id"]]
-                    provincia = provincias_map[canton["id"]]
-                    
-                    # Generar cédula costarricense realista
-                    cedula = self.generate_realistic_cedula()
-                    
-                    record = {
-                        "id": str(uuid.uuid4()),
-                        "cedula": cedula,
-                        "nombre": fake.first_name(),
-                        "primer_apellido": fake.last_name(),
-                        "segundo_apellido": fake.last_name() if random.choice([True, False, False]) else None,
-                        "fecha_nacimiento": fake.date_time_between(start_date='-80y', end_date='-18y'),
-                        "sexo": random.choice(["M", "F"]),
-                        "estado_civil": random.choice(["Soltero", "Casado", "Divorciado", "Viudo", "Unión Libre"]),
-                        "telefono": self.generate_realistic_phone(),
-                        "email": self.generate_realistic_email() if random.choice([True, False, False]) else None,
-                        "provincia_id": provincia["id"],
-                        "canton_id": canton["id"],
-                        "distrito_id": distrito["id"],
-                        "direccion_exacta": f"{fake.street_address()}, {distrito['nombre']}, {canton['nombre']}, {provincia['nombre']}",
-                        "ocupacion": fake.job(),
-                        "sector_laboral": random.choice(["Público", "Privado", "Independiente", "Desempleado"]),
-                        "nivel_educacion": random.choice(["Primaria", "Secundaria", "Universidad", "Técnico", "Posgrado"]),
-                        "junta_electoral": f"Junta {random.randint(1, 100):03d}",
-                        "mesa_votacion": random.randint(1, 500),
-                        "fecha_vencimiento_cedula": fake.date_between(start_date='+1y', end_date='+10y'),
-                        "fuente_datos": "TSE_PADRON_COMPLETO",
-                        "fecha_extraccion": datetime.utcnow(),
-                        "validado_tse": True,
-                        "activo": True
-                    }
-                    batch_records.append(record)
+                batch_records = await self.process_tse_batch(batch)
+                extracted_records.extend(batch_records)
                 
-                # Insertar lote en la base de datos
+                # Insertar en MongoDB en tiempo real
                 if batch_records:
-                    await self.db.personas_fisicas_completo.insert_many(batch_records)
-                    total_records += len(batch_records)
-                    batch_count += 1
-                    
-                    logger.info(f"📈 Lote {batch_count}: {len(batch_records)} registros insertados. Total: {total_records}")
-                    
-                    # Pausa para no sobrecargar el sistema
-                    await asyncio.sleep(0.5)
+                    await self.db.tse_datos_reales.insert_many(batch_records)
+                    logger.info(f"💾 Insertados {len(batch_records)} registros en MongoDB")
+                
+                # Rate limiting y progreso
+                await asyncio.sleep(1)
+                logger.info(f"📈 Progreso: {len(extracted_records)} registros extraídos")
             
-            self.extraction_stats['tse_records'] = total_records
-            logger.info(f"✅ TSE extraction completed: {total_records} records extracted")
+            self.extraction_stats['tse_records'] = len(extracted_records)
+            logger.info(f"✅ TSE extracción completada: {len(extracted_records)} registros reales")
             
-            return total_records
+            return len(extracted_records)
             
         except Exception as e:
-            logger.error(f"❌ Error in TSE extraction: {e}")
+            logger.error(f"❌ Error en extracción TSE: {e}")
             self.extraction_stats['errors'] += 1
             return 0
+    
+    async def process_tse_batch(self, cedula_batch: List[str]) -> List[Dict]:
+        """Procesar un lote de cédulas en el TSE"""
+        batch_results = []
+        
+        # Crear tareas concurrentes para el lote
+        semaphore = asyncio.Semaphore(10)  # Limitar concurrencia
+        
+        tasks = []
+        for cedula in cedula_batch:
+            task = asyncio.create_task(self.consultar_tse_cedula(cedula, semaphore))
+            tasks.append(task)
+        
+        # Esperar resultados del lote
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        for i, result in enumerate(results):
+            if not isinstance(result, Exception) and result:
+                batch_results.append(result)
+                self.extraction_stats['processed_cedulas'] += 1
+                
+                # Extraer números telefónicos si están disponibles
+                phones = self.extract_phone_numbers(result.get('datos_completos', ''))
+                if phones:
+                    result['telefonos_encontrados'] = phones
+                    self.extraction_stats['phone_numbers_found'] += len(phones)
+        
+        return batch_results
+    
+    async def consultar_tse_cedula(self, cedula: str, semaphore: asyncio.Semaphore) -> Optional[Dict]:
+        """
+        Consultar datos de una cédula específica en el TSE
+        Implementa scraping real del sistema TSE
+        """
+        async with semaphore:
+            if cedula in self.processed_cedulas:
+                return None
+                
+            try:
+                # Consulta real al TSE
+                consulta_data = {
+                    'txtCedula': cedula.replace('-', ''),
+                    'btnConsultar': 'Consultar'
+                }
+                
+                async with self.session.post(self.tse_consulta_url, data=consulta_data) as response:
+                    if response.status == 200:
+                        html_content = await response.text()
+                        return await self.parse_tse_response(html_content, cedula)
+                    else:
+                        logger.warning(f"⚠️  TSE consulta falló para {cedula}: HTTP {response.status}")
+                        return None
+                        
+            except Exception as e:
+                logger.error(f"❌ Error consultando TSE {cedula}: {e}")
+                return None
+            finally:
+                self.processed_cedulas.add(cedula)
+    
+    async def parse_tse_response(self, html_content: str, cedula: str) -> Optional[Dict]:
+        """Parsear respuesta HTML del TSE y extraer datos estructurados"""
+        try:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            # Verificar si hay datos
+            if 'no se encuentra' in html_content.lower() or 'error' in html_content.lower():
+                return None
+            
+            # Extraer datos básicos del TSE
+            record = {
+                "id": str(uuid.uuid4()),
+                "cedula": cedula,
+                "fecha_extraccion": datetime.utcnow(),
+                "fuente": "TSE_CONSULTA_REAL",
+                "datos_completos": html_content,
+                "validado_tse": True
+            }
+            
+            # Buscar tablas de datos personales
+            tables = soup.find_all('table')
+            for table in tables:
+                rows = table.find_all('tr')
+                for row in rows:
+                    cells = row.find_all(['td', 'th'])
+                    if len(cells) >= 2:
+                        key = cells[0].get_text(strip=True).lower()
+                        value = cells[1].get_text(strip=True)
+                        
+                        # Mapear campos conocidos
+                        if 'nombre' in key:
+                            record['nombre_completo'] = value
+                        elif 'fecha' in key and 'nacimiento' in key:
+                            record['fecha_nacimiento'] = value
+                        elif 'provincia' in key:
+                            record['provincia'] = value
+                        elif 'canton' in key:
+                            record['canton'] = value
+                        elif 'distrito' in key:
+                            record['distrito'] = value
+                        elif 'telefono' in key or 'tel' in key:
+                            phones = self.extract_phone_numbers(value)
+                            if phones:
+                                record['telefonos_tse'] = phones
+                        elif 'estado' in key:
+                            record['estado_civil'] = value
+                        elif 'sexo' in key:
+                            record['sexo'] = value
+            
+            # Extraer números telefónicos del contenido completo
+            all_phones = self.extract_phone_numbers(html_content)
+            if all_phones:
+                record['todos_telefonos_encontrados'] = all_phones
+            
+            return record if len(record) > 6 else None  # Solo retornar si hay datos útiles
+            
+        except Exception as e:
+            logger.error(f"❌ Error parseando TSE response para {cedula}: {e}")
+            return None
+    
+    def extract_phone_numbers(self, text: str) -> List[str]:
+        """Extraer números telefónicos usando patrones costarricenses"""
+        phones = []
+        
+        for pattern in self.cr_phone_patterns:
+            matches = pattern.findall(text)
+            for match in matches:
+                if isinstance(match, tuple):
+                    match = match[0]
+                if match and len(match) >= 7:
+                    phone_clean = re.sub(r'[^\d]', '', match)
+                    if len(phone_clean) >= 7:
+                        phones.append(f"+506 {phone_clean}")
+        
+        return list(set(phones))  # Eliminar duplicados
+    
+    def generate_real_cedula_ranges(self, max_count: int) -> List[str]:
+        """
+        Generar rangos reales de cédulas costarricenses
+        Usa patrones basados en el sistema oficial del TSE
+        """
+        cedulas = []
+        
+        # Patrones por provincia (primer dígito)
+        provincias = {
+            1: "San José",
+            2: "Alajuela", 
+            3: "Cartago",
+            4: "Heredia",
+            5: "Guanacaste",
+            6: "Puntarenas",
+            7: "Limón",
+            8: "Naturalizados",
+            9: "Residentes"
+        }
+        
+        cedulas_por_provincia = max_count // len(provincias)
+        
+        for provincia_code, provincia_name in provincias.items():
+            logger.info(f"📍 Generando cédulas para {provincia_name} (código {provincia_code})")
+            
+            for i in range(cedulas_por_provincia):
+                # Generar número secuencial realista
+                sequential = random.randint(100000, 999999)
+                cedula = f"{provincia_code}{sequential:06d}"
+                
+                # Formatear con guiones para consulta
+                cedula_formatted = f"{cedula[0]}-{cedula[1:5]}-{cedula[5:8]}"
+                cedulas.append(cedula_formatted)
+        
+        # Agregar cédulas adicionales hasta completar
+        remaining = max_count - len(cedulas)
+        for i in range(remaining):
+            prov = random.choice(list(provincias.keys()))
+            seq = random.randint(100000, 999999)
+            cedula = f"{prov}{seq:06d}"
+            cedula_formatted = f"{cedula[0]}-{cedula[1:5]}-{cedula[5:8]}"
+            cedulas.append(cedula_formatted)
+        
+        logger.info(f"📋 Generadas {len(cedulas)} cédulas para procesamiento")
+        return cedulas
     
     async def extract_registro_nacional_societies(self, batch_size=5000):
         """

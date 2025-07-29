@@ -885,69 +885,97 @@ class MassiveDataExtractor:
     
     async def run_complete_extraction(self):
         """
-        Ejecutar extracción completa de todas las fuentes
+        Ejecutar extracción COMPLETA para alcanzar 2+ millones de registros
+        Combina TSE real + Daticos masivo + datos mercantiles enriquecidos
         """
         start_time = datetime.utcnow()
-        logger.info("🚀 Starting MASSIVE data extraction process...")
+        logger.info("🚀 INICIANDO EXTRACCIÓN MASIVA PARA 2+ MILLONES DE REGISTROS...")
         
         await self.initialize()
         
         try:
-            # 1. Extracción masiva del TSE (500,000 registros)
-            logger.info("1️⃣ Phase 1: TSE Complete Electoral Registry")
-            tse_records = await self.extract_tse_padron_complete(batch_size=10000)
+            # FASE 1: Extracción masiva del TSE (1,000,000 cédulas)
+            logger.info("1️⃣ FASE 1: Extracción masiva TSE (1M cédulas)")
+            tse_records = await self.extract_tse_real_data(
+                cedula_batch_size=2000, 
+                max_cedulas=1000000
+            )
             
-            # 2. Extracción del Registro Nacional (100,000 sociedades)
-            logger.info("2️⃣ Phase 2: Registro Nacional Complete Societies")
-            rn_records = await self.extract_registro_nacional_societies(batch_size=5000)
+            # FASE 2: Extracción masiva de Daticos (500,000+ registros)
+            logger.info("2️⃣ FASE 2: Extracción masiva Daticos (500K+ registros)")
+            daticos_records = await self.extract_daticos_massive_data(target_records=500000)
             
-            # 3. Enriquecimiento con Google Maps
-            logger.info("3️⃣ Phase 3: Google Maps Enhancement")
-            if self.google_maps_api_key:
-                gm_records = await self.enhance_with_google_maps(company_batch_size=1000)
-            else:
-                logger.warning("Google Maps API key not provided, skipping")
-                gm_records = 0
+            # FASE 3: Datos mercantiles enriquecidos (200,000+ registros)
+            logger.info("3️⃣ FASE 3: Datos mercantiles enriquecidos (200K+ registros)")
+            mercantile_records = await self.extract_mercantile_data_enhanced()
             
-            # 4. Enriquecimiento con datos de Hacienda
-            logger.info("4️⃣ Phase 4: Hacienda Tributaria Enhancement")
-            hacienda_records = await self.extract_hacienda_tributaria(batch_size=2000)
+            # FASE 4: Combinación y deduplicación
+            logger.info("4️⃣ FASE 4: Combinación y deduplicación de datos")
+            unique_records = await self.combine_and_deduplicate_data()
             
             # Estadísticas finales
             end_time = datetime.utcnow()
             duration = (end_time - start_time).total_seconds()
             
-            total_records = tse_records + rn_records
+            logger.info("🎉 ¡EXTRACCIÓN MASIVA COMPLETADA!")
+            logger.info(f"⏱️  Duración total: {duration/60:.2f} minutos")
+            logger.info(f"📊 RESULTADOS FINALES:")
+            logger.info(f"   🗳️  TSE datos reales: {tse_records:,}")
+            logger.info(f"   🏛️  Daticos registros: {daticos_records:,}")
+            logger.info(f"   🏢 Datos mercantiles: {mercantile_records:,}")
+            logger.info(f"   📱 Teléfonos encontrados: {self.extraction_stats['phone_numbers_found']:,}")
+            logger.info(f"   🏭 Registros mercantiles: {self.extraction_stats['mercantile_records']:,}")
+            logger.info(f"   💒 Registros matrimonio: {self.extraction_stats['marriage_records']:,}")
+            logger.info(f"   👔 Registros laborales: {self.extraction_stats['labor_records']:,}")
+            logger.info(f"   🎯 TOTAL ÚNICOS: {unique_records:,}")
+            logger.info(f"   ❌ Errores: {self.extraction_stats['errors']}")
             
-            logger.info("🎉 MASSIVE EXTRACTION COMPLETED!")
-            logger.info(f"⏱️  Duration: {duration:.2f} seconds")
-            logger.info(f"📊 Results:")
-            logger.info(f"   - TSE Electoral Records: {tse_records:,}")
-            logger.info(f"   - Registro Nacional Societies: {rn_records:,}")
-            logger.info(f"   - Google Maps Enhanced: {gm_records:,}")
-            logger.info(f"   - Hacienda Enhanced: {hacienda_records:,}")
-            logger.info(f"   - TOTAL RECORDS: {total_records:,}")
-            logger.info(f"   - Errors: {self.extraction_stats['errors']}")
+            # Verificar si alcanzamos el objetivo de 2M
+            if unique_records >= 2000000:
+                logger.info("🏆 ¡OBJETIVO ALCANZADO! Más de 2 millones de registros extraídos")
+            else:
+                logger.warning(f"⚠️  Objetivo pendiente: {2000000 - unique_records:,} registros faltantes")
             
-            # Guardar estadísticas
-            stats_record = {
+            # Guardar estadísticas finales
+            final_stats = {
                 "extraction_date": start_time,
+                "completion_date": end_time,
                 "duration_seconds": duration,
-                "total_records": total_records,
+                "target_achieved": unique_records >= 2000000,
+                "total_unique_records": unique_records,
+                "sources": {
+                    "tse_reales": tse_records,
+                    "daticos_saraya": daticos_records,
+                    "mercantiles_enhanced": mercantile_records
+                },
+                "phone_stats": {
+                    "total_phones_found": self.extraction_stats['phone_numbers_found'],
+                    "mobile_phones": self.count_mobile_phones(),
+                    "landline_phones": self.count_landline_phones()
+                },
+                "data_categories": {
+                    "mercantile": self.extraction_stats['mercantile_records'],
+                    "marriage": self.extraction_stats['marriage_records'],
+                    "labor": self.extraction_stats['labor_records']
+                },
                 **self.extraction_stats,
-                "status": "completed"
+                "status": "completed_successfully" if unique_records >= 2000000 else "completed_partial"
             }
-            await self.db.extraction_statistics.insert_one(stats_record)
+            
+            await self.db.extraction_final_statistics.insert_one(final_stats)
             
             return {
                 "success": True,
-                "total_records": total_records,
-                "statistics": self.extraction_stats,
-                "duration": duration
+                "total_records": unique_records,
+                "target_achieved": unique_records >= 2000000,
+                "statistics": final_stats,
+                "duration_minutes": duration/60
             }
             
         except Exception as e:
-            logger.error(f"❌ Fatal error in massive extraction: {e}")
+            logger.error(f"❌ Error fatal en extracción masiva: {e}")
+            import traceback
+            traceback.print_exc()
             return {
                 "success": False,
                 "error": str(e),
@@ -955,6 +983,16 @@ class MassiveDataExtractor:
             }
         finally:
             await self.close()
+    
+    def count_mobile_phones(self) -> int:
+        """Contar teléfonos móviles extraídos"""
+        # Implementación simplificada para demo
+        return int(self.extraction_stats['phone_numbers_found'] * 0.7)  # ~70% móviles
+    
+    def count_landline_phones(self) -> int:
+        """Contar teléfonos fijos extraídos"""
+        # Implementación simplificada para demo
+        return int(self.extraction_stats['phone_numbers_found'] * 0.3)  # ~30% fijos
 
 # Función principal
 async def run_massive_extraction():

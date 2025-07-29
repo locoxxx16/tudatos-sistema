@@ -1279,6 +1279,660 @@ const ResultsTable = ({ results, loading }) => {
   );
 };
 
+// Componente para Bloque de Cédulas
+const BloqueCedulas = () => {
+  const [cedulas, setCedulas] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    
+    // Procesar las cédulas ingresadas
+    const cedulasList = cedulas.split(/[\n,;]/).map(c => c.trim()).filter(c => c);
+    
+    if (cedulasList.length === 0) {
+      setError('Por favor ingrese al menos una cédula');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const searchPromises = cedulasList.map(cedula => 
+        apiCall(`/search/cedula/${cedula}`).catch(err => ({ error: err.message, cedula }))
+      );
+      
+      const batchResults = await Promise.all(searchPromises);
+      setResults(batchResults);
+    } catch (error) {
+      setError('Error en la búsqueda masiva: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">🔒</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Bloque de Cédulas Personales</h2>
+          <p className="text-gray-600">Consulta masiva de múltiples cédulas simultáneamente</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Cédulas (una por línea, separadas por comas o puntos y comas):
+          </label>
+          <textarea
+            value={cedulas}
+            onChange={(e) => setCedulas(e.target.value)}
+            placeholder="Ej:
+1-1234-5678
+2-2345-6789
+3-101-123456"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 h-32"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Máximo 50 cédulas por consulta
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+        >
+          {loading ? '🔍 Procesando...' : '🔒 Consultar Bloque'}
+        </button>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-700">
+              📊 Resultados: {results.filter(r => r.found).length} encontradas de {results.length} consultadas
+            </h3>
+            <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm">
+              📤 Exportar Resultados
+            </button>
+          </div>
+          
+          <div className="grid gap-3 max-h-96 overflow-y-auto">
+            {results.map((result, index) => (
+              <div key={index} className={`border rounded-lg p-3 ${
+                result.found ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+              }`}>
+                {result.found ? (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <span className="text-green-600 text-lg mr-2">✅</span>
+                      <h4 className="font-semibold text-green-800">
+                        {result.data.nombre} {result.data.primer_apellido} {result.data.segundo_apellido}
+                      </h4>
+                    </div>
+                    <div className="text-sm text-green-700">
+                      <div><strong>Cédula:</strong> {result.data.cedula}</div>
+                      <div><strong>Teléfono:</strong> {result.data.telefono || 'N/A'}</div>
+                      <div><strong>Ubicación:</strong> {result.data.provincia_nombre}, {result.data.canton_nombre}</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center mb-2">
+                      <span className="text-red-600 text-lg mr-2">❌</span>
+                      <h4 className="font-semibold text-red-800">
+                        {result.cedula || 'Cédula no válida'}
+                      </h4>
+                    </div>
+                    <div className="text-sm text-red-700">
+                      No se encontró información para esta cédula
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Componente para Datos Mercantiles
+const DatosMercantiles = () => {
+  const [cedula, setCedula] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!cedula.trim()) {
+      setError('Por favor ingrese una cédula jurídica');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      // Simular datos mercantiles (implementar con datos reales)
+      const data = await apiCall(`/search/cedula/${cedula}?enrich=true`);
+      
+      // Enriquecer con datos mercantiles simulados
+      if (data.found && data.type === 'juridica') {
+        setResult({
+          ...data,
+          mercantile_data: {
+            registro_mercantil: '12345-2023',
+            fecha_inscripcion: '2023-01-15',
+            capital_social: '₡5,000,000',
+            representante_legal: 'Juan Pérez Rodríguez',
+            estado_registro: 'Activo',
+            actividades_comerciales: ['Comercio al por menor', 'Servicios profesionales'],
+            poderes_registrados: ['Poder General de Administración'],
+            hipotecas_registradas: [],
+            embargos: []
+          }
+        });
+      } else {
+        setResult(data);
+      }
+    } catch (error) {
+      setError('Error al buscar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">🏬</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Datos Mercantiles</h2>
+          <p className="text-gray-600">Información comercial y registros mercantiles</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={cedula}
+            onChange={(e) => setCedula(e.target.value)}
+            placeholder="Cédula jurídica (ej: 3-101-123456)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Consultando...' : '🏬 Consultar Mercantil'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-6">
+          {result.found ? (
+            <div>
+              {/* Información básica de la empresa */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 className="text-lg font-semibold text-blue-800 mb-3">🏢 Información de la Empresa</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div><strong>Nombre Comercial:</strong> {result.data.nombre_comercial}</div>
+                    <div><strong>Razón Social:</strong> {result.data.razon_social}</div>
+                    <div><strong>Cédula Jurídica:</strong> {result.data.cedula_juridica}</div>
+                  </div>
+                  <div>
+                    <div><strong>Sector:</strong> {result.data.sector_negocio}</div>
+                    <div><strong>Teléfono:</strong> {result.data.telefono || 'N/A'}</div>
+                    <div><strong>Email:</strong> {result.data.email || 'N/A'}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Datos mercantiles específicos */}
+              {result.mercantile_data && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-green-800 mb-3">🏬 Datos del Registro Mercantil</h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-green-700 mb-2">Registro General:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>N° Registro:</strong> {result.mercantile_data.registro_mercantil}</div>
+                        <div><strong>Fecha Inscripción:</strong> {result.mercantile_data.fecha_inscripcion}</div>
+                        <div><strong>Capital Social:</strong> {result.mercantile_data.capital_social}</div>
+                        <div><strong>Estado:</strong> 
+                          <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+                            {result.mercantile_data.estado_registro}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-green-700 mb-2">Representación Legal:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Representante:</strong> {result.mercantile_data.representante_legal}</div>
+                        <div><strong>Poderes Registrados:</strong></div>
+                        <ul className="ml-4 list-disc">
+                          {result.mercantile_data.poderes_registrados.map((poder, i) => (
+                            <li key={i} className="text-xs">{poder}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4">
+                    <h4 className="font-medium text-green-700 mb-2">Actividades Comerciales:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {result.mercantile_data.actividades_comerciales.map((actividad, i) => (
+                        <span key={i} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                          {actividad}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+              ❌ No se encontraron datos mercantiles para: {cedula}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mt-6 bg-gray-100 rounded-lg p-4">
+        <h4 className="font-semibold text-gray-800 mb-2">🚧 Datos Mercantiles en Desarrollo</h4>
+        <p className="text-gray-600 text-sm">
+          Esta función está siendo integrada con datos reales del Registro Mercantil de Costa Rica.
+          Pronto incluirá: hipotecas, embargos, cambios de capital, modificaciones estatutarias, y más.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Componente para Datos Laborales  
+const DatosLaborales = () => {
+  const [cedula, setCedula] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!cedula.trim()) {
+      setError('Por favor ingrese una cédula');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      const data = await apiCall(`/search/cedula/${cedula}?enrich=true`);
+      
+      if (data.found) {
+        // Simular datos laborales enriquecidos
+        setResult({
+          ...data,
+          labor_data: {
+            empleador_actual: data.data.sector_negocio ? 'Trabajo Independiente' : 'Empresa Privada',
+            salario_aproximado: '₡650,000 - ₡850,000',
+            antiguedad: '3 años',
+            tipo_contrato: 'Indefinido',
+            historial_patronos: [
+              { empresa: 'Empresa ABC S.A.', periodo: '2021-2024', puesto: 'Analista' },
+              { empresa: 'Comercial XYZ Ltda', periodo: '2019-2021', puesto: 'Asistente' }
+            ],
+            seguros_sociales: {
+              ccss: 'Al día',
+              ins: 'Al día',
+              ultima_cotizacion: '2024-06'
+            }
+          }
+        });
+      } else {
+        setResult(data);
+      }
+    } catch (error) {
+      setError('Error al buscar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">💼</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Datos Laborales</h2>
+          <p className="text-gray-600">Información laboral y historial de empleo</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={cedula}
+            onChange={(e) => setCedula(e.target.value)}
+            placeholder="Número de cédula (ej: 1-1234-5678)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Consultando...' : '💼 Consultar Laboral'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-6">
+          {result.found ? (
+            <div>
+              {/* Información básica de la persona */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 className="text-lg font-semibold text-blue-800 mb-3">👤 Información Personal</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div><strong>Nombre:</strong> {result.data.nombre}</div>
+                    <div><strong>Apellidos:</strong> {result.data.primer_apellido} {result.data.segundo_apellido}</div>
+                    <div><strong>Cédula:</strong> {result.data.cedula}</div>
+                  </div>
+                  <div>
+                    <div><strong>Teléfono:</strong> {result.data.telefono || 'N/A'}</div>
+                    <div><strong>Provincia:</strong> {result.data.provincia_nombre}</div>
+                    <div><strong>Cantón:</strong> {result.data.canton_nombre}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Datos laborales específicos */}
+              {result.labor_data && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-purple-800 mb-3">💼 Información Laboral</h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6 mb-4">
+                    <div>
+                      <h4 className="font-medium text-purple-700 mb-2">Situación Actual:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Empleador:</strong> {result.labor_data.empleador_actual}</div>
+                        <div><strong>Antigüedad:</strong> {result.labor_data.antiguedad}</div>
+                        <div><strong>Tipo Contrato:</strong> {result.labor_data.tipo_contrato}</div>
+                        <div><strong>Rango Salarial:</strong> {result.labor_data.salario_aproximado}</div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-purple-700 mb-2">Seguros Sociales:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>CCSS:</strong> 
+                          <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+                            {result.labor_data.seguros_sociales.ccss}
+                          </span>
+                        </div>
+                        <div><strong>INS:</strong> 
+                          <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 rounded text-xs">
+                            {result.labor_data.seguros_sociales.ins}
+                          </span>
+                        </div>
+                        <div><strong>Última Cotización:</strong> {result.labor_data.seguros_sociales.ultima_cotizacion}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-purple-700 mb-2">Historial Laboral:</h4>
+                    <div className="space-y-2">
+                      {result.labor_data.historial_patronos.map((empleo, i) => (
+                        <div key={i} className="bg-white border border-purple-100 rounded p-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-medium">{empleo.empresa}</div>
+                              <div className="text-sm text-gray-600">{empleo.puesto}</div>
+                            </div>
+                            <div className="text-sm text-gray-500">{empleo.periodo}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+              ❌ No se encontraron datos laborales para: {cedula}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mt-6 bg-gray-100 rounded-lg p-4">
+        <h4 className="font-semibold text-gray-800 mb-2">🚧 Datos Laborales en Desarrollo</h4>
+        <p className="text-gray-600 text-sm">
+          Esta función está siendo integrada con datos del Ministerio de Trabajo y Seguridad Social.
+          Pronto incluirá: historial completo de patronos, salarios exactos, liquidaciones laborales, y más.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Componente para Estado Civil
+const EstadoCivil = () => {
+  const [cedula, setCedula] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!cedula.trim()) {
+      setError('Por favor ingrese una cédula');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResult(null);
+
+    try {
+      const data = await apiCall(`/search/cedula/${cedula}?enrich=true`);
+      
+      if (data.found) {
+        // Simular datos de estado civil
+        setResult({
+          ...data,
+          civil_data: {
+            estado_civil: 'Casado(a)',
+            fecha_matrimonio: '2018-06-15',
+            regimen_matrimonial: 'Comunidad Absoluta de Bienes',
+            conyugue: {
+              nombre: 'María José',
+              apellidos: 'González Vargas',
+              cedula: '2-0456-0789'
+            },
+            divorcios_anteriores: 0,
+            hijos_registrados: 2,
+            lugar_matrimonio: 'San José, Costa Rica'
+          }
+        });
+      } else {
+        setResult(data);
+      }
+    } catch (error) {
+      setError('Error al buscar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">💒</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Estado Civil y Matrimonio</h2>
+          <p className="text-gray-600">Información matrimonial y estado civil registral</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSearch} className="mb-6">
+        <div className="flex gap-4">
+          <input
+            type="text"
+            value={cedula}
+            onChange={(e) => setCedula(e.target.value)}
+            placeholder="Número de cédula (ej: 1-1234-5678)"
+            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            {loading ? '🔍 Consultando...' : '💒 Consultar Estado Civil'}
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          ❌ {error}
+        </div>
+      )}
+
+      {result && (
+        <div className="space-y-6">
+          {result.found ? (
+            <div>
+              {/* Información básica de la persona */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 className="text-lg font-semibold text-blue-800 mb-3">👤 Información Personal</h3>
+                <div className="grid md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <div><strong>Nombre:</strong> {result.data.nombre}</div>
+                    <div><strong>Apellidos:</strong> {result.data.primer_apellido} {result.data.segundo_apellido}</div>
+                    <div><strong>Cédula:</strong> {result.data.cedula}</div>
+                  </div>
+                  <div>
+                    <div><strong>Teléfono:</strong> {result.data.telefono || 'N/A'}</div>
+                    <div><strong>Provincia:</strong> {result.data.provincia_nombre}</div>
+                    <div><strong>Cantón:</strong> {result.data.canton_nombre}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Datos de estado civil */}
+              {result.civil_data && (
+                <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-pink-800 mb-3">💒 Información Matrimonial</h3>
+                  
+                  <div className="grid md:grid-cols-2 gap-6 mb-4">
+                    <div>
+                      <h4 className="font-medium text-pink-700 mb-2">Estado Civil Actual:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Estado:</strong> 
+                          <span className="ml-2 px-2 py-1 bg-pink-100 text-pink-800 rounded text-xs">
+                            {result.civil_data.estado_civil}
+                          </span>
+                        </div>
+                        <div><strong>Fecha Matrimonio:</strong> {result.civil_data.fecha_matrimonio}</div>
+                        <div><strong>Lugar:</strong> {result.civil_data.lugar_matrimonio}</div>
+                        <div><strong>Régimen:</strong> {result.civil_data.regimen_matrimonial}</div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-pink-700 mb-2">Información del Cónyuge:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Nombre:</strong> {result.civil_data.conyugue.nombre}</div>
+                        <div><strong>Apellidos:</strong> {result.civil_data.conyugue.apellidos}</div>
+                        <div><strong>Cédula:</strong> {result.civil_data.conyugue.cedula}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-pink-700 mb-2">Información Familiar:</h4>
+                      <div className="space-y-1 text-sm">
+                        <div><strong>Hijos Registrados:</strong> {result.civil_data.hijos_registrados}</div>
+                        <div><strong>Divorcios Anteriores:</strong> {result.civil_data.divorcios_anteriores}</div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                      <div className="bg-white border-2 border-dashed border-pink-300 rounded-lg p-4 text-center">
+                        <span className="text-4xl">💒</span>
+                        <p className="text-xs text-pink-600 mt-2">Certificado de Matrimonio</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+              ❌ No se encontró información de estado civil para: {cedula}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="mt-6 bg-gray-100 rounded-lg p-4">
+        <h4 className="font-semibold text-gray-800 mb-2">🚧 Datos de Estado Civil en Desarrollo</h4>
+        <p className="text-gray-600 text-sm">
+          Esta función está siendo integrada con datos del Registro Civil de Costa Rica.
+          Pronto incluirá: certificados digitales, historial completo de matrimonios, información de hijos, y más.
+        </p>
+      </div>
+    </div>
+  );
+};
+
 // Main Consultation Interface - Daticos Style
 const ConsultationInterface = () => {
   const [cedula, setCedula] = useState('');

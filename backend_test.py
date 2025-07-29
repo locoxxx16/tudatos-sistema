@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for Daticos System
-Tests all API endpoints with real data scenarios
+Comprehensive Backend Testing for Massive Costa Rican Data Extraction System
+Tests MongoDB collections, API endpoints, and data quality for 2M+ records system
 """
 
 import requests
@@ -9,6 +9,10 @@ import json
 import sys
 from datetime import datetime
 import time
+import re
+import pymongo
+import os
+from typing import Dict, List, Any
 
 # Configuration
 BACKEND_URL = "https://fa24ba8a-848e-48cd-bba5-592950660fa8.preview.emergentagent.com/api"
@@ -16,6 +20,10 @@ TEST_CREDENTIALS = {
     "login": "admin",
     "password": "admin123"
 }
+
+# MongoDB connection for direct database testing
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+DB_NAME = os.environ.get('DB_NAME', 'test_database')
 
 class DaticosAPITester:
     def __init__(self):

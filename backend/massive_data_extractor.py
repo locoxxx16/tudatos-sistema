@@ -35,7 +35,8 @@ fake = Faker('es_ES')
 
 class MassiveDataExtractor:
     """
-    Extractor masivo de datos de múltiples fuentes oficiales y comerciales de Costa Rica
+    Extractor masivo de datos REALES de múltiples fuentes oficiales de Costa Rica
+    Versión 2.0 con integración TSE real y Daticos masivo
     """
     
     def __init__(self):
@@ -45,16 +46,39 @@ class MassiveDataExtractor:
         self.db = None
         self.session = None
         
-        # API Keys (should be set via environment variables)
+        # URLs oficiales
+        self.tse_url = "https://www.tse.go.cr/consulta-cedula/"
+        self.tse_consulta_url = "https://consultas.tse.go.cr/consulta_cedula/consulta.aspx"
+        
+        # Integración con Daticos
+        self.daticos_extractor = None
+        
+        # API Keys
         self.google_maps_api_key = os.environ.get('GOOGLE_MAPS_API_KEY')
+        
+        # Estadísticas de extracción
         self.extraction_stats = {
             'tse_records': 0,
-            'registro_nacional_records': 0,
-            'google_maps_records': 0,
-            'hacienda_records': 0,
-            'total_enhanced_records': 0,
-            'errors': 0
+            'daticos_records': 0,
+            'phone_numbers_found': 0,
+            'mercantile_records': 0,
+            'marriage_records': 0,
+            'labor_records': 0,
+            'total_unique_records': 0,
+            'errors': 0,
+            'processed_cedulas': 0
         }
+        
+        # Cache de cédulas procesadas
+        self.processed_cedulas = set()
+        
+        # Patrones de números telefónicos costarricenses
+        self.cr_phone_patterns = [
+            re.compile(r'\+506[\s-]?([678]\d{7})'),  # Móviles
+            re.compile(r'\+506[\s-]?(2\d{3}[\s-]?\d{4})'),  # Fijos
+            re.compile(r'(\d{4}[\s-]?\d{4})'),  # Formato local
+            re.compile(r'([678]\d{3}[\s-]?\d{4})')  # Móviles sin código país
+        ]
     
     async def initialize(self):
         """Initialize database and session"""

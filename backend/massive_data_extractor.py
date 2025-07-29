@@ -724,7 +724,7 @@ class MassiveDataExtractor:
             
             # Ejecutar pipeline y crear colección unificada
             unified_records = []
-            async for record in self.db.tse_datos_reales.aggregate(pipeline):
+            async for record in self.db.tse_datos_hibridos.aggregate(pipeline):
                 unified_records.append(record)
                 
                 # Insertar en lotes

@@ -227,11 +227,7 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus:
-    - "Sistema ULTRA DEEP EXTRACTION (3M+ Registros COMPLETOS)"
-    - "Scripts de Ejecución Inmediata Ultra Deep"
-    - "APIs Backend Ultra Deep (Nuevos Endpoints)"
-    - "Sistema Autónomo Diario (5am) - ACTUALIZADO ULTRA"
+  current_focus: []
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"

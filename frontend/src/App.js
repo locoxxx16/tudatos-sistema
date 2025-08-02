@@ -1195,7 +1195,346 @@ const ConsultaMasivaTipo = ({ tipo, titulo, descripcion, icono, color }) => {
 };
 
 // Results Display Component
+// Componente para mostrar TODA la información de una persona
+const PersonDetailModal = ({ person, isOpen, onClose }) => {
+  if (!isOpen || !person) return null;
+
+  const isJuridica = person.type === 'juridica' || person.data.cedula_juridica;
+  
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className={`px-6 py-4 border-b ${isJuridica ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {isJuridica 
+                  ? (person.data.nombre_comercial || person.data.razon_social)
+                  : `${person.data.nombre || ''} ${person.data.primer_apellido || ''} ${person.data.segundo_apellido || ''}`
+                }
+              </h2>
+              <div className="flex items-center mt-2">
+                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
+                  isJuridica ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {isJuridica ? '🏢 Persona Jurídica' : '👤 Persona Física'}
+                </span>
+                <span className="ml-3 text-sm text-gray-600">
+                  Cédula: {person.data.cedula || person.data.cedula_juridica}
+                </span>
+              </div>
+            </div>
+            <button 
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Información Básica */}
+            <div className="bg-gray-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                📋 Información Básica
+              </h3>
+              <div className="space-y-2">
+                <div className="flex">
+                  <span className="font-medium text-gray-600 w-32">Cédula:</span>
+                  <span className="text-gray-900 font-mono">{person.data.cedula || person.data.cedula_juridica}</span>
+                </div>
+                {!isJuridica && (
+                  <>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Nombre:</span>
+                      <span className="text-gray-900">{person.data.nombre}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Apellidos:</span>
+                      <span className="text-gray-900">{person.data.primer_apellido} {person.data.segundo_apellido}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Ocupación:</span>
+                      <span className="text-gray-900">{person.data.ocupacion || 'No especificada'}</span>
+                    </div>
+                  </>
+                )}
+                {isJuridica && (
+                  <>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Nombre Comercial:</span>
+                      <span className="text-gray-900">{person.data.nombre_comercial}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Razón Social:</span>
+                      <span className="text-gray-900">{person.data.razon_social}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Sector:</span>
+                      <span className="text-gray-900">{person.data.sector_negocio}</span>
+                    </div>
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Empleados:</span>
+                      <span className="text-gray-900">{person.data.numero_empleados || 'No especificado'}</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Información de Contacto */}
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                📞 Información de Contacto
+              </h3>
+              <div className="space-y-2">
+                <div className="flex">
+                  <span className="font-medium text-gray-600 w-32">Teléfono:</span>
+                  <span className="text-gray-900 font-mono">{person.data.telefono || 'No disponible'}</span>
+                </div>
+                {person.data.telefono_adicionales && person.data.telefono_adicionales.length > 0 && (
+                  <div>
+                    <span className="font-medium text-gray-600">Teléfonos adicionales:</span>
+                    <div className="ml-4 mt-1">
+                      {person.data.telefono_adicionales.map((tel, idx) => (
+                        <div key={idx} className="text-gray-900 font-mono">{tel}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex">
+                  <span className="font-medium text-gray-600 w-32">Email:</span>
+                  <span className="text-gray-900">{person.data.email || 'No disponible'}</span>
+                </div>
+                {person.data.emails_adicionales && person.data.emails_adicionales.length > 0 && (
+                  <div>
+                    <span className="font-medium text-gray-600">Emails adicionales:</span>
+                    <div className="ml-4 mt-1">
+                      {person.data.emails_adicionales.map((email, idx) => (
+                        <div key={idx} className="text-gray-900">{email}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Ubicación */}
+            <div className="bg-green-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                📍 Ubicación
+              </h3>
+              <div className="space-y-2">
+                <div className="flex">
+                  <span className="font-medium text-gray-600 w-32">Provincia:</span>
+                  <span className="text-gray-900">{person.data.provincia_nombre || 'No disponible'}</span>
+                </div>
+                <div className="flex">
+                  <span className="font-medium text-gray-600 w-32">Cantón:</span>
+                  <span className="text-gray-900">{person.data.canton_nombre || 'No disponible'}</span>
+                </div>
+                <div className="flex">
+                  <span className="font-medium text-gray-600 w-32">Distrito:</span>
+                  <span className="text-gray-900">{person.data.distrito_nombre || 'No disponible'}</span>
+                </div>
+                {person.data.direcciones && person.data.direcciones.length > 0 && (
+                  <div>
+                    <span className="font-medium text-gray-600">Direcciones adicionales:</span>
+                    <div className="ml-4 mt-1">
+                      {person.data.direcciones.map((dir, idx) => (
+                        <div key={idx} className="text-gray-900">{dir}</div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Información Financiera */}
+            {person.data.informacion_salarial && (
+              <div className="bg-yellow-50 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  💰 Información Financiera
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-32">Salario Máximo:</span>
+                    <span className="text-gray-900 font-semibold">₡{person.data.informacion_salarial.salario_maximo?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-32">Salario Mínimo:</span>
+                    <span className="text-gray-900">₡{person.data.informacion_salarial.salario_minimo?.toLocaleString()}</span>
+                  </div>
+                  <div className="flex">
+                    <span className="font-medium text-gray-600 w-32">Rango Salarial:</span>
+                    <span className="text-gray-900">{person.data.informacion_salarial.rango_salarial}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Información Laboral */}
+            {person.data.datos_laborales && (
+              <div className="bg-purple-50 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  💼 Información Laboral
+                </h3>
+                <div className="space-y-2">
+                  {person.data.datos_laborales.empresa && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Empresa:</span>
+                      <span className="text-gray-900">{person.data.datos_laborales.empresa.join(', ')}</span>
+                    </div>
+                  )}
+                  {person.data.datos_laborales.puesto && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Puesto:</span>
+                      <span className="text-gray-900">{person.data.datos_laborales.puesto.join(', ')}</span>
+                    </div>
+                  )}
+                  {person.data.datos_laborales.sector && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Sector:</span>
+                      <span className="text-gray-900">{person.data.datos_laborales.sector.join(', ')}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Información Matrimonial */}
+            {person.data.datos_matrimonio && (
+              <div className="bg-pink-50 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  💕 Información Matrimonial
+                </h3>
+                <div className="space-y-2">
+                  {person.data.datos_matrimonio.estado_civil && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Estado Civil:</span>
+                      <span className="text-gray-900">{person.data.datos_matrimonio.estado_civil}</span>
+                    </div>
+                  )}
+                  {person.data.datos_matrimonio.conyugue && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Cónyuge:</span>
+                      <span className="text-gray-900">{person.data.datos_matrimonio.conyugue}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Información Mercantil */}
+            {person.data.datos_mercantiles && (
+              <div className="bg-indigo-50 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  🏪 Información Mercantil
+                </h3>
+                <div className="space-y-2">
+                  {person.data.datos_mercantiles.actividad && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Actividad:</span>
+                      <span className="text-gray-900">{person.data.datos_mercantiles.actividad}</span>
+                    </div>
+                  )}
+                  {person.data.datos_mercantiles.tipo_empresa && (
+                    <div className="flex">
+                      <span className="font-medium text-gray-600 w-32">Tipo Empresa:</span>
+                      <span className="text-green-600 font-semibold">✓ Empresa registrada</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Empresas Asociadas */}
+            {person.data.empresas_asociadas && person.data.empresas_asociadas.length > 0 && (
+              <div className="bg-gray-100 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  🏢 Empresas Asociadas
+                </h3>
+                <div className="space-y-1">
+                  {person.data.empresas_asociadas.map((empresa, idx) => (
+                    <div key={idx} className="text-gray-900 bg-white px-2 py-1 rounded">{empresa}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Actividades Comerciales */}
+            {person.data.actividades_comerciales && person.data.actividades_comerciales.length > 0 && (
+              <div className="bg-orange-50 rounded-lg p-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                  🛒 Actividades Comerciales
+                </h3>
+                <div className="space-y-1">
+                  {person.data.actividades_comerciales.map((actividad, idx) => (
+                    <div key={idx} className="text-gray-900 bg-white px-2 py-1 rounded">{actividad}</div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Información de Fuente */}
+          <div className="mt-6 pt-4 border-t border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+              <div>
+                <span className="font-medium">Fuente de datos:</span>
+                <div className="mt-1">
+                  {person.data.fuente_ultra_deep && <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs mr-1">Ultra Deep</span>}
+                  {person.data.fuente_mega_aggressive && <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs mr-1">Mega Aggressive</span>}
+                  {person.data.fuente_extraccion_ultra && <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs mr-1">Ultra Massive</span>}
+                  {person.data.fuente_extraccion === 'DATICOS_CABEZAS_MASIVA' && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs mr-1">Daticos CABEZAS</span>}
+                </div>
+              </div>
+              <div>
+                <span className="font-medium">Fecha extracción:</span>
+                <div className="mt-1">
+                  {person.data.fecha_mega_extraction && new Date(person.data.fecha_mega_extraction).toLocaleString()}
+                  {person.data.fecha_ultra_extraccion && new Date(person.data.fecha_ultra_extraccion).toLocaleString()}
+                  {person.data.created_at && new Date(person.data.created_at).toLocaleString()}
+                </div>
+              </div>
+              <div>
+                <span className="font-medium">Credencial usada:</span>
+                <div className="mt-1">
+                  {person.data.credencial_extraccion || person.data.credential_used || 'N/A'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Botón de cerrar */}
+        <div className="px-6 py-4 border-t bg-gray-50 flex justify-end">
+          <button 
+            onClick={onClose}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ResultsTable = ({ results, loading }) => {
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handlePersonClick = (person) => {
+    setSelectedPerson(person);
+    setModalOpen(true);
+  };
+
   if (loading) {
     return (
       <div className="text-center py-8">
@@ -1214,68 +1553,94 @@ const ResultsTable = ({ results, loading }) => {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-white border border-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cédula</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ubicación</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalles</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-          {results.map((result, index) => (
-            <tr key={index} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  result.type === 'fisica' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-                }`}>
-                  {result.type === 'fisica' ? 'Física' : 'Jurídica'}
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {result.data.cedula || result.data.cedula_juridica}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <div className="text-sm text-gray-900">
-                  {result.type === 'fisica' 
-                    ? `${result.data.nombre} ${result.data.primer_apellido} ${result.data.segundo_apellido || ''}`
-                    : result.data.nombre_comercial
-                  }
-                </div>
-                {result.type === 'juridica' && (
-                  <div className="text-sm text-gray-500">{result.data.razon_social}</div>
-                )}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {result.data.telefono || 'N/A'}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <div>{result.data.provincia_nombre}</div>
-                <div>{result.data.canton_nombre}</div>
-                <div>{result.data.distrito_nombre}</div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm">
-                {result.type === 'fisica' ? (
-                  <div>
-                    <div>Ocupación: {result.data.ocupacion || 'N/A'}</div>
-                    <div>Email: {result.data.email || 'N/A'}</div>
-                  </div>
-                ) : (
-                  <div>
-                    <div>Sector: {result.data.sector_negocio}</div>
-                    <div>Empleados: {result.data.numero_empleados || 'N/A'}</div>
-                  </div>
-                )}
-              </td>
+    <>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cédula</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ubicación</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {results.map((result, index) => (
+              <tr key={index} className="hover:bg-gray-50 cursor-pointer" onClick={() => handlePersonClick(result)}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    result.type === 'fisica' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                  }`}>
+                    {result.type === 'fisica' ? '👤 Física' : '🏢 Jurídica'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-mono">
+                  {result.data.cedula || result.data.cedula_juridica}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900 font-medium">
+                    {result.type === 'fisica' 
+                      ? `${result.data.nombre || ''} ${result.data.primer_apellido || ''} ${result.data.segundo_apellido || ''}`
+                      : result.data.nombre_comercial || result.data.razon_social
+                    }
+                  </div>
+                  {result.type === 'juridica' && result.data.razon_social && (
+                    <div className="text-sm text-gray-500">{result.data.razon_social}</div>
+                  )}
+                  {/* Indicadores de información adicional */}
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {result.data.informacion_salarial && <span className="bg-yellow-100 text-yellow-800 text-xs px-1 rounded">💰</span>}
+                    {result.data.datos_laborales && <span className="bg-purple-100 text-purple-800 text-xs px-1 rounded">💼</span>}
+                    {result.data.datos_matrimonio && <span className="bg-pink-100 text-pink-800 text-xs px-1 rounded">💕</span>}
+                    {result.data.datos_mercantiles && <span className="bg-indigo-100 text-indigo-800 text-xs px-1 rounded">🏪</span>}
+                    {result.data.telefono_adicionales && result.data.telefono_adicionales.length > 0 && <span className="bg-blue-100 text-blue-800 text-xs px-1 rounded">📞+</span>}
+                    {result.data.emails_adicionales && result.data.emails_adicionales.length > 0 && <span className="bg-green-100 text-green-800 text-xs px-1 rounded">📧+</span>}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                  {result.data.telefono || 'N/A'}
+                  {result.data.telefono_adicionales && result.data.telefono_adicionales.length > 0 && (
+                    <div className="text-xs text-gray-400">+{result.data.telefono_adicionales.length} más</div>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <div>{result.data.provincia_nombre || 'N/A'}</div>
+                  <div className="text-xs">{result.data.canton_nombre || ''}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePersonClick(result);
+                    }}
+                    className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700 transition-colors"
+                  >
+                    Ver Todo 🔍
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        {/* Resumen de resultados */}
+        <div className="bg-gray-100 px-6 py-3 text-sm text-gray-600">
+          📊 <strong>{results.length}</strong> resultados encontrados. Haz clic en cualquier fila para ver TODA la información disponible.
+        </div>
+      </div>
+
+      {/* Modal para mostrar información completa */}
+      <PersonDetailModal 
+        person={selectedPerson}
+        isOpen={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedPerson(null);
+        }}
+      />
+    </>
   );
 };
 

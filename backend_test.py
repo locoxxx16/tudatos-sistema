@@ -15,7 +15,7 @@ import os
 from typing import Dict, List, Any
 
 # Configuration
-BACKEND_URL = "https://7e97440c-87c2-42e9-83b2-831eb1f68836.preview.emergentagent.com/api"
+BACKEND_URL = "https://9002bbf2-1098-4c65-8a02-cf9453a6c0ce.preview.emergentagent.com/api"
 TEST_CREDENTIALS = {
     "login": "admin",
     "password": "admin123"

@@ -1001,9 +1001,6 @@ async def system_health_check():
             "error": str(e)
         }
 
-# Include the router in the main app
-app.include_router(api_router)
-
 # Admin Panel Endpoints
 @api_router.get("/admin/dashboard/stats", response_model=AdminPanelModels.SystemStats)
 async def get_admin_dashboard_stats(current_user=Depends(get_current_user)):

@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 
 # Cargar variables de entorno
 load_dotenv()
-fake = Faker('es_CR')  # Costa Rica específico
+fake = Faker('es_ES')  # Usar español disponible
 
 class UltraMassiveExtractor:
     """

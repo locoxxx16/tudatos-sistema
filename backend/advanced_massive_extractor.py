@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 # Cargar variables de entorno
 load_dotenv()
-fake = Faker('es_CR')  # Costa Rica locale
+fake = Faker('es_ES')  # Spanish locale (Costa Rica compatible)
 
 class AdvancedMassiveExtractor:
     """

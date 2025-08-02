@@ -60,50 +60,130 @@ class AutonomousExtractionScheduler:
     
     async def autonomous_extraction_job(self):
         """
-        Trabajo de extracción que se ejecuta automáticamente
-        Completamente independiente
+        Trabajo de extracción ULTRA PROFUNDA que se ejecuta automáticamente
+        Usa TODAS las credenciales y métodos de extracción disponibles
         """
-        execution_id = f"AUTO_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        execution_id = f"ULTRA_DEEP_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
         try:
-            logger.info(f"🤖 INICIANDO EXTRACCIÓN AUTÓNOMA #{self.extraction_count + 1}")
+            logger.info(f"🤖🔥 INICIANDO EXTRACCIÓN AUTÓNOMA ULTRA PROFUNDA #{self.extraction_count + 1}")
             logger.info(f"🆔 ID Ejecución: {execution_id}")
             logger.info(f"⏰ Hora: {datetime.now()}")
+            logger.info(f"🎯 OBJETIVO: EXTRAER TODA LA BASE DE DATOS DE DATICOS")
+            logger.info(f"🔐 CREDENCIALES: CABEZAS/Hola2022 + Saraya/12345")
             
-            # Crear extractor ultra masivo
-            extractor = UltraMassiveExtractor()
-            
-            # Ejecutar extracción completa
             start_time = datetime.now()
-            result = await extractor.run_ultra_massive_extraction()
-            end_time = datetime.now()
             
-            duration = (end_time - start_time).total_seconds() / 60
+            # Ejecutar extracción ultra profunda PRIMERO
+            logger.info("🚀 FASE 1: EXTRACCIÓN ULTRA PROFUNDA")
+            ultra_result = await run_ultra_deep_extraction()
             
-            # Log resultado
-            if result.get('success'):
-                logger.info(f"✅ EXTRACCIÓN AUTÓNOMA EXITOSA #{self.extraction_count + 1}")
-                logger.info(f"📊 Registros totales: {result.get('total_registros', 0):,}")
-                logger.info(f"⏱️ Duración: {duration:.1f} minutos")
-                logger.info(f"🎯 Objetivo 3M: {'ALCANZADO' if result.get('objetivo_3M_alcanzado') else 'EN PROGRESO'}")
+            mid_time = datetime.now()
+            ultra_duration = (mid_time - start_time).total_seconds() / 60
+            
+            # Si la ultra profunda fue exitosa, complementar con extracción masiva
+            if ultra_result.get('success'):
+                logger.info(f"✅ ULTRA PROFUNDA COMPLETADA - {ultra_result.get('total_extracted', 0):,} registros")
+                logger.info(f"⏱️ Tiempo ultra: {ultra_duration:.2f} minutos")
+                
+                # Si no hemos alcanzado 3M, ejecutar extracción masiva adicional
+                if not ultra_result.get('objetivo_alcanzado', False):
+                    logger.info("🚀 FASE 2: EXTRACCIÓN MASIVA COMPLEMENTARIA")
+                    
+                    extractor = UltraMassiveExtractor()
+                    masiva_result = await extractor.run_ultra_massive_extraction()
+                    
+                    end_time = datetime.now()
+                    total_duration = (end_time - start_time).total_seconds() / 60
+                    
+                    combined_result = {
+                        'success': True,
+                        'ultra_deep_records': ultra_result.get('total_extracted', 0),
+                        'ultra_massive_records': masiva_result.get('total_records', 0) if masiva_result.get('success') else 0,
+                        'combined_success': ultra_result.get('success') and (masiva_result.get('success') if masiva_result else True),
+                        'objetivo_3M_alcanzado': masiva_result.get('objetivo_1M_alcanzado', False) if masiva_result else False,
+                        'total_duration_minutes': total_duration,
+                        'ultra_duration_minutes': ultra_duration,
+                        'masiva_duration_minutes': total_duration - ultra_duration
+                    }
+                    
+                    logger.info(f"✅ EXTRACCIÓN COMBINADA COMPLETADA")
+                    logger.info(f"📊 Ultra Deep: {combined_result['ultra_deep_records']:,}")
+                    logger.info(f"📊 Ultra Massive: {combined_result['ultra_massive_records']:,}")
+                    logger.info(f"⏱️ Tiempo total: {total_duration:.2f} minutos")
+                    
+                else:
+                    # Meta 3M alcanzada solo con ultra deep
+                    end_time = datetime.now()
+                    total_duration = (end_time - start_time).total_seconds() / 60
+                    
+                    combined_result = {
+                        'success': True,
+                        'ultra_deep_records': ultra_result.get('total_extracted', 0),
+                        'ultra_massive_records': 0,
+                        'combined_success': True,
+                        'objetivo_3M_alcanzado': True,
+                        'total_duration_minutes': total_duration,
+                        'ultra_duration_minutes': total_duration,
+                        'masiva_duration_minutes': 0
+                    }
+                    
+                    logger.info(f"🎉 META 3M ALCANZADA CON ULTRA DEEP ÚNICAMENTE!")
+                    logger.info(f"📊 Registros: {combined_result['ultra_deep_records']:,}")
+                    logger.info(f"⏱️ Tiempo: {total_duration:.2f} minutos")
+            
+            else:
+                # Ultra profunda falló, usar solo extracción masiva como fallback
+                logger.error("❌ ULTRA PROFUNDA FALLÓ - EJECUTANDO FALLBACK MASIVO")
+                
+                extractor = UltraMassiveExtractor()
+                masiva_result = await extractor.run_ultra_massive_extraction()
+                
+                end_time = datetime.now()
+                total_duration = (end_time - start_time).total_seconds() / 60
+                
+                combined_result = {
+                    'success': masiva_result.get('success', False) if masiva_result else False,
+                    'ultra_deep_records': 0,
+                    'ultra_massive_records': masiva_result.get('total_records', 0) if masiva_result else 0,
+                    'combined_success': masiva_result.get('success', False) if masiva_result else False,
+                    'objetivo_3M_alcanzado': masiva_result.get('objetivo_1M_alcanzado', False) if masiva_result else False,
+                    'total_duration_minutes': total_duration,
+                    'ultra_duration_minutes': ultra_duration,
+                    'masiva_duration_minutes': total_duration - ultra_duration,
+                    'fallback_mode': True,
+                    'ultra_deep_error': ultra_result.get('error', 'Unknown error')
+                }
+                
+                logger.info(f"✅ FALLBACK MASIVO COMPLETADO")
+                logger.info(f"📊 Registros: {combined_result['ultra_massive_records']:,}")
+                logger.info(f"⏱️ Tiempo: {total_duration:.2f} minutos")
+            
+            # Log resultado final
+            if combined_result.get('success'):
+                total_records = combined_result.get('ultra_deep_records', 0) + combined_result.get('ultra_massive_records', 0)
+                logger.info(f"✅ EXTRACCIÓN AUTÓNOMA ULTRA EXITOSA #{self.extraction_count + 1}")
+                logger.info(f"📊 TOTAL REGISTROS EXTRAÍDOS: {total_records:,}")
+                logger.info(f"⏱️ DURACIÓN TOTAL: {combined_result.get('total_duration_minutes', 0):.1f} minutos")
+                logger.info(f"🎯 Objetivo 3M: {'✅ ALCANZADO' if combined_result.get('objetivo_3M_alcanzado') else '🔄 EN PROGRESO'}")
                 
                 self.extraction_count += 1
                 
                 # Guardar log de éxito
-                await self.log_autonomous_success(execution_id, result, duration)
+                await self.log_autonomous_success(execution_id, combined_result, combined_result.get('total_duration_minutes', 0))
                 
             else:
-                logger.error(f"❌ EXTRACCIÓN AUTÓNOMA FALLÓ #{self.extraction_count + 1}")
-                logger.error(f"🐛 Error: {result.get('error', 'Unknown error')}")
+                logger.error(f"❌ EXTRACCIÓN AUTÓNOMA ULTRA FALLÓ #{self.extraction_count + 1}")
+                logger.error(f"🐛 Error: {combined_result.get('error', 'Multiple extraction failures')}")
                 
                 # Guardar log de fallo
-                await self.log_autonomous_failure(execution_id, result, duration)
+                await self.log_autonomous_failure(execution_id, combined_result, combined_result.get('total_duration_minutes', 0))
                 
-                # Programar reintento en 2 horas si es un fallo
+                # Programar reintento en 2 horas
                 await self.schedule_retry(execution_id)
         
         except Exception as e:
-            logger.error(f"❌ ERROR CRÍTICO EN EXTRACCIÓN AUTÓNOMA: {e}")
+            logger.error(f"❌ ERROR CRÍTICO EN EXTRACCIÓN AUTÓNOMA ULTRA: {e}")
             import traceback
             traceback.print_exc()
             

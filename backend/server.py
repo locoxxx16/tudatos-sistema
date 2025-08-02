@@ -1883,6 +1883,47 @@ async def extraction_methods_comparison(current_user=Depends(get_current_user)):
         logger.error(f"❌ Error en comparación: {e}")
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
+@api_router.post("/admin/integrated-ultra-extraction/start")
+async def start_integrated_ultra_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción INTEGRADA ULTRA - TODOS los extractores en secuencia optimizada"""
+    try:
+        logger.info("🚀🚀🚀 INICIANDO EXTRACCIÓN INTEGRADA ULTRA COMPLETA")
+        
+        # Ejecutar extracción integrada
+        extraction_result = await run_integrated_ultra_extraction()
+        
+        if extraction_result.get('success'):
+            return {
+                "status": "success",
+                "message": "EXTRACCIÓN INTEGRADA ULTRA completada exitosamente",
+                "objetivo_5M_alcanzado": extraction_result.get('objetivo_5M_alcanzado', False),
+                "total_registros_extraidos": extraction_result.get('total_extracted', 0),
+                "total_final_bd": extraction_result.get('total_final', 0),
+                "tiempo_total_minutos": extraction_result.get('time_minutes', 0),
+                "extractores_exitosos": extraction_result.get('extractores_exitosos', 0),
+                "extraccion_detallada": extraction_result.get('extraccion_detallada', {}),
+                "sistemas_ejecutados": [
+                    "✅ Ultra Deep Extractor (Daticos 18 endpoints + 118 términos)",
+                    "✅ Registro Nacional (Propiedades + Vehículos + Sociedades)",
+                    "✅ Portal Datos Abiertos (Funcionarios + Contratistas + APIs)",
+                    "✅ Colegios Profesionales (Médicos + Abogados + Ingenieros + etc.)"
+                ],
+                "cobertura_maxima": "Sistema con máxima cobertura de datos de Costa Rica",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        else:
+            return {
+                "status": "partial_success",
+                "message": f"Extracción completada con algunos errores: {extraction_result.get('error', '')}",
+                "total_registros_extraidos": extraction_result.get('total_extracted', 0),
+                "tiempo_total_minutos": extraction_result.get('time_minutes', 0),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en extracción integrada: {e}")
+        raise HTTPException(status_code=500, detail=f"Error crítico: {str(e)}")
+
 async def get_total_records():
     """Función auxiliar para contar registros totales"""
     try:

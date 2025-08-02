@@ -19,8 +19,8 @@ class DaticosExtractor:
         self.base_url = "https://www.daticos.com"
         self.session = None
         self.credentials = {
-            'usuario': 'Saraya',
-            'password': '12345'
+            'usuario': 'CABEZAS',
+            'password': 'Hola2022'
         }
         self.logged_in = False
         

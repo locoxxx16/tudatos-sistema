@@ -3266,6 +3266,9 @@ const Dashboard = () => {
         
       case 'nombres':
         return <BusquedaNombres />;
+        
+      case 'busqueda-avanzada':
+        return <BusquedaAvanzada />;
       
       // Consultas Masivas con componentes específicos
       case 'patronos':

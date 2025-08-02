@@ -191,7 +191,7 @@ class UltraDeepExtractor:
             # Conexión MongoDB
             self.client = AsyncIOMotorClient(self.mongo_url)
             self.db = self.client[self.db_name]
-            await self.db.admin.command('ping')
+            await self.db.command('ping')  # Usar db.command en lugar de db.admin.command
             logger.info("✅ MongoDB Ultra Deep Connection - OK")
             
             # Crear índices de rendimiento

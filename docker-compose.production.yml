@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # MongoDB
+  mongodb:
+    image: mongo:7.0
+    container_name: tudatos_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: tudatos_admin
+      MONGO_INITDB_ROOT_PASSWORD: tu_password_super_seguro_aqui
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - tudatos_network
+    command: mongod --auth
+
+  # Backend FastAPI
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.production
+    container_name: tudatos_backend
+    restart: always
+    environment:
+      - MONGO_URL=mongodb://tudatos_admin:tu_password_super_seguro_aqui@mongodb:27017/tudatos_production?authSource=admin
+      - DB_NAME=tudatos_production
+      - SECRET_KEY=tu_clave_jwt_super_segura_aqui
+      - ENVIRONMENT=production
+    volumes:
+      - ./backend:/app/backend
+      - extraction_logs:/app/logs
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mongodb
+    networks:
+      - tudatos_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/system/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Frontend React (en producción usarás Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.production
+    container_name: tudatos_frontend
+    restart: always
+    environment:
+      - REACT_APP_BACKEND_URL=https://tudatos.com
+    volumes:
+      - frontend_build:/app/build
+    depends_on:
+      - backend
+    networks:
+      - tudatos_network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: tudatos_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites-available:/etc/nginx/sites-available:ro
+      - frontend_build:/var/www/html
+      - ./ssl:/etc/ssl/certs
+      - extraction_logs:/var/log/tudatos
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - tudatos_network
+
+  # Sistema de Extracción (Cron Job)
+  extraction_scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.scheduler
+    container_name: tudatos_scheduler
+    restart: always
+    environment:
+      - MONGO_URL=mongodb://tudatos_admin:tu_password_super_seguro_aqui@mongodb:27017/tudatos_production?authSource=admin
+      - DB_NAME=tudatos_production
+    volumes:
+      - extraction_logs:/app/logs
+      - ./backend:/app/backend
+    depends_on:
+      - mongodb
+      - backend
+    networks:
+      - tudatos_network
+
+volumes:
+  mongodb_data:
+    driver: local
+  frontend_build:
+    driver: local
+  extraction_logs:
+    driver: local
+
+networks:
+  tudatos_network:
+    driver: bridge

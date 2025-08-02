@@ -1218,33 +1218,189 @@ async def get_data_integration_summary(current_user=Depends(get_current_user)):
         logger.error(f"Error getting data integration summary: {e}")
         raise HTTPException(status_code=500, detail=f"Error obteniendo resumen: {str(e)}")
 
-@api_router.post("/admin/daticos/run-full-extraction")
-async def run_full_daticos_extraction(current_user=Depends(get_current_user)):
-    """Ejecutar extracción completa de Daticos e integrar datos"""
+@api_router.post("/admin/ultra-massive-extraction/start")
+async def start_ultra_massive_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción ultra masiva de 3+ millones de registros"""
     try:
-        from advanced_daticos_extractor import run_complete_extraction
-        from daticos_data_integrator import run_data_integration
+        from ultra_massive_extractor import run_ultra_extraction
         
-        logger.info("Iniciando extracción completa de Daticos...")
+        logger.info("🚀 Iniciando ULTRA MASSIVE EXTRACTION - 3+ millones de registros")
         
-        # Fase 1: Extracción
-        extraction_result = await run_complete_extraction()
-        if not extraction_result:
-            raise HTTPException(status_code=500, detail="Error en la extracción de datos")
+        # Ejecutar extracción ultra masiva
+        extraction_result = await run_ultra_extraction()
         
-        # Fase 2: Integración
-        integration_result = await run_data_integration()
-        if not integration_result:
-            raise HTTPException(status_code=500, detail="Error en la integración de datos")
+        if extraction_result.get('success'):
+            return {
+                "status": "success",
+                "message": "Ultra Massive Extraction completada exitosamente",
+                "objetivo_3M_alcanzado": extraction_result.get('objetivo_3M_alcanzado', False),
+                "total_registros": extraction_result.get('total_registros', 0),
+                "duracion_horas": extraction_result.get('duracion_horas', 0),
+                "fuentes_integradas": ["DATICOS_CABEZAS", "DATICOS_SARAYA", "COSEVI_VEHICULOS", "COSEVI_PROPIEDADES", "TSE_VERIFICADO"],
+                "filtros_aplicados": ["SOLO_COSTA_RICA", "TELEFONOS_VALIDADOS", "EMAILS_VALIDADOS"],
+                "estadisticas_completas": extraction_result.get('estadisticas_completas', {}),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        else:
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Error en Ultra Massive Extraction: {extraction_result.get('error', 'Unknown error')}"
+            )
+        
+    except Exception as e:
+        logger.error(f"❌ Error en ultra massive extraction: {e}")
+        raise HTTPException(status_code=500, detail=f"Error crítico en extracción ultra masiva: {str(e)}")
+
+@api_router.get("/admin/ultra-massive-extraction/status")
+async def get_ultra_extraction_status(current_user=Depends(get_current_user)):
+    """Obtener estado actual de la extracción ultra masiva"""
+    try:
+        # Contar registros actuales
+        total_fisicas = await db.personas_fisicas.count_documents({})
+        total_juridicas = await db.personas_juridicas.count_documents({})
+        total_vehiculos = await db.vehiculos_cr.count_documents({}) if 'vehiculos_cr' in await db.list_collection_names() else 0
+        total_propiedades = await db.propiedades_cr.count_documents({}) if 'propiedades_cr' in await db.list_collection_names() else 0
+        
+        # Obtener últimas estadísticas de extracción
+        latest_stats = await db.ultra_massive_final_stats.find_one(
+            {}, sort=[('fecha_completado', -1)]
+        )
+        
+        # Verificar sistema autónomo
+        latest_health = await db.autonomous_health_checks.find_one(
+            {}, sort=[('timestamp', -1)]
+        )
+        
+        grand_total = total_fisicas + total_juridicas + total_vehiculos + total_propiedades
         
         return {
             "status": "success",
-            "message": "Extracción e integración completa finalizada",
-            "extraction_stats": {
-                "total_records": extraction_result.get('total_records', 0),
-                "categories_processed": len(extraction_result.get('endpoints_explored', {}))
+            "registros_actuales": {
+                "personas_fisicas": total_fisicas,
+                "personas_juridicas": total_juridicas,
+                "vehiculos_cosevi": total_vehiculos,
+                "propiedades": total_propiedades,
+                "total_general": grand_total
             },
-            "integration_stats": integration_result,
+            "objetivo_3M": {
+                "alcanzado": grand_total >= 3000000,
+                "progreso_porcentaje": round((grand_total / 3000000) * 100, 2),
+                "registros_restantes": max(0, 3000000 - grand_total)
+            },
+            "ultima_extraccion": {
+                "fecha": latest_stats.get('fecha_completado') if latest_stats else None,
+                "exitosa": latest_stats.get('objetivo_3M_alcanzado', False) if latest_stats else False,
+                "duracion_horas": latest_stats.get('duracion_horas', 0) if latest_stats else 0
+            },
+            "sistema_autonomo": {
+                "activo": latest_health.get('sistema_activo', False) if latest_health else False,
+                "ultima_verificacion": latest_health.get('timestamp') if latest_health else None,
+                "extracciones_completadas": latest_health.get('extracciones_completadas', 0) if latest_health else 0
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo status ultra: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo status: {str(e)}")
+
+@api_router.post("/admin/autonomous-system/start")
+async def start_autonomous_system(current_user=Depends(get_current_user)):
+    """Iniciar sistema autónomo de extracción diaria (5am)"""
+    try:
+        import subprocess
+        import os
+        
+        # Verificar si ya está corriendo
+        existing_process = None
+        try:
+            result = subprocess.run(['pgrep', '-f', 'autonomous_scheduler.py'], capture_output=True, text=True)
+            if result.returncode == 0:
+                existing_process = result.stdout.strip()
+        except:
+            pass
+        
+        if existing_process:
+            return {
+                "status": "warning",
+                "message": "Sistema autónomo ya está ejecutándose",
+                "process_id": existing_process,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+        # Iniciar sistema autónomo en background
+        script_path = "/app/backend/autonomous_scheduler.py"
+        log_path = "/app/backend/autonomous_system.log"
+        
+        # Ejecutar en background con nohup
+        cmd = f"cd /app/backend && nohup python3 {script_path} > {log_path} 2>&1 &"
+        subprocess.run(cmd, shell=True)
+        
+        # Esperar un momento y verificar que se inició
+        await asyncio.sleep(2)
+        
+        result = subprocess.run(['pgrep', '-f', 'autonomous_scheduler.py'], capture_output=True, text=True)
+        if result.returncode == 0:
+            process_id = result.stdout.strip()
+            
+            return {
+                "status": "success",
+                "message": "Sistema autónomo iniciado exitosamente",
+                "process_id": process_id,
+                "programado_para": "5:00 AM diariamente",
+                "objetivo": "3+ millones de registros diarios",
+                "log_file": log_path,
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        else:
+            raise HTTPException(status_code=500, detail="No se pudo iniciar el sistema autónomo")
+        
+    except Exception as e:
+        logger.error(f"❌ Error iniciando sistema autónomo: {e}")
+        raise HTTPException(status_code=500, detail=f"Error iniciando sistema autónomo: {str(e)}")
+
+@api_router.post("/admin/autonomous-system/stop")
+async def stop_autonomous_system(current_user=Depends(get_current_user)):
+    """Detener sistema autónomo"""
+    try:
+        import subprocess
+        
+        # Buscar proceso
+        result = subprocess.run(['pgrep', '-f', 'autonomous_scheduler.py'], capture_output=True, text=True)
+        if result.returncode == 0:
+            process_ids = result.stdout.strip().split('\n')
+            
+            # Terminar procesos
+            for pid in process_ids:
+                if pid:
+                    subprocess.run(['kill', '-TERM', pid])
+            
+            return {
+                "status": "success",
+                "message": "Sistema autónomo detenido",
+                "processes_terminated": len(process_ids),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        else:
+            return {
+                "status": "warning",
+                "message": "Sistema autónomo no está ejecutándose",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        
+    except Exception as e:
+        logger.error(f"❌ Error deteniendo sistema autónomo: {e}")
+        raise HTTPException(status_code=500, detail=f"Error deteniendo sistema autónomo: {str(e)}")
+
+@api_router.post("/admin/daticos/run-full-extraction")
+async def run_full_daticos_extraction(current_user=Depends(get_current_user)):
+    """DEPRECATED: Usar ultra-massive-extraction en su lugar"""
+    try:
+        return {
+            "status": "deprecated",
+            "message": "Este endpoint ha sido reemplazado por /admin/ultra-massive-extraction/start",
+            "nuevo_endpoint": "/admin/ultra-massive-extraction/start",
+            "razon": "Migrado a sistema ultra masivo de 3+ millones de registros",
             "timestamp": datetime.utcnow().isoformat()
         }
         

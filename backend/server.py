@@ -1791,3 +1791,6 @@ async def shutdown_db_client():
     client.close()
     data_updater.stop_scheduler()
     await costa_rica_integrator.close_session()
+
+# Include the router in the main app (MUST be at the end after all endpoints are defined)
+app.include_router(api_router)

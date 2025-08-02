@@ -165,17 +165,17 @@ backend:
         agent: "main"
         comment: "4 nuevos endpoints implementados: /admin/ultra-massive-extraction/start (iniciar extracción 3M+), /status (progreso en tiempo real), /autonomous-system/start (activar sistema diario 5am), /stop (detener sistema). Incluye estadísticas completas y control procesos."
 
-  - task: "Script Inicio Rápido"
+  - task: "Scripts de Ejecución Inmediata Ultra Deep"
     implemented: true
     working: true
-    file: "backend/start_ultra_extraction.py"
+    file: "backend/start_ultra_deep_now.py, backend/monitor_extraction.py"
     stuck_count: 0
-    priority: "medium"
+    priority: "high"
     needs_retesting: true
     status_history:
       - working: true
         agent: "main"
-        comment: "Script ejecutable para iniciar extracción inmediatamente. Opciones: --status (verificar BD), --autonomous (iniciar sistema diario), o ejecución única directa. Incluye logging y manejo errores."
+        comment: "Scripts para ejecutar inmediatamente la extracción ultra profunda y monitorear progreso en tiempo real. Incluye confirmación usuario, logging detallado, estadísticas progreso cada 10k registros, ETA estimado."
 
 frontend:
   - task: "Panel Administración Funcional Completo"

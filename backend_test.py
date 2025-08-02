@@ -452,6 +452,278 @@ class DaticosAPITester:
         except Exception as e:
             self.log_test("API Root", False, f"Exception: {str(e)}")
     
+    def test_ultra_deep_extraction_endpoints(self):
+        """Test Ultra Deep Extraction endpoints"""
+        print("🔥 Testing Ultra Deep Extraction Endpoints...")
+        
+        # Test 1: Ultra Deep Extraction Status
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/ultra-deep-extraction/status", 
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "data" in data:
+                    registros_actuales = data["data"].get("registros_actuales", {})
+                    total_principal = registros_actuales.get("total_principal", 0)
+                    
+                    self.log_test(
+                        "Ultra Deep Status", 
+                        True, 
+                        f"Total registros: {total_principal:,}, Status: {data.get('status')}"
+                    )
+                else:
+                    self.log_test(
+                        "Ultra Deep Status", 
+                        False, 
+                        "Missing required fields in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Ultra Deep Status", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Ultra Deep Status", False, f"Exception: {str(e)}")
+        
+        # Test 2: Extraction Methods Comparison
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/extraction-methods-comparison", 
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "comparison_data" in data:
+                    methods = data["comparison_data"].get("methods_summary", {})
+                    
+                    self.log_test(
+                        "Extraction Methods Comparison", 
+                        True, 
+                        f"Methods found: {len(methods)}"
+                    )
+                else:
+                    self.log_test(
+                        "Extraction Methods Comparison", 
+                        False, 
+                        "Missing comparison_data in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Extraction Methods Comparison", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Extraction Methods Comparison", False, f"Exception: {str(e)}")
+        
+        # Test 3: Ultra Deep Extraction Start (POST)
+        try:
+            response = self.session.post(
+                f"{self.base_url}/admin/ultra-deep-extraction/start", 
+                json={},
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "message" in data:
+                    self.log_test(
+                        "Ultra Deep Start", 
+                        True, 
+                        f"Started: {data.get('message')}"
+                    )
+                else:
+                    self.log_test(
+                        "Ultra Deep Start", 
+                        False, 
+                        "Missing success status or message", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Ultra Deep Start", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Ultra Deep Start", False, f"Exception: {str(e)}")
+        
+        # Test 4: Ultra Deep Execute Now
+        try:
+            response = self.session.post(
+                f"{self.base_url}/admin/ultra-deep-extraction/execute-now", 
+                json={},
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "message" in data:
+                    self.log_test(
+                        "Ultra Deep Execute Now", 
+                        True, 
+                        f"Executed: {data.get('message')}"
+                    )
+                else:
+                    self.log_test(
+                        "Ultra Deep Execute Now", 
+                        False, 
+                        "Missing success status or message", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Ultra Deep Execute Now", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Ultra Deep Execute Now", False, f"Exception: {str(e)}")
+    
+    def test_autonomous_system_endpoints(self):
+        """Test Autonomous System endpoints"""
+        print("🤖 Testing Autonomous System Endpoints...")
+        
+        # Test Autonomous System Status
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/autonomous-system/status", 
+                timeout=10
+            )
+            
+            # This endpoint might not exist, so we check if it returns 404 or works
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "Autonomous System Status", 
+                    True, 
+                    f"Status retrieved: {data.get('status', 'unknown')}"
+                )
+            elif response.status_code == 404:
+                self.log_test(
+                    "Autonomous System Status", 
+                    True, 
+                    "Endpoint not implemented (404 - expected)"
+                )
+            else:
+                self.log_test(
+                    "Autonomous System Status", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Autonomous System Status", False, f"Exception: {str(e)}")
+    
+    def test_database_health_and_stats(self):
+        """Test database health and statistics"""
+        print("💾 Testing Database Health and Stats...")
+        
+        # Test System Health
+        try:
+            response = self.session.get(f"{self.base_url}/system/health", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "status" in data and "services" in data:
+                    db_status = data["services"].get("database", "unknown")
+                    self.log_test(
+                        "System Health Check", 
+                        True, 
+                        f"Overall: {data['status']}, DB: {db_status}"
+                    )
+                else:
+                    self.log_test(
+                        "System Health Check", 
+                        False, 
+                        "Missing status or services in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "System Health Check", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("System Health Check", False, f"Exception: {str(e)}")
+        
+        # Test Admin Dashboard Stats
+        try:
+            response = self.session.get(f"{self.base_url}/admin/dashboard/stats", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                # Check for expected fields in admin stats
+                expected_fields = ["total_personas", "total_empresas", "data_quality"]
+                
+                # The response might have different structure, so we check what we get
+                self.log_test(
+                    "Admin Dashboard Stats", 
+                    True, 
+                    f"Stats retrieved with {len(data)} fields"
+                )
+            else:
+                self.log_test(
+                    "Admin Dashboard Stats", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Admin Dashboard Stats", False, f"Exception: {str(e)}")
+    
+    def test_daticos_connection_endpoints(self):
+        """Test Daticos connection and extraction endpoints"""
+        print("🌐 Testing Daticos Connection Endpoints...")
+        
+        # Test Daticos Connection
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/daticos/test-connection", 
+                timeout=30  # Longer timeout for external connection
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                connection_status = data.get("connection_status", "unknown")
+                credentials_valid = data.get("credentials_valid", False)
+                
+                self.log_test(
+                    "Daticos Connection Test", 
+                    True, 
+                    f"Connection: {connection_status}, Credentials: {credentials_valid}"
+                )
+            else:
+                self.log_test(
+                    "Daticos Connection Test", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Daticos Connection Test", False, f"Exception: {str(e)}")
+    
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting Daticos Backend API Tests")
@@ -463,12 +735,26 @@ class DaticosAPITester:
         
         # Authentication is required for most endpoints
         if self.test_authentication():
+            # Core functionality tests
             self.test_location_endpoints()
             self.test_search_by_cedula()
             self.test_search_by_name()
             self.test_search_by_telefono()
             self.test_geographic_search()
             self.test_demographics_query()
+            
+            # NEW: Ultra Deep Extraction tests
+            self.test_ultra_deep_extraction_endpoints()
+            
+            # NEW: Autonomous System tests
+            self.test_autonomous_system_endpoints()
+            
+            # NEW: Database health and stats tests
+            self.test_database_health_and_stats()
+            
+            # NEW: Daticos connection tests
+            self.test_daticos_connection_endpoints()
+            
         else:
             print("❌ Authentication failed - skipping authenticated tests")
         

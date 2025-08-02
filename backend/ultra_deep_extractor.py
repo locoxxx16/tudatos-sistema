@@ -990,9 +990,16 @@ class UltraDeepExtractor:
         
         try:
             # Inicializar sistema
-            if not await self.initialize_ultra_system():
+            init_success = await self.initialize_ultra_system()
+            if not init_success:
                 logger.error("❌ Falló inicialización ultra deep")
-                return False
+                return {
+                    'success': False,
+                    'error': 'Falló la inicialización del sistema ultra profundo',
+                    'total_extracted': 0,
+                    'time_minutes': 0,
+                    'objetivo_alcanzado': False
+                }
             
             # Ejecutar extracción masiva
             extracted_total = await self.extract_ultra_deep_all_data(target_records=3000000)

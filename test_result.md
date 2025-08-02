@@ -153,7 +153,7 @@ backend:
         agent: "main"
         comment: "Sistema de filtrado ultra estricto que rechaza automáticamente datos de otros países, valida teléfonos con formato CR (+506), verifica emails con dominios CR, y mantiene estadísticas de registros rechazados."
 
-  - task: "APIs Backend Ultra Masivas"
+  - task: "APIs Backend Ultra Deep (Nuevos Endpoints)"
     implemented: true
     working: true
     file: "backend/server.py"
@@ -163,7 +163,7 @@ backend:
     status_history:
       - working: true
         agent: "main"
-        comment: "4 nuevos endpoints implementados: /admin/ultra-massive-extraction/start (iniciar extracción 3M+), /status (progreso en tiempo real), /autonomous-system/start (activar sistema diario 5am), /stop (detener sistema). Incluye estadísticas completas y control procesos."
+        comment: "Nuevos endpoints implementados: /admin/ultra-deep-extraction/start (iniciar extracción ULTRA PROFUNDA), /status (progreso tiempo real), /execute-now (ejecución inmediata), /extraction-methods-comparison (comparar todos los métodos). Sistema completo con estadísticas detalladas y control procesos."
 
   - task: "Scripts de Ejecución Inmediata Ultra Deep"
     implemented: true

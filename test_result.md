@@ -210,10 +210,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Extracción Masiva TSE Híbrida (2M Registros)"
-    - "Integración Masiva Daticos Saraya/12345"
-    - "Extracción Especializada Números Telefónicos"
-    - "MongoDB Integración Tiempo Real"
+    - "Sistema ULTRA DEEP EXTRACTION (3M+ Registros COMPLETOS)"
+    - "Scripts de Ejecución Inmediata Ultra Deep"
+    - "APIs Backend Ultra Deep (Nuevos Endpoints)"
+    - "Sistema Autónomo Diario (5am) - ACTUALIZADO ULTRA"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"

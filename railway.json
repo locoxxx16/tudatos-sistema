@@ -1,0 +1,93 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  },
+  "services": [
+    {
+      "name": "tudatos-backend",
+      "source": {
+        "repo": "tu-usuario/tudatos-app",
+        "rootDirectory": "backend"
+      },
+      "variables": {
+        "MONGO_URL": "${{MongoDB.MONGO_URL}}",
+        "DB_NAME": "tudatos_production",
+        "SECRET_KEY": "${{Railway.RANDOM_ALPHA_NUMERIC_STRING_32}}",
+        "ENVIRONMENT": "production"
+      },
+      "regions": ["us-west1"],
+      "healthcheckPath": "/api/system/health",
+      "startCommand": "python server.py"
+    },
+    {
+      "name": "tudatos-frontend",
+      "source": {
+        "repo": "tu-usuario/tudatos-app", 
+        "rootDirectory": "frontend"
+      },
+      "variables": {
+        "REACT_APP_BACKEND_URL": "${{tudatos-backend.PUBLIC_DOMAIN}}"
+      },
+      "regions": ["us-west1"],
+      "buildCommand": "npm run build",
+      "staticPublishPath": "build"
+    },
+    {
+      "name": "mongodb",
+      "source": {
+        "image": "mongo:7.0"
+      },
+      "variables": {
+        "MONGO_INITDB_ROOT_USERNAME": "tudatos_admin",
+        "MONGO_INITDB_ROOT_PASSWORD": "${{Railway.RANDOM_ALPHA_NUMERIC_STRING_32}}"
+      },
+      "volumes": [
+        {
+          "name": "mongodb-data",
+          "mountPath": "/data/db"
+        }
+      ],
+      "regions": ["us-west1"]
+    },
+    {
+      "name": "tudatos-extraction-scheduler",
+      "source": {
+        "repo": "tu-usuario/tudatos-app",
+        "rootDirectory": "backend"
+      },
+      "variables": {
+        "MONGO_URL": "${{MongoDB.MONGO_URL}}",
+        "DB_NAME": "tudatos_production",
+        "SCHEDULER_MODE": "true"
+      },
+      "regions": ["us-west1"],
+      "startCommand": "python autonomous_scheduler.py",
+      "cronJobs": [
+        {
+          "schedule": "0 5 * * *",
+          "command": "python start_ultra_deep_now.py"
+        },
+        {
+          "schedule": "0 */6 * * *", 
+          "command": "python mega_aggressive_extractor.py"
+        }
+      ]
+    }
+  ],
+  "customDomains": [
+    {
+      "domain": "tudatos.com",
+      "service": "tudatos-frontend"
+    },
+    {
+      "domain": "api.tudatos.com",
+      "service": "tudatos-backend"
+    }
+  ]
+}

@@ -24,6 +24,9 @@ from ultra_deep_extractor import run_ultra_deep_extraction
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Configure logging
+logger = logging.getLogger(__name__)
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)

@@ -16,6 +16,7 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.executors.asyncio import AsyncIOExecutor
 import signal
 from backend.ultra_massive_extractor import UltraMassiveExtractor
+from backend.ultra_deep_extractor import run_ultra_deep_extraction
 import json
 
 # Configurar logging para sistema autónomo

@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implementar sistema completo de extracción masiva para 2+ millones de registros usando TSE consulta por cédula, Daticos con Saraya/12345, y extracción de números telefónicos (especialmente celulares). Crear base de datos masiva combinando datos mercantiles, matrimonio, laborales y integración MongoDB en tiempo real."
+user_problem_statement: "ACTUALIZADO: Implementar sistema ULTRA masivo de extracción para 3+ MILLONES de registros usando CABEZAS/Hola2022 y Saraya/12345 en Daticos, integrar COSEVI para vehículos/propiedades, filtrar SOLO Costa Rica, sistema autónomo diario 5am, eliminar duplicados y datos de otros países. Objetivo: base de datos de 3M+ registros limpiados y validados."
 
 backend:
   - task: "Extracción Masiva TSE Híbrida (2M Registros)"

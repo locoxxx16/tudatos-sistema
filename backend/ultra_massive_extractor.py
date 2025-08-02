@@ -28,7 +28,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import schedule
 from dotenv import load_dotenv
-from backend.daticos_extractor import DaticosExtractor
+from daticos_extractor import DaticosExtractor
 from faker import Faker
 import phonenumbers
 from phonenumbers import geocoder, carrier

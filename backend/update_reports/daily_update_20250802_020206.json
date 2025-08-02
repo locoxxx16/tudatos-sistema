@@ -1,0 +1,30 @@
+{
+  "timestamp": "2025-08-02T02:02:06.817781",
+  "extraction": {
+    "success": true,
+    "total_records": 396,
+    "endpoints_processed": 4,
+    "file_saved": "/app/backend/daily_extractions/daticos_daily_20250802.json"
+  },
+  "integration": {
+    "total_processed": 198,
+    "personas_added": 198,
+    "empresas_added": 0,
+    "duplicates_skipped": 0,
+    "errors": 198,
+    "processing_timestamp": "2025-08-02T02:02:05.434286",
+    "source_file": "/app/backend/daily_extractions/daticos_daily_20250802.json"
+  },
+  "enrichment": {
+    "success": true,
+    "records_processed": 67,
+    "successfully_enriched": 0,
+    "errors": 66
+  },
+  "cleanup": {
+    "duplicates_removed": 0,
+    "empty_records_removed": 1,
+    "indexes_optimized": true
+  },
+  "total_duration_minutes": 1.8962371166666665
+}

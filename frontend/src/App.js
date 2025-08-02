@@ -3232,6 +3232,699 @@ const NavigationBar = ({ activeSection, setActiveSection }) => {
 };
 
 // Dashboard Component
+// Componente de Búsqueda Avanzada - Nueva funcionalidad solicitada por el usuario
+const BusquedaAvanzada = () => {
+  const [filtros, setFiltros] = useState({
+    tipo_busqueda: 'exacta',
+    cedula: '',
+    cedula_juridica: '',
+    telefono: '',
+    nombre: '',
+    apellido: '',
+    provincia: '',
+    canton: '',
+    distrito: '',
+    email: '',
+    salario_min: '',
+    salario_max: '',
+    incluir_datos_completos: true,
+    incluir_representantes: true,
+    incluir_multiples_telefonos: true
+  });
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [totalResults, setTotalResults] = useState(0);
+  const [provincias, setProvincias] = useState([]);
+  const [cantones, setCantones] = useState([]);
+
+  useEffect(() => {
+    loadProvincias();
+  }, []);
+
+  useEffect(() => {
+    if (filtros.provincia) {
+      loadCantones(filtros.provincia);
+    } else {
+      setCantones([]);
+    }
+  }, [filtros.provincia]);
+
+  const loadProvincias = async () => {
+    try {
+      const data = await apiCall('/locations/provincias');
+      setProvincias(data);
+    } catch (error) {
+      console.error('Error loading provincias:', error);
+    }
+  };
+
+  const loadCantones = async (provinciaId) => {
+    try {
+      const data = await apiCall(`/locations/cantones/${provinciaId}`);
+      setCantones(data);
+    } catch (error) {
+      console.error('Error loading cantones:', error);
+    }
+  };
+
+  const handleAdvancedSearch = async (e) => {
+    e.preventDefault();
+    
+    // Validar que al menos un campo esté lleno
+    const hasFilter = Object.entries(filtros).some(([key, value]) => {
+      if (['tipo_busqueda', 'incluir_datos_completos', 'incluir_representantes', 'incluir_multiples_telefonos'].includes(key)) {
+        return false;
+      }
+      return value && value.toString().trim() !== '';
+    });
+
+    if (!hasFilter) {
+      setError('Por favor complete al menos un campo de búsqueda');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setResults([]);
+
+    try {
+      const searchResults = [];
+      
+      // Búsqueda por cédula física
+      if (filtros.cedula.trim()) {
+        try {
+          const data = await apiCall(`/search/cedula/${filtros.cedula}?enrich=true`);
+          if (data.found) {
+            searchResults.push({
+              type: 'cedula_fisica',
+              data: data.data,
+              source: 'Búsqueda por Cédula',
+              match_type: filtros.tipo_busqueda
+            });
+          }
+        } catch (error) {
+          console.log('No encontrado por cédula física');
+        }
+      }
+
+      // Búsqueda por cédula jurídica
+      if (filtros.cedula_juridica.trim()) {
+        try {
+          const data = await apiCall(`/search/cedula/${filtros.cedula_juridica}?enrich=true`);
+          if (data.found) {
+            searchResults.push({
+              type: 'cedula_juridica',
+              data: data.data,
+              source: 'Búsqueda por Cédula Jurídica',
+              match_type: filtros.tipo_busqueda
+            });
+          }
+        } catch (error) {
+          console.log('No encontrado por cédula jurídica');
+        }
+      }
+
+      // Búsqueda por teléfono (con búsqueda exacta)
+      if (filtros.telefono.trim()) {
+        try {
+          const data = await apiCall(`/search/telefono/${filtros.telefono}`);
+          if (data.results && data.results.length > 0) {
+            data.results.forEach(result => {
+              searchResults.push({
+                type: 'telefono',
+                data: result.data,
+                source: 'Búsqueda por Teléfono',
+                match_type: filtros.tipo_busqueda
+              });
+            });
+          }
+        } catch (error) {
+          console.log('No encontrado por teléfono');
+        }
+      }
+
+      // Búsqueda por nombres
+      if (filtros.nombre.trim() || filtros.apellido.trim()) {
+        try {
+          const searchTerm = `${filtros.nombre} ${filtros.apellido}`.trim();
+          const data = await apiCall(`/search/name/${searchTerm}`);
+          if (data.results && data.results.length > 0) {
+            data.results.forEach(result => {
+              searchResults.push({
+                type: 'nombre',
+                data: result.data,
+                source: 'Búsqueda por Nombre',
+                match_type: filtros.tipo_busqueda
+              });
+            });
+          }
+        } catch (error) {
+          console.log('No encontrado por nombre');
+        }
+      }
+
+      // Búsqueda geográfica
+      if (filtros.provincia || filtros.canton || filtros.distrito) {
+        try {
+          const data = await apiCall('/search/geografica', 'POST', {
+            provincia_id: filtros.provincia || null,
+            canton_id: filtros.canton || null,
+            distrito_id: filtros.distrito || null
+          });
+          if (data.results && data.results.length > 0) {
+            data.results.forEach(result => {
+              searchResults.push({
+                type: 'geografica',
+                data: result.data,
+                source: 'Búsqueda Geográfica',
+                match_type: filtros.tipo_busqueda
+              });
+            });
+          }
+        } catch (error) {
+          console.log('No encontrado por ubicación');
+        }
+      }
+
+      // Eliminar duplicados por cédula
+      const uniqueResults = [];
+      const seenCedulas = new Set();
+      
+      searchResults.forEach(result => {
+        const cedula = result.data.cedula || result.data.cedula_juridica;
+        if (cedula && !seenCedulas.has(cedula)) {
+          seenCedulas.add(cedula);
+          uniqueResults.push(result);
+        }
+      });
+
+      setResults(uniqueResults);
+      setTotalResults(uniqueResults.length);
+
+      if (uniqueResults.length === 0) {
+        setError('No se encontraron resultados con los filtros especificados');
+      }
+
+    } catch (error) {
+      setError('Error en la búsqueda avanzada: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="flex items-center mb-6">
+        <span className="text-3xl mr-3">🔍</span>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800">Búsqueda Avanzada</h2>
+          <p className="text-gray-600">
+            Búsqueda exacta con múltiples filtros - Incluye múltiples teléfonos, representantes legales, datos completos
+          </p>
+        </div>
+      </div>
+
+      <form onSubmit={handleAdvancedSearch} className="space-y-6">
+        {/* Tipo de búsqueda */}
+        <div className="bg-blue-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-blue-800 mb-3">Configuración de Búsqueda</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tipo de Búsqueda:
+              </label>
+              <select
+                value={filtros.tipo_busqueda}
+                onChange={(e) => setFiltros({...filtros, tipo_busqueda: e.target.value})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="exacta">🎯 Búsqueda Exacta</option>
+                <option value="aproximada">🔍 Búsqueda Aproximada</option>
+                <option value="global">🌍 Búsqueda Global</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Opciones Avanzadas:
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={filtros.incluir_multiples_telefonos}
+                    onChange={(e) => setFiltros({...filtros, incluir_multiples_telefonos: e.target.checked})}
+                    className="mr-2"
+                  />
+                  <span className="text-sm">📱 Incluir múltiples teléfonos</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={filtros.incluir_representantes}
+                    onChange={(e) => setFiltros({...filtros, incluir_representantes: e.target.checked})}
+                    className="mr-2"
+                  />
+                  <span className="text-sm">👔 Incluir representantes legales</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={filtros.incluir_datos_completos}
+                    onChange={(e) => setFiltros({...filtros, incluir_datos_completos: e.target.checked})}
+                    className="mr-2"
+                  />
+                  <span className="text-sm">📊 Datos completos (mercantil, laboral, matrimonio)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros de identificación */}
+        <div className="bg-green-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-green-800 mb-3">Filtros de Identificación</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cédula Física:
+              </label>
+              <input
+                type="text"
+                value={filtros.cedula}
+                onChange={(e) => setFiltros({...filtros, cedula: e.target.value})}
+                placeholder="1-2345-6789"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cédula Jurídica:
+              </label>
+              <input
+                type="text"
+                value={filtros.cedula_juridica}
+                onChange={(e) => setFiltros({...filtros, cedula_juridica: e.target.value})}
+                placeholder="3-101-123456"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Teléfono:
+              </label>
+              <input
+                type="text"
+                value={filtros.telefono}
+                onChange={(e) => setFiltros({...filtros, telefono: e.target.value})}
+                placeholder="8888-8888 o 2222-2222"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros personales */}
+        <div className="bg-purple-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-purple-800 mb-3">Filtros Personales</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nombre:
+              </label>
+              <input
+                type="text"
+                value={filtros.nombre}
+                onChange={(e) => setFiltros({...filtros, nombre: e.target.value})}
+                placeholder="Juan, María, Carlos..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Apellido:
+              </label>
+              <input
+                type="text"
+                value={filtros.apellido}
+                onChange={(e) => setFiltros({...filtros, apellido: e.target.value})}
+                placeholder="González, Rodríguez..."
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email:
+              </label>
+              <input
+                type="email"
+                value={filtros.email}
+                onChange={(e) => setFiltros({...filtros, email: e.target.value})}
+                placeholder="ejemplo@email.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros geográficos */}
+        <div className="bg-yellow-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-yellow-800 mb-3">Filtros Geográficos</h3>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Provincia:
+              </label>
+              <select
+                value={filtros.provincia}
+                onChange={(e) => setFiltros({...filtros, provincia: e.target.value, canton: ''})}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Todas las provincias</option>
+                {provincias.map(prov => (
+                  <option key={prov.id} value={prov.id}>{prov.nombre}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cantón:
+              </label>
+              <select
+                value={filtros.canton}
+                onChange={(e) => setFiltros({...filtros, canton: e.target.value})}
+                disabled={!filtros.provincia}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+              >
+                <option value="">Todos los cantones</option>
+                {cantones.map(canton => (
+                  <option key={canton.id} value={canton.id}>{canton.nombre}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Distrito:
+              </label>
+              <input
+                type="text"
+                value={filtros.distrito}
+                onChange={(e) => setFiltros({...filtros, distrito: e.target.value})}
+                placeholder="Nombre del distrito"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros salariales */}
+        <div className="bg-orange-50 p-4 rounded-lg">
+          <h3 className="font-semibold text-orange-800 mb-3">Filtros Salariales (₡)</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Salario Mínimo:
+              </label>
+              <input
+                type="number"
+                value={filtros.salario_min}
+                onChange={(e) => setFiltros({...filtros, salario_min: e.target.value})}
+                placeholder="500000"
+                min="0"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Salario Máximo:
+              </label>
+              <input
+                type="number"
+                value={filtros.salario_max}
+                onChange={(e) => setFiltros({...filtros, salario_max: e.target.value})}
+                placeholder="2000000"
+                min="0"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-4 rounded-lg font-medium transition-all duration-200 disabled:opacity-50"
+        >
+          {loading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
+              🔍 Realizando Búsqueda Avanzada...
+            </div>
+          ) : (
+            '🔍 Ejecutar Búsqueda Avanzada'
+          )}
+        </button>
+      </form>
+
+      {error && (
+        <div className="mt-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          ❌ {error}
+        </div>
+      )}
+
+      {results.length > 0 && (
+        <div className="mt-8 space-y-6">
+          <div className="flex justify-between items-center bg-green-100 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-green-800">
+              ✅ Resultados Encontrados: {totalResults}
+            </h3>
+            <div className="flex gap-2">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                📤 Exportar CSV
+              </button>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                📊 Ver Estadísticas
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {results.map((result, index) => (
+              <div key={index} className="bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 rounded-lg p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">
+                      {result.type === 'cedula_juridica' ? '🏢' : 
+                       result.type === 'telefono' ? '📞' : 
+                       result.type === 'geografica' ? '🗺️' : 
+                       result.type === 'nombre' ? '👤' : '🆔'}
+                    </span>
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-800">
+                        {result.data.nombre || result.data.nombre_comercial || 'Sin nombre'}
+                      </h4>
+                      <p className="text-sm text-gray-600">
+                        Fuente: {result.source} | Tipo: {result.match_type}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-blue-800">
+                      {result.data.cedula || result.data.cedula_juridica}
+                    </div>
+                    <div className={`text-xs px-2 py-1 rounded ${
+                      result.data.cedula_juridica ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                    }`}>
+                      {result.data.cedula_juridica ? 'Persona Jurídica' : 'Persona Física'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-4 text-sm">
+                  {/* Información básica */}
+                  <div className="bg-white rounded-lg p-3 border">
+                    <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                      ℹ️ Información Básica
+                    </h5>
+                    <div className="space-y-1">
+                      {result.data.cedula && (
+                        <div><strong>Cédula:</strong> {result.data.cedula}</div>
+                      )}
+                      {result.data.cedula_juridica && (
+                        <div><strong>Cédula Jurídica:</strong> {result.data.cedula_juridica}</div>
+                      )}
+                      {result.data.nombre && (
+                        <div><strong>Nombre:</strong> {result.data.nombre}</div>
+                      )}
+                      {result.data.primer_apellido && (
+                        <div><strong>Apellidos:</strong> {result.data.primer_apellido} {result.data.segundo_apellido}</div>
+                      )}
+                      {result.data.nombre_comercial && (
+                        <div><strong>Empresa:</strong> {result.data.nombre_comercial}</div>
+                      )}
+                      {result.data.sector_negocio && (
+                        <div><strong>Sector:</strong> {result.data.sector_negocio}</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Información de contacto - MÚLTIPLES TELÉFONOS */}
+                  <div className="bg-white rounded-lg p-3 border">
+                    <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                      📞 Contacto
+                    </h5>
+                    <div className="space-y-1">
+                      {result.data.telefono && (
+                        <div><strong>Teléfono Principal:</strong> {result.data.telefono}</div>
+                      )}
+                      {result.data.telefono_adicionales && result.data.telefono_adicionales.length > 0 && (
+                        <div>
+                          <strong>Teléfonos Adicionales:</strong>
+                          <ul className="ml-2 text-xs">
+                            {result.data.telefono_adicionales.slice(0, 3).map((tel, i) => (
+                              <li key={i}>• {tel}</li>
+                            ))}
+                            {result.data.telefono_adicionales.length > 3 && (
+                              <li className="text-blue-600">• +{result.data.telefono_adicionales.length - 3} más...</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                      {result.data.email && (
+                        <div><strong>Email:</strong> {result.data.email}</div>
+                      )}
+                      {result.data.emails_adicionales && result.data.emails_adicionales.length > 0 && (
+                        <div>
+                          <strong>Emails Adicionales:</strong>
+                          <ul className="ml-2 text-xs">
+                            {result.data.emails_adicionales.slice(0, 2).map((email, i) => (
+                              <li key={i}>• {email}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Información de ubicación */}
+                  <div className="bg-white rounded-lg p-3 border">
+                    <h5 className="font-semibold text-gray-800 mb-2 flex items-center">
+                      📍 Ubicación
+                    </h5>
+                    <div className="space-y-1">
+                      <div><strong>Provincia:</strong> {result.data.provincia_nombre || result.data.provincia || 'N/A'}</div>
+                      <div><strong>Cantón:</strong> {result.data.canton_nombre || result.data.canton || 'N/A'}</div>
+                      <div><strong>Distrito:</strong> {result.data.distrito_nombre || result.data.distrito || 'N/A'}</div>
+                      {result.data.direccion_exacta && (
+                        <div><strong>Dirección:</strong> {result.data.direccion_exacta}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información adicional si están disponibles los datos completos */}
+                {filtros.incluir_datos_completos && (
+                  <div className="mt-4 grid md:grid-cols-2 gap-4">
+                    {/* Datos laborales */}
+                    {result.data.datos_laborales && (
+                      <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                        <h5 className="font-semibold text-yellow-800 mb-2 flex items-center">
+                          💼 Información Laboral
+                        </h5>
+                        <div className="text-xs space-y-1">
+                          {result.data.ocupacion && (
+                            <div><strong>Ocupación:</strong> {result.data.ocupacion}</div>
+                          )}
+                          {result.data.informacion_salarial?.salario_mensual && (
+                            <div>
+                              <strong>Salario:</strong> ₡{result.data.informacion_salarial.salario_mensual.toLocaleString()}
+                              <span className={`ml-2 px-2 py-1 rounded text-xs ${
+                                result.data.informacion_salarial.salario_mensual >= 500000 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-gray-100 text-gray-800'
+                              }`}>
+                                {result.data.informacion_salarial.rango_salarial}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Datos mercantiles */}
+                    {result.data.datos_mercantiles && (
+                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                        <h5 className="font-semibold text-blue-800 mb-2 flex items-center">
+                          🏬 Información Mercantil
+                        </h5>
+                        <div className="text-xs space-y-1">
+                          <div><strong>Actividades:</strong></div>
+                          <ul className="ml-2">
+                            {Object.entries(result.data.datos_mercantiles).slice(0, 3).map(([key, value], i) => (
+                              <li key={i}>• {key}: {Array.isArray(value) ? value.join(', ') : value}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Representantes legales */}
+                {filtros.incluir_representantes && result.data.representantes_legales && result.data.representantes_legales.length > 0 && (
+                  <div className="mt-4 bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <h5 className="font-semibold text-purple-800 mb-3 flex items-center">
+                      👔 Representantes Legales ({result.data.representantes_legales.length})
+                    </h5>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {result.data.representantes_legales.slice(0, 4).map((rep, i) => (
+                        <div key={i} className="bg-white rounded p-3 text-xs">
+                          <div><strong>Cédula:</strong> {rep.cedula}</div>
+                          {rep.relacion && <div><strong>Cargo:</strong> {rep.relacion}</div>}
+                          {rep.datos_tse?.nombre_completo && (
+                            <div><strong>Nombre:</strong> {rep.datos_tse.nombre_completo}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {result.data.representantes_legales.length > 4 && (
+                      <div className="text-center mt-2 text-purple-600 text-sm">
+                        +{result.data.representantes_legales.length - 4} representantes más
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!loading && results.length === 0 && !error && (
+        <div className="mt-8 text-center py-12 bg-gray-50 rounded-lg">
+          <span className="text-6xl mb-4 block">🔍</span>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">Búsqueda Avanzada Lista</h3>
+          <p className="text-gray-500">
+            Complete los filtros y haga clic en "Ejecutar Búsqueda Avanzada" para encontrar registros exactos
+          </p>
+          <div className="mt-4 text-sm text-gray-400">
+            ✅ Búsquedas exactas • 📱 Múltiples teléfonos • 👔 Representantes legales • 📊 Datos completos
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [stats, setStats] = useState(null);

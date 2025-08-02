@@ -43,7 +43,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-fake = Faker('es_CR')
+fake = Faker('es_ES')  # Usar español de España que está disponible
 
 class UltraDeepExtractor:
     """

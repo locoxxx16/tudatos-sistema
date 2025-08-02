@@ -1025,7 +1025,13 @@ class UltraDeepExtractor:
             logger.error(f"❌ Error en ultra deep extraction: {e}")
             import traceback
             traceback.print_exc()
-            return {'success': False, 'error': str(e)}
+            return {
+                'success': False,
+                'error': str(e),
+                'total_extracted': 0,
+                'time_minutes': 0,
+                'objetivo_alcanzado': False
+            }
         
         finally:
             await self.close_ultra_system()

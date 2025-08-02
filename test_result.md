@@ -287,7 +287,12 @@ metadata:
   run_ui: false
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Portal Datos Abiertos Extractor"
+    - "Colegios Profesionales Extractor" 
+    - "Registro Nacional Extractor"
+    - "Sistema Integrado Ultra Extractor"
+    - "Nuevos Endpoints API Backend"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"

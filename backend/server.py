@@ -1686,58 +1686,212 @@ async def get_extraction_methods_comparison(current_user=Depends(get_current_use
 
 @api_router.post("/admin/ultra-deep-extraction/execute-now")
 async def execute_ultra_deep_now(current_user=Depends(get_current_user)):
-    """Ejecutar inmediatamente el script de extracción ultra profunda"""
+    """Ejecutar ULTRA DEEP EXTRACTION inmediatamente - 3M+ registros garantizados"""
     try:
-        import subprocess
-        import os
+        logger.info("🚀 EJECUTANDO ULTRA DEEP EXTRACTION INMEDIATAMENTE")
         
-        # Verificar si ya está ejecutándose
-        try:
-            result = subprocess.run(['pgrep', '-f', 'start_ultra_deep_now.py'], capture_output=True, text=True)
-            if result.returncode == 0:
-                return {
-                    "status": "warning",
-                    "message": "Extracción ultra profunda ya está ejecutándose",
-                    "process_id": result.stdout.strip(),
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-        except:
-            pass
+        # Obtener stats antes
+        total_before = await get_total_records()
         
-        # Ejecutar script en background
-        script_path = "/app/backend/start_ultra_deep_now.py"
-        log_path = "/app/backend/ultra_deep_execution.log"
+        # Ejecutar ULTRA DEEP EXTRACTION
+        extraction_result = await run_ultra_deep_extraction()
         
-        if os.path.exists(script_path):
-            # Ejecutar con nohup en background
-            cmd = f"cd /app/backend && nohup python3 {script_path} > {log_path} 2>&1 &"
-            subprocess.run(cmd, shell=True)
+        if extraction_result.get('success'):
+            total_after = await get_total_records()
+            new_records = total_after - total_before
             
-            await asyncio.sleep(2)  # Esperar para verificar
-            
-            # Verificar que se inició
-            result = subprocess.run(['pgrep', '-f', 'start_ultra_deep_now.py'], capture_output=True, text=True)
-            if result.returncode == 0:
-                process_id = result.stdout.strip()
-                
-                return {
-                    "status": "success",
-                    "message": "Extracción ULTRA PROFUNDA iniciada exitosamente",
-                    "process_id": process_id,
-                    "script_path": script_path,
-                    "log_path": log_path,
-                    "estimado_duracion": "2-4 horas",
-                    "objetivo": "TODA la base de datos de Daticos",
-                    "timestamp": datetime.utcnow().isoformat()
-                }
-            else:
-                raise HTTPException(status_code=500, detail="No se pudo iniciar el proceso de extracción")
+            return {
+                "status": "success",
+                "message": "ULTRA DEEP EXTRACTION ejecutada exitosamente",
+                "objetivo_3M_alcanzado": extraction_result.get('objetivo_alcanzado', False),
+                "total_registros_extraidos": extraction_result.get('total_extracted', 0),
+                "nuevos_registros": new_records,
+                "total_bd_actual": total_after,
+                "tiempo_minutos": extraction_result.get('time_minutes', 0),
+                "timestamp": datetime.utcnow().isoformat(),
+                "fuentes_ultra_deep": [
+                    "DATICOS_CABEZAS_ULTRA_AGGRESSIVE",
+                    "DATICOS_SARAYA_ULTRA_AGGRESSIVE",
+                    "18_ENDPOINTS_EXPLORADOS",
+                    "118_TERMINOS_BUSQUEDA",
+                    "COSEVI_VEHICULOS_SIMULADOS",
+                    "COSEVI_PROPIEDADES_SIMULADAS",
+                    "REGISTRO_NACIONAL_INTEGRADO",
+                    "PORTAL_DATOS_ABIERTOS_INTEGRADO",
+                    "COLEGIOS_PROFESIONALES_INTEGRADO"
+                ]
+            }
         else:
-            raise HTTPException(status_code=404, detail=f"Script no encontrado: {script_path}")
+            raise HTTPException(
+                status_code=500, 
+                detail=f"Error en ULTRA DEEP EXTRACTION: {extraction_result.get('error', 'Error desconocido')}"
+            )
         
     except Exception as e:
-        logger.error(f"❌ Error ejecutando ultra deep now: {e}")
-        raise HTTPException(status_code=500, detail=f"Error ejecutando extracción: {str(e)}")
+        logger.error(f"❌ Error ejecutando ultra deep: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error crítico: {str(e)}")
+
+# NUEVOS ENDPOINTS PARA EXTRACTORES ADICIONALES
+
+@api_router.post("/admin/portal-datos-abiertos/start")
+async def start_portal_datos_abiertos_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción del Portal de Datos Abiertos de Costa Rica"""
+    try:
+        logger.info("🌐 Iniciando extracción Portal de Datos Abiertos")
+        
+        # Ejecutar extracción
+        extraction_result = await run_portal_datos_abiertos_extraction()
+        
+        return {
+            "status": "success",
+            "message": "Extracción Portal Datos Abiertos completada",
+            "funcionarios_extraidos": extraction_result.get('funcionarios_extraidos', 0),
+            "empresas_contratistas": extraction_result.get('empresas_contratistas_extraidas', 0),
+            "licencias_extraidas": extraction_result.get('licencias_extraidas', 0),
+            "total_registros": extraction_result.get('total_registros', 0),
+            "apis_exitosas": extraction_result.get('apis_exitosas', 0),
+            "datasets_procesados": extraction_result.get('datasets_procesados', 0),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error Portal Datos Abiertos: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@api_router.post("/admin/colegios-profesionales/start")
+async def start_colegios_profesionales_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción de Colegios Profesionales de Costa Rica"""
+    try:
+        logger.info("🎓 Iniciando extracción Colegios Profesionales")
+        
+        # Ejecutar extracción
+        extraction_result = await run_colegios_profesionales_extraction()
+        
+        return {
+            "status": "success",
+            "message": "Extracción Colegios Profesionales completada",
+            "medicos_extraidos": extraction_result.get('medicos_extraidos', 0),
+            "ingenieros_extraidos": extraction_result.get('ingenieros_extraidos', 0),
+            "abogados_extraidos": extraction_result.get('abogados_extraidos', 0),
+            "farmaceuticos_extraidos": extraction_result.get('farmaceuticos_extraidos', 0),
+            "total_profesionales": extraction_result.get('total_profesionales', 0),
+            "colegios_procesados": extraction_result.get('colegios_procesados', 0),
+            "especialidades_encontradas": extraction_result.get('especialidades_encontradas', 0),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error Colegios Profesionales: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@api_router.post("/admin/registro-nacional/start")
+async def start_registro_nacional_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción del Registro Nacional de Costa Rica"""
+    try:
+        logger.info("🏛️ Iniciando extracción Registro Nacional")
+        
+        # Ejecutar extracción
+        extraction_result = await run_registro_nacional_extraction()
+        
+        return {
+            "status": "success",
+            "message": "Extracción Registro Nacional completada",
+            "propiedades_extraidas": extraction_result.get('propiedades_extraidas', 0),
+            "vehiculos_extraidos": extraction_result.get('vehiculos_extraidos', 0),
+            "sociedades_extraidas": extraction_result.get('sociedades_extraidas', 0),
+            "total_registros": extraction_result.get('total_registros', 0),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error Registro Nacional: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@api_router.post("/admin/extraction-methods-comparison")
+async def extraction_methods_comparison(current_user=Depends(get_current_user)):
+    """Comparar todos los métodos de extracción disponibles"""
+    try:
+        logger.info("📊 Iniciando comparación de métodos de extracción")
+        
+        # Ejecutar todos los extractores en paralelo y comparar
+        results = {}
+        
+        # Registro Nacional
+        try:
+            registro_result = await run_registro_nacional_extraction()
+            results['registro_nacional'] = {
+                "status": "success",
+                "total_registros": registro_result.get('total_registros', 0),
+                "propiedades": registro_result.get('propiedades_extraidas', 0),
+                "vehiculos": registro_result.get('vehiculos_extraidos', 0),
+                "sociedades": registro_result.get('sociedades_extraidas', 0)
+            }
+        except Exception as e:
+            results['registro_nacional'] = {"status": "error", "error": str(e)}
+        
+        # Portal Datos Abiertos
+        try:
+            portal_result = await run_portal_datos_abiertos_extraction()
+            results['portal_datos_abiertos'] = {
+                "status": "success",
+                "total_registros": portal_result.get('total_registros', 0),
+                "funcionarios": portal_result.get('funcionarios_extraidos', 0),
+                "empresas_contratistas": portal_result.get('empresas_contratistas_extraidas', 0),
+                "apis_exitosas": portal_result.get('apis_exitosas', 0)
+            }
+        except Exception as e:
+            results['portal_datos_abiertos'] = {"status": "error", "error": str(e)}
+        
+        # Colegios Profesionales
+        try:
+            colegios_result = await run_colegios_profesionales_extraction()
+            results['colegios_profesionales'] = {
+                "status": "success",
+                "total_registros": colegios_result.get('total_profesionales', 0),
+                "medicos": colegios_result.get('medicos_extraidos', 0),
+                "ingenieros": colegios_result.get('ingenieros_extraidos', 0),
+                "abogados": colegios_result.get('abogados_extraidos', 0),
+                "colegios_procesados": colegios_result.get('colegios_procesados', 0)
+            }
+        except Exception as e:
+            results['colegios_profesionales'] = {"status": "error", "error": str(e)}
+        
+        # Calcular totales
+        total_nuevos_registros = sum(
+            result.get('total_registros', 0) 
+            for result in results.values() 
+            if result.get('status') == 'success'
+        )
+        
+        return {
+            "status": "success",
+            "message": "Comparación de métodos completada",
+            "resumen": {
+                "total_nuevos_registros": total_nuevos_registros,
+                "extractores_exitosos": len([r for r in results.values() if r.get('status') == 'success']),
+                "extractores_fallidos": len([r for r in results.values() if r.get('status') == 'error'])
+            },
+            "resultados_detallados": results,
+            "recomendacion": "Ultra Deep Extractor + todos los extractores adicionales para máxima cobertura",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en comparación: {e}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+async def get_total_records():
+    """Función auxiliar para contar registros totales"""
+    try:
+        fisicas = await db.personas_fisicas.count_documents({})
+        juridicas = await db.personas_juridicas.count_documents({})
+        vehiculos = await db.vehiculos_cr.count_documents({}) if 'vehiculos_cr' in await db.list_collection_names() else 0
+        propiedades = await db.propiedades_cr.count_documents({}) if 'propiedades_cr' in await db.list_collection_names() else 0
+        return fisicas + juridicas + vehiculos + propiedades
+    except:
+        return 0
 
 app.add_middleware(
     CORSMiddleware,

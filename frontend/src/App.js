@@ -3049,7 +3049,8 @@ const NavigationBar = ({ activeSection, setActiveSection }) => {
         { id: 'foto', label: 'Consulta con Foto', icon: '📷', description: 'Búsqueda por cédula con foto incluida' },
         { id: 'cedula-global', label: 'Búsqueda Global', icon: '🌍', description: 'Búsqueda completa por cédula' },
         { id: 'telefono', label: 'Por Teléfono', icon: '📞', description: 'Búsqueda por número telefónico' },
-        { id: 'nombres', label: 'Por Nombres', icon: '👥', description: 'Búsqueda por nombres y apellidos' }
+        { id: 'nombres', label: 'Por Nombres', icon: '👥', description: 'Búsqueda por nombres y apellidos' },
+        { id: 'busqueda-avanzada', label: 'Búsqueda Avanzada', icon: '🔍', description: 'Búsqueda avanzada con múltiples filtros' }
       ]
     },
     { 

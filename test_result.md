@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "ACTUALIZADO: Implementar sistema ULTRA masivo de extracción para 3+ MILLONES de registros usando CABEZAS/Hola2022 y Saraya/12345 en Daticos, integrar COSEVI para vehículos/propiedades, filtrar SOLO Costa Rica, sistema autónomo diario 5am, eliminar duplicados y datos de otros países. Objetivo: base de datos de 3M+ registros limpiados y validados."
+user_problem_statement: "ACTUALIZADO ULTRA PROFUNDO: Sistema ULTRA DEEP EXTRACTION para extraer TODA la base de datos de Daticos.com usando CABEZAS/Hola2022 y Saraya/12345. Meta: 3+ MILLONES de registros con 18 endpoints diferentes, 118 términos de búsqueda, filtrado exclusivo Costa Rica, validación teléfonos +506, emails CR, simulación COSEVI vehículos/propiedades. Sistema ULTRA AGRESIVO que explora TODO Daticos hasta el nivel más profundo."
 
 backend:
   - task: "Sistema Ultra Masivo de Extracción (3M+ Registros)"

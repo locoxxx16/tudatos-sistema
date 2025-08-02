@@ -1410,6 +1410,332 @@ async def run_full_daticos_extraction(current_user=Depends(get_current_user)):
         logger.error(f"Error in full Daticos extraction: {e}")
         raise HTTPException(status_code=500, detail=f"Error en extracción completa: {str(e)}")
 
+# ================================================================================================
+# ULTRA DEEP EXTRACTION ENDPOINTS - TODA LA BASE DE DATOS DE DATICOS
+# ================================================================================================
+
+@api_router.post("/admin/ultra-deep-extraction/start")
+async def start_ultra_deep_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción ULTRA PROFUNDA de toda la base de datos de Daticos"""
+    try:
+        logger.info("🚀 API: Iniciando extracción ULTRA PROFUNDA")
+        logger.info("🎯 OBJETIVO: Extraer TODA la base de datos de Daticos.com")
+        logger.info("🔐 CREDENCIALES: CABEZAS/Hola2022 + Saraya/12345")
+        
+        # Ejecutar en background para evitar timeout
+        import asyncio
+        
+        async def run_background_ultra_deep():
+            try:
+                result = await run_ultra_deep_extraction()
+                logger.info(f"✅ Extracción ultra profunda completada: {result}")
+            except Exception as e:
+                logger.error(f"❌ Error en extracción ultra profunda background: {e}")
+        
+        # Iniciar en background
+        task = asyncio.create_task(run_background_ultra_deep())
+        
+        return {
+            "status": "success", 
+            "message": "Extracción ULTRA PROFUNDA iniciada en background",
+            "details": {
+                "objetivo": "TODA la base de datos de Daticos",
+                "meta_registros": "3+ millones",
+                "credenciales": ["CABEZAS/Hola2022", "Saraya/12345"],
+                "metodo": "ULTRA_DEEP_EXTRACTION",
+                "estimado_duracion": "2-4 horas",
+                "endpoints_explorados": "TODOS los disponibles",
+                "filtrado": "Solo Costa Rica",
+                "incluye": ["Validación teléfonos +506", "Emails CR", "Salarios", "Datos laborales", "Matrimonio", "Mercantiles"],
+                "simulacion": ["Vehículos COSEVI", "Propiedades Registro Nacional"]
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error iniciando extracción ultra profunda: {e}")
+        raise HTTPException(status_code=500, detail=f"Error iniciando extracción ultra profunda: {str(e)}")
+
+@api_router.get("/admin/ultra-deep-extraction/status")
+async def get_ultra_deep_extraction_status(current_user=Depends(get_current_user)):
+    """Obtener estado de la extracción ultra profunda"""
+    try:
+        # Contar registros actuales
+        total_fisicas = await db.personas_fisicas.count_documents({})
+        total_juridicas = await db.personas_juridicas.count_documents({})
+        total_vehiculos = await db.vehiculos_cr.count_documents({})
+        total_propiedades = await db.propiedades_cr.count_documents({})
+        
+        # Verificar registros ultra deep
+        ultra_deep_fisicas = 0
+        ultra_deep_juridicas = 0
+        ultra_deep_raw = 0
+        
+        try:
+            ultra_deep_fisicas = await db.personas_fisicas.count_documents({'fuente_ultra_deep': True})
+            ultra_deep_juridicas = await db.personas_juridicas.count_documents({'fuente_ultra_deep': True})
+            ultra_deep_raw = await db.ultra_deep_extraction.count_documents({})
+        except:
+            pass
+        
+        # Obtener último reporte si existe
+        latest_report = None
+        try:
+            latest_report = await db.ultra_deep_extraction_final_report.find_one(
+                {}, sort=[('fecha_generacion', -1)]
+            )
+        except:
+            pass
+        
+        # Obtener progreso reciente
+        recent_progress = None
+        try:
+            recent_progress = await db.ultra_extraction_progress.find_one(
+                {}, sort=[('timestamp', -1)]
+            )
+        except:
+            pass
+        
+        total_registros = total_fisicas + total_juridicas
+        progreso_3m = (total_registros / 3000000) * 100
+        
+        return {
+            "status": "success",
+            "data": {
+                "registros_actuales": {
+                    "personas_fisicas": total_fisicas,
+                    "personas_juridicas": total_juridicas,
+                    "vehiculos_cr": total_vehiculos,
+                    "propiedades_cr": total_propiedades,
+                    "total_principal": total_registros
+                },
+                "ultra_deep_especificos": {
+                    "personas_fisicas_ultra_deep": ultra_deep_fisicas,
+                    "personas_juridicas_ultra_deep": ultra_deep_juridicas,
+                    "registros_raw_ultra_deep": ultra_deep_raw,
+                    "total_ultra_deep": ultra_deep_fisicas + ultra_deep_juridicas
+                },
+                "progreso_meta_3m": {
+                    "progreso_porcentaje": min(progreso_3m, 100),
+                    "objetivo_alcanzado": total_registros >= 3000000,
+                    "registros_faltantes": max(0, 3000000 - total_registros),
+                    "eficiencia": f"{progreso_3m:.2f}%"
+                },
+                "ultimo_reporte_ultra": {
+                    "existe": latest_report is not None,
+                    "fecha": latest_report.get('fecha_generacion').isoformat() if latest_report and latest_report.get('fecha_generacion') else None,
+                    "objetivo_3m_alcanzado": latest_report.get('objetivo_3M_alcanzado') if latest_report else False,
+                    "tiempo_minutos": latest_report.get('tiempo_total_extraccion_minutos') if latest_report else None,
+                    "endpoints_completados": latest_report.get('endpoints_explorados_completamente') if latest_report else 0,
+                    "credenciales_usadas": latest_report.get('credenciales_utilizadas') if latest_report else []
+                } if latest_report else {
+                    "existe": False,
+                    "mensaje": "No se ha ejecutado extracción ultra profunda aún"
+                },
+                "progreso_reciente": {
+                    "timestamp": recent_progress.get('timestamp').isoformat() if recent_progress and recent_progress.get('timestamp') else None,
+                    "total_extraido": recent_progress.get('total_extraido') if recent_progress else 0,
+                    "cedulas_fisicas_unicas": recent_progress.get('cedulas_fisicas_unicas_count') if recent_progress else 0,
+                    "cedulas_juridicas_unicas": recent_progress.get('cedulas_juridicas_unicas_count') if recent_progress else 0,
+                    "telefonos_validados_cr": recent_progress.get('telefonos_unicos_count') if recent_progress else 0,
+                    "emails_validados": recent_progress.get('emails_unicos_count') if recent_progress else 0,
+                    "endpoints_completados": recent_progress.get('endpoints_completados') if recent_progress else 0
+                } if recent_progress else {
+                    "mensaje": "No hay progreso reciente registrado"
+                }
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo estado ultra deep: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo estado ultra deep: {str(e)}")
+
+@api_router.get("/admin/extraction-methods-comparison")
+async def get_extraction_methods_comparison(current_user=Depends(get_current_user)):
+    """Comparar todos los métodos de extracción disponibles"""
+    try:
+        # Estadísticas por fuente/método
+        stats_by_method = {}
+        
+        # Ultra Deep
+        try:
+            ultra_deep_fisicas = await db.personas_fisicas.count_documents({'fuente_ultra_deep': True})
+            ultra_deep_juridicas = await db.personas_juridicas.count_documents({'fuente_ultra_deep': True})
+            stats_by_method['ultra_deep'] = {
+                'fisicas': ultra_deep_fisicas,
+                'juridicas': ultra_deep_juridicas,
+                'total': ultra_deep_fisicas + ultra_deep_juridicas,
+                'metodo': 'ULTRA_DEEP_EXTRACTION',
+                'descripcion': 'Extracción ultra profunda con TODAS las credenciales y endpoints'
+            }
+        except:
+            stats_by_method['ultra_deep'] = {'fisicas': 0, 'juridicas': 0, 'total': 0, 'metodo': 'ULTRA_DEEP_EXTRACTION'}
+        
+        # Ultra Massive
+        try:
+            ultra_massive_fisicas = await db.personas_fisicas.count_documents({'fuente_extraccion_ultra': {'$exists': True}})
+            ultra_massive_juridicas = await db.personas_juridicas.count_documents({'fuente_extraccion_ultra': {'$exists': True}})
+            stats_by_method['ultra_massive'] = {
+                'fisicas': ultra_massive_fisicas,
+                'juridicas': ultra_massive_juridicas,
+                'total': ultra_massive_fisicas + ultra_massive_juridicas,
+                'metodo': 'ULTRA_MASSIVE_EXTRACTION',
+                'descripcion': 'Extracción masiva con credenciales múltiples'
+            }
+        except:
+            stats_by_method['ultra_massive'] = {'fisicas': 0, 'juridicas': 0, 'total': 0, 'metodo': 'ULTRA_MASSIVE_EXTRACTION'}
+        
+        # Advanced Massive (CABEZAS)
+        try:
+            advanced_massive_count = await db.personas_fisicas.count_documents({'fuente_extraccion': 'DATICOS_CABEZAS_MASIVA'})
+            advanced_massive_juridicas = await db.personas_juridicas.count_documents({'fuente_extraccion': 'DATICOS_CABEZAS_MASIVA'})
+            stats_by_method['advanced_massive'] = {
+                'fisicas': advanced_massive_count,
+                'juridicas': advanced_massive_juridicas,
+                'total': advanced_massive_count + advanced_massive_juridicas,
+                'metodo': 'ADVANCED_MASSIVE_EXTRACTION',
+                'descripcion': 'Extracción avanzada con credencial CABEZAS/Hola2022'
+            }
+        except:
+            stats_by_method['advanced_massive'] = {'fisicas': 0, 'juridicas': 0, 'total': 0, 'metodo': 'ADVANCED_MASSIVE_EXTRACTION'}
+        
+        # TSE Original
+        try:
+            tse_count = await db.tse_datos_hibridos.count_documents({})
+            stats_by_method['tse_original'] = {
+                'registros': tse_count,
+                'metodo': 'TSE_HIBRIDO_ORIGINAL',
+                'descripcion': 'Datos originales del TSE híbrido'
+            }
+        except:
+            stats_by_method['tse_original'] = {'registros': 0, 'metodo': 'TSE_HIBRIDO_ORIGINAL'}
+        
+        # Daticos Original (Saraya)
+        try:
+            daticos_count = await db.daticos_datos_masivos.count_documents({})
+            stats_by_method['daticos_original'] = {
+                'registros': daticos_count,
+                'metodo': 'DATICOS_SARAYA_ORIGINAL',
+                'descripcion': 'Datos originales de Daticos con Saraya/12345'
+            }
+        except:
+            stats_by_method['daticos_original'] = {'registros': 0, 'metodo': 'DATICOS_SARAYA_ORIGINAL'}
+        
+        # COSEVI Simulado
+        try:
+            vehiculos_count = await db.vehiculos_cr.count_documents({})
+            propiedades_count = await db.propiedades_cr.count_documents({})
+            stats_by_method['cosevi_simulado'] = {
+                'vehiculos': vehiculos_count,
+                'propiedades': propiedades_count,
+                'total': vehiculos_count + propiedades_count,
+                'metodo': 'COSEVI_SIMULADO',
+                'descripcion': 'Datos simulados de vehículos y propiedades'
+            }
+        except:
+            stats_by_method['cosevi_simulado'] = {'vehiculos': 0, 'propiedades': 0, 'total': 0, 'metodo': 'COSEVI_SIMULADO'}
+        
+        # Totales generales
+        total_fisicas = await db.personas_fisicas.count_documents({})
+        total_juridicas = await db.personas_juridicas.count_documents({})
+        gran_total = total_fisicas + total_juridicas
+        
+        # Determinar método más efectivo
+        metodos_principales = ['ultra_deep', 'ultra_massive', 'advanced_massive']
+        mejor_metodo = max(metodos_principales, 
+                          key=lambda x: stats_by_method.get(x, {}).get('total', 0))
+        
+        return {
+            "status": "success",
+            "data": {
+                "resumen_general": {
+                    "total_personas_fisicas": total_fisicas,
+                    "total_personas_juridicas": total_juridicas,
+                    "gran_total_registros": gran_total,
+                    "progreso_3m_porcentaje": (gran_total / 3000000) * 100,
+                    "meta_3m_alcanzada": gran_total >= 3000000,
+                    "registros_faltantes_3m": max(0, 3000000 - gran_total)
+                },
+                "estadisticas_por_metodo": stats_by_method,
+                "analisis_efectividad": {
+                    "metodo_mas_efectivo": mejor_metodo,
+                    "registros_mejor_metodo": stats_by_method.get(mejor_metodo, {}).get('total', 0),
+                    "porcentaje_mejor_metodo": (stats_by_method.get(mejor_metodo, {}).get('total', 0) / gran_total * 100) if gran_total > 0 else 0,
+                    "recomendacion": "ultra_deep" if gran_total < 3000000 else "mantenimiento"
+                },
+                "credenciales_disponibles": {
+                    "cabezas": {"username": "CABEZAS", "password": "Hola2022", "status": "activa"},
+                    "saraya": {"username": "Saraya", "password": "12345", "status": "activa"}
+                },
+                "siguiente_accion": {
+                    "recomendada": "ejecutar_ultra_deep" if gran_total < 3000000 else "monitoreo_mantenimiento",
+                    "razon": "Meta 3M no alcanzada, usar extracción ultra profunda" if gran_total < 3000000 else "Meta alcanzada, mantener sistema",
+                    "endpoint_sugerido": "/admin/ultra-deep-extraction/start" if gran_total < 3000000 else "/admin/autonomous-system/start"
+                }
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en comparación de métodos: {e}")
+        raise HTTPException(status_code=500, detail=f"Error comparando métodos de extracción: {str(e)}")
+
+@api_router.post("/admin/ultra-deep-extraction/execute-now")
+async def execute_ultra_deep_now(current_user=Depends(get_current_user)):
+    """Ejecutar inmediatamente el script de extracción ultra profunda"""
+    try:
+        import subprocess
+        import os
+        
+        # Verificar si ya está ejecutándose
+        try:
+            result = subprocess.run(['pgrep', '-f', 'start_ultra_deep_now.py'], capture_output=True, text=True)
+            if result.returncode == 0:
+                return {
+                    "status": "warning",
+                    "message": "Extracción ultra profunda ya está ejecutándose",
+                    "process_id": result.stdout.strip(),
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+        except:
+            pass
+        
+        # Ejecutar script en background
+        script_path = "/app/backend/start_ultra_deep_now.py"
+        log_path = "/app/backend/ultra_deep_execution.log"
+        
+        if os.path.exists(script_path):
+            # Ejecutar con nohup en background
+            cmd = f"cd /app/backend && nohup python3 {script_path} > {log_path} 2>&1 &"
+            subprocess.run(cmd, shell=True)
+            
+            await asyncio.sleep(2)  # Esperar para verificar
+            
+            # Verificar que se inició
+            result = subprocess.run(['pgrep', '-f', 'start_ultra_deep_now.py'], capture_output=True, text=True)
+            if result.returncode == 0:
+                process_id = result.stdout.strip()
+                
+                return {
+                    "status": "success",
+                    "message": "Extracción ULTRA PROFUNDA iniciada exitosamente",
+                    "process_id": process_id,
+                    "script_path": script_path,
+                    "log_path": log_path,
+                    "estimado_duracion": "2-4 horas",
+                    "objetivo": "TODA la base de datos de Daticos",
+                    "timestamp": datetime.utcnow().isoformat()
+                }
+            else:
+                raise HTTPException(status_code=500, detail="No se pudo iniciar el proceso de extracción")
+        else:
+            raise HTTPException(status_code=404, detail=f"Script no encontrado: {script_path}")
+        
+    except Exception as e:
+        logger.error(f"❌ Error ejecutando ultra deep now: {e}")
+        raise HTTPException(status_code=500, detail=f"Error ejecutando extracción: {str(e)}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

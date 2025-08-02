@@ -22,6 +22,7 @@ from ultra_deep_extractor import run_ultra_deep_extraction
 from portal_datos_abiertos_extractor import run_portal_datos_abiertos_extraction
 from colegios_profesionales_extractor import run_colegios_profesionales_extraction
 from registro_nacional_extractor import run_registro_nacional_extraction
+from integrated_ultra_extractor import run_integrated_ultra_extraction
 
 
 ROOT_DIR = Path(__file__).parent

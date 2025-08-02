@@ -19,6 +19,9 @@ from daticos_extractor import daticos_extractor
 from daily_auto_updater import start_auto_updater, get_updater_status, force_update, update_config
 from ultra_massive_extractor import UltraMassiveExtractor
 from ultra_deep_extractor import run_ultra_deep_extraction
+from portal_datos_abiertos_extractor import run_portal_datos_abiertos_extraction
+from colegios_profesionales_extractor import run_colegios_profesionales_extraction
+from registro_nacional_extractor import run_registro_nacional_extraction
 
 
 ROOT_DIR = Path(__file__).parent

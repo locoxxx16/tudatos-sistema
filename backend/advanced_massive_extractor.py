@@ -23,7 +23,7 @@ from bs4 import BeautifulSoup
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from dotenv import load_dotenv
-from daticos_extractor import DaticosExtractor
+from backend.daticos_extractor import DaticosExtractor
 from faker import Faker
 
 # Configurar logging

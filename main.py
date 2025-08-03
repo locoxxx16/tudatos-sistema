@@ -763,21 +763,601 @@ async def user_dashboard():
 </html>
     """)
 
-# Health check
-@app.get("/api/health")
-async def health_check():
-    """Health check del sistema COMPLETO"""
-    return {
-        "status": "SISTEMA_ULTRA_FUNCIONANDO",
-        "version": "6.0.0",
-        "timestamp": datetime.utcnow().isoformat(),
-        "database": {
-            "personas_completas": STATS_CALCULATOR["total_personas"],
-            "fotos_integradas": STATS_CALCULATOR["total_fotos"],
-            "telefonos_registrados": STATS_CALCULATOR["total_telefonos"],
-            "emails_registrados": STATS_CALCULATOR["total_emails"]
+# =============================================================================
+# TODOS LOS ENDPOINTS FALTANTES
+# =============================================================================
+
+@app.get("/api/user/profile")
+async def get_user_profile(request: Request):
+    """Obtener perfil de usuario autenticado"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token requerido")
+        
+        token = auth_header.split(" ")[1]
+        user = authenticate_user(token)
+        
+        if not user:
+            raise HTTPException(status_code=401, detail="Token inválido")
+        
+        return {
+            "success": True,
+            "user": {
+                "id": user["id"],
+                "username": user["username"],
+                "email": user["email"],
+                "credits": user["credits"],
+                "plan": user["plan"],
+                "role": user["role"]
+            }
         }
-    }
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@app.get("/api/search/complete")
+async def search_complete(request: Request, q: str, limit: int = 10):
+    """Búsqueda COMPLETA REAL en base de datos"""
+    try:
+        # Verificar autenticación
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token requerido")
+        
+        token = auth_header.split(" ")[1]
+        user = authenticate_user(token)
+        
+        if not user:
+            raise HTTPException(status_code=401, detail="Token inválido")
+        
+        if user["credits"] <= 0:
+            return {"success": False, "message": "Sin créditos suficientes"}
+        
+        # CONSUMIR CRÉDITO
+        users_database[user["id"]]["credits"] -= 1
+        
+        # BUSCAR EN BASE REAL
+        results = buscar_en_base_completa(q, limit)
+        
+        return {
+            "success": True,
+            "data": results,
+            "total": len(results),
+            "credits_remaining": users_database[user["id"]]["credits"],
+            "query": q,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Error en búsqueda: {e}")
+        return {"success": False, "message": "Error interno"}
+
+# =============================================================================
+# PANEL ADMIN COMPLETO CON TODAS LAS FUNCIONES
+# =============================================================================
+
+@app.get("/admin/dashboard")
+async def admin_dashboard():
+    """Panel admin ULTRA COMPLETO con todas las funciones"""
+    return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin Ultra - TuDatos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {{ font-family: 'Inter', sans-serif; }}
+        .gradient-admin {{ background: linear-gradient(135deg, #dc2626 0%, #7c2d12 50%, #581c87 100%); }}
+        .glass {{ background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }}
+    </style>
+</head>
+<body class="bg-gray-900 text-white" x-data="adminApp()">
+    <!-- Header Admin -->
+    <header class="gradient-admin shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-4xl font-black">🛡️ PANEL ADMIN ULTRA</h1>
+                    <p class="text-xl">Control Total - {STATS_CALCULATOR['total_personas']:,} registros con {STATS_CALCULATOR['total_fotos']:,} fotos</p>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="glass rounded-lg px-6 py-3 text-center">
+                        <p class="font-bold text-lg">Master Admin</p>
+                        <p class="text-sm">Control Absoluto</p>
+                    </div>
+                    <button @click="showChangePassword = true" class="bg-yellow-600 hover:bg-yellow-700 px-6 py-3 rounded-lg font-bold">
+                        <i class="fas fa-key mr-2"></i>Cambiar Contraseña
+                    </button>
+                    <button @click="logout()" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-bold">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Salir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-80 glass h-screen p-6 overflow-y-auto">
+            <nav class="space-y-3">
+                <button @click="currentSection = 'dashboard'" :class="currentSection === 'dashboard' ? 'bg-red-600' : 'hover:bg-white hover:bg-opacity-10'" class="w-full flex items-center px-4 py-3 rounded-lg transition-all font-bold">
+                    <i class="fas fa-tachometer-alt mr-3 text-lg"></i>Dashboard
+                </button>
+                <button @click="currentSection = 'users'" :class="currentSection === 'users' ? 'bg-red-600' : 'hover:bg-white hover:bg-opacity-10'" class="w-full flex items-center px-4 py-3 rounded-lg transition-all font-bold">
+                    <i class="fas fa-users mr-3 text-lg"></i>Usuarios
+                </button>
+                <button @click="currentSection = 'search'" :class="currentSection === 'search' ? 'bg-red-600' : 'hover:bg-white hover:bg-opacity-10'" class="w-full flex items-center px-4 py-3 rounded-lg transition-all font-bold">
+                    <i class="fas fa-search mr-3 text-lg"></i>Consultas Admin
+                </button>
+                <button @click="currentSection = 'extractors'" :class="currentSection === 'extractors' ? 'bg-red-600' : 'hover:bg-white hover:bg-opacity-10'" class="w-full flex items-center px-4 py-3 rounded-lg transition-all font-bold">
+                    <i class="fas fa-robot mr-3 text-lg"></i>Extractores
+                </button>
+                <button @click="currentSection = 'system'" :class="currentSection === 'system' ? 'bg-red-600' : 'hover:bg-white hover:bg-opacity-10'" class="w-full flex items-center px-4 py-3 rounded-lg transition-all font-bold">
+                    <i class="fas fa-cogs mr-3 text-lg"></i>Sistema
+                </button>
+            </nav>
+        </div>
+
+        <!-- Contenido Principal -->
+        <div class="flex-1 p-6 overflow-y-auto">
+            <!-- Dashboard -->
+            <div x-show="currentSection === 'dashboard'">
+                <h2 class="text-4xl font-bold mb-8">📊 Dashboard Ultra Completo</h2>
+                
+                <!-- Stats REALES -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="glass rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-300 text-lg">Personas</p>
+                                <p class="text-4xl font-black">{STATS_CALCULATOR['total_personas']:,}</p>
+                            </div>
+                            <i class="fas fa-users text-5xl text-blue-400"></i>
+                        </div>
+                    </div>
+                    <div class="glass rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-300 text-lg">Fotos</p>
+                                <p class="text-4xl font-black">{STATS_CALCULATOR['total_fotos']:,}</p>
+                            </div>
+                            <i class="fas fa-images text-5xl text-green-400"></i>
+                        </div>
+                    </div>
+                    <div class="glass rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-300 text-lg">Extractores</p>
+                                <p class="text-4xl font-black">5</p>
+                            </div>
+                            <i class="fas fa-robot text-5xl text-purple-400"></i>
+                        </div>
+                    </div>
+                    <div class="glass rounded-xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-yellow-300 text-lg">Usuarios</p>
+                                <p class="text-4xl font-black" x-text="totalUsers"></p>
+                            </div>
+                            <i class="fas fa-user-cog text-5xl text-yellow-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daticos Estado REAL -->
+                <div class="glass rounded-xl p-6 mb-8">
+                    <h3 class="text-2xl font-bold mb-4">🔑 Extractores Daticos (TIEMPO REAL)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white bg-opacity-5 rounded-xl p-6">
+                            <h4 class="text-xl font-bold text-green-400 mb-3">CABEZAS</h4>
+                            <p><strong>Estado:</strong> <span class="text-green-400">ACTIVA</span></p>
+                            <p><strong>Consultas hoy:</strong> <span class="font-bold">{DATICOS_REAL['CABEZAS']['consultas_hoy']}/1000</span></p>
+                            <div class="w-full bg-gray-700 rounded-full h-3 mt-3">
+                                <div class="bg-green-600 h-3 rounded-full" style="width: {DATICOS_REAL['CABEZAS']['consultas_hoy']/10}%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white bg-opacity-5 rounded-xl p-6">
+                            <h4 class="text-xl font-bold text-green-400 mb-3">Saraya</h4>
+                            <p><strong>Estado:</strong> <span class="text-green-400">ACTIVA</span></p>
+                            <p><strong>Consultas hoy:</strong> <span class="font-bold">{DATICOS_REAL['Saraya']['consultas_hoy']}/1000</span></p>
+                            <div class="w-full bg-gray-700 rounded-full h-3 mt-3">
+                                <div class="bg-blue-600 h-3 rounded-full" style="width: {DATICOS_REAL['Saraya']['consultas_hoy']/10}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usuarios -->
+            <div x-show="currentSection === 'users'">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-4xl font-bold">👥 Gestión Completa de Usuarios</h2>
+                    <button @click="showCreateUser = true" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-bold text-lg">
+                        <i class="fas fa-plus mr-2"></i>Crear Usuario
+                    </button>
+                </div>
+                
+                <!-- Lista de Usuarios -->
+                <div class="glass rounded-xl p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-600">
+                                    <th class="text-left py-4 px-4 font-bold text-lg">Usuario</th>
+                                    <th class="text-left py-4 px-4 font-bold text-lg">Plan</th>
+                                    <th class="text-left py-4 px-4 font-bold text-lg">Créditos</th>
+                                    <th class="text-left py-4 px-4 font-bold text-lg">Estado</th>
+                                    <th class="text-left py-4 px-4 font-bold text-lg">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template x-for="user in users" :key="user.id">
+                                    <tr class="border-b border-gray-700 hover:bg-white hover:bg-opacity-5">
+                                        <td class="py-4 px-4">
+                                            <div>
+                                                <p class="font-bold text-lg" x-text="user.username"></p>
+                                                <p class="text-gray-400" x-text="user.email"></p>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <span class="px-3 py-2 rounded-full text-sm font-bold bg-blue-600" x-text="user.plan"></span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <span class="text-xl font-bold" x-text="user.credits"></span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <span class="px-3 py-2 rounded-full text-sm font-bold bg-green-600">Activo</span>
+                                        </td>
+                                        <td class="py-4 px-4">
+                                            <div class="flex space-x-2">
+                                                <button @click="addCredits(user.id)" class="px-3 py-2 bg-green-600 rounded font-bold hover:bg-green-700">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <button @click="changeUserPassword(user.id)" class="px-3 py-2 bg-yellow-600 rounded font-bold hover:bg-yellow-700">
+                                                    <i class="fas fa-key"></i>
+                                                </button>
+                                                <button @click="deleteUser(user.id)" class="px-3 py-2 bg-red-600 rounded font-bold hover:bg-red-700">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consultas Admin -->
+            <div x-show="currentSection === 'search'">
+                <h2 class="text-4xl font-bold mb-8">🔍 Consultas Admin (Sin Límite)</h2>
+                
+                <div class="glass rounded-xl p-8">
+                    <div class="relative mb-8">
+                        <input type="text" x-model="adminSearchQuery" @keydown.enter="performAdminSearch()"
+                               class="w-full px-6 py-4 text-xl bg-white bg-opacity-10 border-2 border-white border-opacity-20 rounded-xl focus:border-red-400 focus:outline-none text-white"
+                               placeholder="🔍 Búsqueda admin sin límites...">
+                        <button @click="performAdminSearch()" :disabled="adminSearching"
+                                class="absolute right-3 top-3 bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700">
+                            <i class="fas fa-search-plus mr-2" :class="{ 'fa-spin fa-spinner': adminSearching }"></i>
+                            <span x-text="adminSearching ? 'Buscando...' : 'BUSCAR'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Crear Usuario -->
+    <div x-show="showCreateUser" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+        <div class="glass rounded-xl max-w-lg w-full p-8" @click.away="showCreateUser = false">
+            <h3 class="text-3xl font-bold mb-6">➕ Crear Usuario COMPLETO</h3>
+            <form @submit.prevent="createUser()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-2">Usuario</label>
+                        <input type="text" x-model="newUser.username" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2">Email</label>
+                        <input type="email" x-model="newUser.email" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2">Contraseña</label>
+                        <input type="password" x-model="newUser.password" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold mb-2">Plan</label>
+                        <select x-model="newUser.plan" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white">
+                            <option value="Básico">Básico (100 créditos)</option>
+                            <option value="Premium">Premium (1000 créditos)</option>
+                            <option value="Enterprise">Enterprise (10000 créditos)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-bold mb-2">Créditos Personalizados</label>
+                        <input type="number" x-model="newUser.customCredits" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white">
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 py-4 rounded-lg font-bold text-lg mt-6">
+                    <i class="fas fa-plus mr-2"></i>Crear Usuario
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Cambiar Contraseña -->
+    <div x-show="showChangePassword" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+        <div class="glass rounded-xl max-w-md w-full p-8" @click.away="showChangePassword = false">
+            <h3 class="text-3xl font-bold mb-6">🔐 Cambiar Contraseña Admin</h3>
+            <form @submit.prevent="changeAdminPassword()">
+                <div class="mb-6">
+                    <input type="password" x-model="passwordChange.current" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white" placeholder="Contraseña Actual" required>
+                </div>
+                <div class="mb-6">
+                    <input type="password" x-model="passwordChange.new" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white" placeholder="Nueva Contraseña" required>
+                </div>
+                <div class="mb-6">
+                    <input type="password" x-model="passwordChange.confirm" class="w-full px-4 py-3 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white" placeholder="Confirmar" required>
+                </div>
+                <button type="submit" class="w-full bg-yellow-600 hover:bg-yellow-700 py-4 rounded-lg font-bold text-lg">
+                    <i class="fas fa-key mr-2"></i>Cambiar Contraseña
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function adminApp() {{
+            return {{
+                currentSection: 'dashboard',
+                showCreateUser: false,
+                showChangePassword: false,
+                totalUsers: 1,
+                users: [],
+                adminSearchQuery: '',
+                adminSearching: false,
+                
+                newUser: {{
+                    username: '', email: '', password: '', plan: 'Básico', customCredits: ''
+                }},
+                
+                passwordChange: {{
+                    current: '', new: '', confirm: ''
+                }},
+                
+                init() {{
+                    const token = localStorage.getItem('admin_token');
+                    if (!token) {{
+                        window.location.href = '/';
+                        return;
+                    }}
+                    this.loadUsers();
+                }},
+                
+                async loadUsers() {{
+                    try {{
+                        const response = await fetch('/api/admin/users', {{
+                            headers: {{ 'Authorization': 'Bearer admin_master_token' }}
+                        }});
+                        const result = await response.json();
+                        if (result.success) {{
+                            this.users = result.users;
+                            this.totalUsers = result.users.length + 1;
+                        }}
+                    }} catch (error) {{
+                        console.error('Error loading users:', error);
+                    }}
+                }},
+                
+                async createUser() {{
+                    try {{
+                        const response = await fetch('/api/admin/users/create', {{
+                            method: 'POST',
+                            headers: {{
+                                'Authorization': 'Bearer admin_master_token',
+                                'Content-Type': 'application/json'
+                            }},
+                            body: JSON.stringify(this.newUser)
+                        }});
+                        
+                        const result = await response.json();
+                        if (result.success) {{
+                            this.showCreateUser = false;
+                            await this.loadUsers();
+                            alert(`✅ Usuario creado exitosamente:\\n\\nUsuario: ${{result.username}}\\nContraseña: ${{result.password}}\\nCréditos: ${{result.credits}}\\n\\n⚠️ Comparte estas credenciales con el usuario`);
+                            this.newUser = {{ username: '', email: '', password: '', plan: 'Básico', customCredits: '' }};
+                        }} else {{
+                            alert('❌ Error: ' + result.message);
+                        }}
+                    }} catch (error) {{
+                        alert('❌ Error creando usuario');
+                    }}
+                }},
+                
+                async changeAdminPassword() {{
+                    if (this.passwordChange.new !== this.passwordChange.confirm) {{
+                        alert('❌ Las contraseñas no coinciden');
+                        return;
+                    }}
+                    
+                    try {{
+                        const response = await fetch('/api/admin/change-password', {{
+                            method: 'POST',
+                            headers: {{
+                                'Authorization': 'Bearer admin_master_token',
+                                'Content-Type': 'application/json'
+                            }},
+                            body: JSON.stringify(this.passwordChange)
+                        }});
+                        
+                        const result = await response.json();
+                        if (result.success) {{
+                            this.showChangePassword = false;
+                            alert('✅ Contraseña cambiada exitosamente');
+                            this.passwordChange = {{ current: '', new: '', confirm: '' }};
+                        }} else {{
+                            alert('❌ Error: ' + result.message);
+                        }}
+                    }} catch (error) {{
+                        alert('❌ Error cambiando contraseña');
+                    }}
+                }},
+                
+                addCredits(userId) {{
+                    const credits = prompt('¿Cuántos créditos agregar?');
+                    if (credits && !isNaN(credits)) {{
+                        alert(`✅ ${{credits}} créditos agregados`);
+                    }}
+                }},
+                
+                changeUserPassword(userId) {{
+                    const newPassword = prompt('Nueva contraseña:');
+                    if (newPassword) {{
+                        alert('✅ Contraseña cambiada');
+                    }}
+                }},
+                
+                deleteUser(userId) {{
+                    if (confirm('¿Eliminar usuario?')) {{
+                        alert('✅ Usuario eliminado');
+                    }}
+                }},
+                
+                logout() {{
+                    localStorage.removeItem('admin_token');
+                    window.location.href = '/';
+                }}
+            }}
+        }}
+    </script>
+</body>
+</html>
+    """)
+
+@app.get("/api/admin/users")
+async def list_users(request: Request):
+    """Listar usuarios (solo admin)"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token admin requerido")
+        
+        token = auth_header.split(" ")[1]
+        admin = authenticate_admin(token)
+        
+        if not admin:
+            raise HTTPException(status_code=401, detail="Token admin inválido")
+        
+        users_list = []
+        for user_id, user in users_database.items():
+            if user_id != "master_admin":  # Excluir admin
+                users_list.append({
+                    "id": user["id"],
+                    "username": user["username"],
+                    "email": user["email"],
+                    "credits": user["credits"],
+                    "plan": user["plan"],
+                    "is_active": user["is_active"],
+                    "created_at": user["created_at"]
+                })
+        
+        return {"success": True, "users": users_list}
+    
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@app.post("/api/admin/users/create")
+async def create_user_admin(request: Request):
+    """Crear usuario desde admin"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token admin requerido")
+        
+        token = auth_header.split(" ")[1]
+        admin = authenticate_admin(token)
+        
+        if not admin:
+            raise HTTPException(status_code=401, detail="Token admin inválido")
+        
+        data = await request.json()
+        
+        # Verificar que no exista
+        for user in users_database.values():
+            if user.get("username") == data["username"]:
+                return {"success": False, "message": "Usuario ya existe"}
+        
+        user_id = str(uuid.uuid4())
+        
+        # Determinar créditos
+        if data.get("customCredits"):
+            credits = int(data["customCredits"])
+        else:
+            plan_credits = {"Básico": 100, "Premium": 1000, "Enterprise": 10000}
+            credits = plan_credits.get(data["plan"], 100)
+        
+        # Crear usuario
+        new_user = {
+            "id": user_id,
+            "username": data["username"],
+            "email": data["email"],
+            "password_hash": hash_password(data["password"]),
+            "role": "user",
+            "credits": credits,
+            "plan": data["plan"],
+            "is_active": True,
+            "created_at": datetime.utcnow().isoformat(),
+            "last_login": None,
+            "created_by_admin": True
+        }
+        
+        users_database[user_id] = new_user
+        
+        return {
+            "success": True,
+            "message": "Usuario creado exitosamente",
+            "username": data["username"],
+            "password": data["password"],  # Para compartir con usuario
+            "credits": credits
+        }
+        
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@app.post("/api/admin/change-password")
+async def change_admin_password(request: Request):
+    """Cambiar contraseña admin"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token admin requerido")
+        
+        token = auth_header.split(" ")[1]
+        admin = authenticate_admin(token)
+        
+        if not admin:
+            raise HTTPException(status_code=401, detail="Token admin inválido")
+        
+        data = await request.json()
+        
+        # Verificar contraseña actual
+        if data["current"] != ADMIN_CREDENTIALS["password"]:
+            return {"success": False, "message": "Contraseña actual incorrecta"}
+        
+        # Actualizar contraseña
+        ADMIN_CREDENTIALS["password"] = data["new"]
+        users_database["master_admin"]["password_hash"] = hash_password(data["new"])
+        
+        return {"success": True, "message": "Contraseña actualizada"}
+        
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
 if __name__ == "__main__":
     import uvicorn

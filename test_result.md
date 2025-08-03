@@ -308,7 +308,12 @@ test_plan:
     - "Registro Nacional Extractor"
     - "Sistema Integrado Ultra Extractor"
     - "Nuevos Endpoints API Backend"
-  stuck_tasks: []
+  stuck_tasks:
+    - "Portal Datos Abiertos Extractor"
+    - "Colegios Profesionales Extractor"
+    - "Registro Nacional Extractor"
+    - "Sistema Integrado Ultra Extractor"
+    - "Nuevos Endpoints API Backend"
   test_all: false
   test_priority: "high_first"
 

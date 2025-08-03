@@ -1,0 +1,49 @@
+🔥 MEGA EXTRACTOR COSTA RICA - EJECUCIÓN INMEDIATA
+INFO:__main__:🚀 INICIANDO EXTRACCIÓN MASIVA COSTA RICA
+INFO:__main__:📋 OBJETIVO: EXTRAER MÁXIMO DE DATOS DE TODAS LAS FUENTES
+INFO:costa_rica_mega_extractor:🚀 CostaRicaMegaExtractor inicializado
+INFO:costa_rica_mega_extractor:🚀 INICIANDO EXTRACCIÓN MASIVA DE COSTA RICA
+INFO:costa_rica_mega_extractor:📋 FUENTES: Páginas Amarillas, Empleo, Ministerios, Colegios
+INFO:costa_rica_mega_extractor:📞 EXTRAYENDO PÁGINAS AMARILLAS Y DIRECTORIOS...
+INFO:costa_rica_mega_extractor:🔍 Procesando: https://www.yellowpages.cr
+ERROR:costa_rica_mega_extractor:❌ Error en https://www.yellowpages.cr: Cannot connect to host www.yellowpages.cr:443 ssl:True [SSLCertVerificationError: (1, "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.yellowpages.cr'. (_ssl.c:1016)")]
+INFO:costa_rica_mega_extractor:🔍 Procesando: https://yelu.cr
+INFO:costa_rica_mega_extractor:✅ https://yelu.cr: 0 registros extraídos
+INFO:costa_rica_mega_extractor:🔍 Procesando: https://cr.eldirectorio.co
+INFO:costa_rica_mega_extractor:✅ https://cr.eldirectorio.co: 0 registros extraídos
+INFO:costa_rica_mega_extractor:🔍 Procesando: https://nexdu.com/cr
+INFO:costa_rica_mega_extractor:✅ https://nexdu.com/cr: 0 registros extraídos
+INFO:costa_rica_mega_extractor:🔍 Procesando: https://es.cybo.com/costa-rica
+INFO:costa_rica_mega_extractor:💼 EXTRAYENDO PORTALES DE EMPLEO Y CVS...
+INFO:costa_rica_mega_extractor:🔍 Procesando portal empleo: https://www.computrabajo.co.cr
+INFO:costa_rica_mega_extractor:✅ https://www.computrabajo.co.cr/perfiles: datos profesionales extraídos
+INFO:costa_rica_mega_extractor:✅ https://www.computrabajo.co.cr/candidatos: datos profesionales extraídos
+INFO:costa_rica_mega_extractor:✅ https://www.computrabajo.co.cr/cv: datos profesionales extraídos
+INFO:costa_rica_mega_extractor:✅ https://www.computrabajo.co.cr/profesionales: datos profesionales extraídos
+INFO:costa_rica_mega_extractor:✅ https://www.computrabajo.co.cr/trabajos: datos profesionales extraídos
+INFO:costa_rica_mega_extractor:🔍 Procesando portal empleo: https://www.empleos.net/costa-rica
+INFO:costa_rica_mega_extractor:🔍 Procesando portal empleo: https://cr.linkedin.com/jobs
+INFO:costa_rica_mega_extractor:🏛️ EXTRAYENDO DATOS GUBERNAMENTALES...
+INFO:costa_rica_mega_extractor:🔍 Procesando ministerio: https://datosabiertos.gob.go.cr
+INFO:costa_rica_mega_extractor:🔍 Procesando ministerio: https://www.tse.go.cr
+INFO:costa_rica_mega_extractor:✅ https://www.tse.go.cr/datos: datos gubernamentales procesados
+INFO:costa_rica_mega_extractor:✅ https://www.tse.go.cr/funcionarios: datos gubernamentales procesados
+INFO:costa_rica_mega_extractor:✅ https://www.tse.go.cr/directorio: datos gubernamentales procesados
+INFO:costa_rica_mega_extractor:✅ https://www.tse.go.cr/contactos: datos gubernamentales procesados
+INFO:costa_rica_mega_extractor:✅ https://www.tse.go.cr/transparencia: datos gubernamentales procesados
+INFO:costa_rica_mega_extractor:🔍 Procesando ministerio: https://www.ccss.sa.cr
+INFO:costa_rica_mega_extractor:🔍 Procesando ministerio: https://www.hacienda.go.cr
+INFO:costa_rica_mega_extractor:🔍 Procesando ministerio: https://www.mtss.go.cr
+INFO:costa_rica_mega_extractor:🎓 EXTRAYENDO COLEGIOS PROFESIONALES...
+INFO:costa_rica_mega_extractor:🔍 Procesando colegio: https://www.colmedcr.com
+INFO:costa_rica_mega_extractor:🔍 Procesando colegio: https://www.colabogcr.com
+INFO:costa_rica_mega_extractor:🔍 Procesando colegio: https://www.cfia.or.cr
+INFO:costa_rica_mega_extractor:🔍 Procesando colegio: https://www.colegiofarmaceutico.cr
+INFO:costa_rica_mega_extractor:💾 GUARDANDO DATOS EN BASE DE DATOS...
+INFO:costa_rica_mega_extractor:🎯 EXTRACCIÓN COMPLETADA
+INFO:costa_rica_mega_extractor:📊 TOTAL EXTRAÍDO: 0 registros
+INFO:costa_rica_mega_extractor:💾 TOTAL GUARDADO: 0 registros
+INFO:__main__:✅ EXTRACCIÓN MASIVA COMPLETADA EXITOSAMENTE
+INFO:__main__:📊 TOTAL EXTRAÍDO: 0
+INFO:__main__:💾 TOTAL GUARDADO: 0
+INFO:__main__:🔢 FUENTES PROCESADAS: 4

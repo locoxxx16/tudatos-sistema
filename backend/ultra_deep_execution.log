@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/app/backend/start_ultra_deep_now.py", line 15, in <module>
+    from backend.ultra_deep_extractor import run_ultra_deep_extraction
+  File "/app/backend/ultra_deep_extractor.py", line 18, in <module>
+    import httpx
+ModuleNotFoundError: No module named 'httpx'

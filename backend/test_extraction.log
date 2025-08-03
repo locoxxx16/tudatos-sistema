@@ -1,0 +1,416 @@
+2025-07-29 07:22:36,409 - massive_data_extractor - INFO - ✅ Sistema inicializado: MongoDB, Session HTTP y Daticos listos
+2025-07-29 07:22:36,409 - __main__ - INFO - 🚀 Iniciando prueba de extracción...
+2025-07-29 07:22:36,409 - __main__ - INFO - 1️⃣ Probando extracción TSE (1K cédulas)
+2025-07-29 07:22:36,409 - massive_data_extractor - INFO - 🗳️ Iniciando extracción HÍBRIDA del TSE - Target: 1000 cédulas...
+2025-07-29 07:22:36,409 - massive_data_extractor - INFO - 📍 Generando cédulas para San José (código 1)
+2025-07-29 07:22:36,409 - massive_data_extractor - INFO - 📍 Generando cédulas para Alajuela (código 2)
+2025-07-29 07:22:36,409 - massive_data_extractor - INFO - 📍 Generando cédulas para Cartago (código 3)
+2025-07-29 07:22:36,410 - massive_data_extractor - INFO - 📍 Generando cédulas para Heredia (código 4)
+2025-07-29 07:22:36,410 - massive_data_extractor - INFO - 📍 Generando cédulas para Guanacaste (código 5)
+2025-07-29 07:22:36,410 - massive_data_extractor - INFO - 📍 Generando cédulas para Puntarenas (código 6)
+2025-07-29 07:22:36,410 - massive_data_extractor - INFO - 📍 Generando cédulas para Limón (código 7)
+2025-07-29 07:22:36,410 - massive_data_extractor - INFO - 📍 Generando cédulas para Naturalizados (código 8)
+2025-07-29 07:22:36,410 - massive_data_extractor - INFO - 📍 Generando cédulas para Residentes (código 9)
+2025-07-29 07:22:36,411 - massive_data_extractor - INFO - 📋 Generadas 1000 cédulas para procesamiento
+2025-07-29 07:22:36,411 - massive_data_extractor - INFO - 📊 Procesando lote TSE 1: 500 cédulas
+2025-07-29 07:22:37,515 - massive_data_extractor - INFO - 💾 Insertados 500 registros TSE en MongoDB
+2025-07-29 07:22:37,515 - massive_data_extractor - INFO - 📈 Progreso TSE: 500 registros extraídos
+2025-07-29 07:22:37,515 - massive_data_extractor - INFO - 📊 Procesando lote TSE 2: 500 cédulas
+2025-07-29 07:22:38,403 - massive_data_extractor - INFO - 💾 Insertados 500 registros TSE en MongoDB
+2025-07-29 07:22:38,403 - massive_data_extractor - INFO - 📈 Progreso TSE: 1,000 registros extraídos
+2025-07-29 07:22:38,403 - massive_data_extractor - INFO - ✅ TSE extracción híbrida completada: 1,000 registros
+2025-07-29 07:22:38,404 - __main__ - INFO - ✅ TSE completado: 1000 registros
+2025-07-29 07:22:38,404 - __main__ - INFO - 2️⃣ Probando extracción Daticos
+2025-07-29 07:22:38,404 - massive_data_extractor - INFO - 🏛️ Iniciando extracción masiva de Daticos - Target: 50000 registros...
+2025-07-29 07:22:38,404 - advanced_daticos_extractor - INFO - 🔐 Realizando login con usuario: Saraya
+2025-07-29 07:22:38,627 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:38,796 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-07-29 07:22:38,874 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:38,875 - advanced_daticos_extractor - INFO - ✅ Login exitoso en Daticos
+2025-07-29 07:22:38,876 - massive_data_extractor - INFO - ✅ Login exitoso en Daticos con Saraya/12345
+2025-07-29 07:22:38,876 - advanced_daticos_extractor - INFO - 🚀 Iniciando extracción COMPLETA de todos los endpoints...
+2025-07-29 07:22:38,876 - advanced_daticos_extractor - INFO - 📂 Procesando categoría: consultas_individuales
+2025-07-29 07:22:38,876 - advanced_daticos_extractor - INFO - 🔍 Procesando foto (/foto.php)...
+2025-07-29 07:22:38,876 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: foto (/foto.php)
+2025-07-29 07:22:38,947 - httpx - INFO - HTTP Request: GET https://www.daticos.com/foto.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:38,955 - advanced_daticos_extractor - INFO - ✅ Endpoint foto: 1 formularios, 0 tablas
+2025-07-29 07:22:39,024 - httpx - INFO - HTTP Request: GET https://www.daticos.com/foto.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:39,032 - advanced_daticos_extractor - INFO - ✅ foto: 0 registros extraídos
+2025-07-29 07:22:41,033 - advanced_daticos_extractor - INFO - 🔍 Procesando global (/buscedglobal.php)...
+2025-07-29 07:22:41,033 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: global (/buscedglobal.php)
+2025-07-29 07:22:41,106 - httpx - INFO - HTTP Request: GET https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:41,114 - advanced_daticos_extractor - INFO - ✅ Endpoint global: 1 formularios, 0 tablas
+2025-07-29 07:22:41,114 - advanced_daticos_extractor - INFO - 🌍 Iniciando extracción masiva via búsqueda global...
+2025-07-29 07:22:41,114 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: Búsqueda Global (/buscedglobal.php)
+2025-07-29 07:22:41,187 - httpx - INFO - HTTP Request: GET https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:41,194 - advanced_daticos_extractor - INFO - ✅ Endpoint Búsqueda Global: 1 formularios, 0 tablas
+2025-07-29 07:22:41,199 - advanced_daticos_extractor - INFO - 🔄 Ejecutando estrategia: cedula
+2025-07-29 07:22:41,270 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:41,277 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0000-0000'
+2025-07-29 07:22:41,850 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:41,857 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0100-0700'
+2025-07-29 07:22:42,428 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:42,435 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0200-1400'
+2025-07-29 07:22:43,008 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:43,015 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0300-2100'
+2025-07-29 07:22:43,586 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:43,596 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0400-2800'
+2025-07-29 07:22:44,167 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:44,174 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0500-3500'
+2025-07-29 07:22:44,748 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:44,755 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0600-4200'
+2025-07-29 07:22:45,331 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:45,338 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0700-4900'
+2025-07-29 07:22:45,909 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:45,916 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0800-5600'
+2025-07-29 07:22:46,490 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:46,497 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-0900-6300'
+2025-07-29 07:22:47,069 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:47,079 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1000-7000'
+2025-07-29 07:22:47,650 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:47,657 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1100-7700'
+2025-07-29 07:22:48,232 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:48,239 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1200-8400'
+2025-07-29 07:22:48,812 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:48,819 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1300-9100'
+2025-07-29 07:22:49,394 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:49,401 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1400-9800'
+2025-07-29 07:22:49,973 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:49,980 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1500-0500'
+2025-07-29 07:22:50,553 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:50,563 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1600-1200'
+2025-07-29 07:22:51,134 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:51,141 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1700-1900'
+2025-07-29 07:22:51,713 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:51,720 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1800-2600'
+2025-07-29 07:22:52,292 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:52,299 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-1900-3300'
+2025-07-29 07:22:52,871 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:52,878 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2000-4000'
+2025-07-29 07:22:53,452 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:53,461 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2100-4700'
+2025-07-29 07:22:54,033 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:54,040 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2200-5400'
+2025-07-29 07:22:54,645 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:54,652 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2300-6100'
+2025-07-29 07:22:55,225 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:55,232 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2400-6800'
+2025-07-29 07:22:55,805 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:55,812 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2500-7500'
+2025-07-29 07:22:56,382 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:56,389 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2600-8200'
+2025-07-29 07:22:56,960 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:56,970 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2700-8900'
+2025-07-29 07:22:57,542 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:57,550 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2800-9600'
+2025-07-29 07:22:58,120 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:58,127 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-2900-0300'
+2025-07-29 07:22:58,698 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:58,705 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3000-1000'
+2025-07-29 07:22:59,277 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:59,284 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3100-1700'
+2025-07-29 07:22:59,858 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:22:59,865 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3200-2400'
+2025-07-29 07:23:00,436 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:00,446 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3300-3100'
+2025-07-29 07:23:01,018 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:01,072 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3400-3800'
+2025-07-29 07:23:01,646 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:01,653 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3500-4500'
+2025-07-29 07:23:02,230 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:02,237 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3600-5200'
+2025-07-29 07:23:02,809 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:02,816 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3700-5900'
+2025-07-29 07:23:03,387 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:03,394 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3800-6600'
+2025-07-29 07:23:03,966 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:03,975 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-3900-7300'
+2025-07-29 07:23:04,547 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:04,554 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4000-8000'
+2025-07-29 07:23:05,123 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:05,130 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4100-8700'
+2025-07-29 07:23:05,702 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:05,710 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4200-9400'
+2025-07-29 07:23:06,280 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:06,287 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4300-0100'
+2025-07-29 07:23:06,858 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:06,865 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4400-0800'
+2025-07-29 07:23:07,438 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:07,448 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4500-1500'
+2025-07-29 07:23:08,021 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:08,028 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4600-2200'
+2025-07-29 07:23:08,603 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:08,610 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4700-2900'
+2025-07-29 07:23:09,181 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:09,188 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4800-3600'
+2025-07-29 07:23:09,762 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:09,769 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-4900-4300'
+2025-07-29 07:23:10,341 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:10,348 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5000-5000'
+2025-07-29 07:23:10,919 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:10,932 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5100-5700'
+2025-07-29 07:23:11,504 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:11,511 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5200-6400'
+2025-07-29 07:23:12,083 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:12,090 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5300-7100'
+2025-07-29 07:23:12,662 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:12,669 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5400-7800'
+2025-07-29 07:23:13,241 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:13,249 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5500-8500'
+2025-07-29 07:23:13,820 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:13,830 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5600-9200'
+2025-07-29 07:23:14,401 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:14,408 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5700-9900'
+2025-07-29 07:23:14,981 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:14,988 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5800-0600'
+2025-07-29 07:23:15,560 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:15,567 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-5900-1300'
+2025-07-29 07:23:16,138 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:16,145 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-6000-2000'
+2025-07-29 07:23:16,716 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:16,723 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-6100-2700'
+2025-07-29 07:23:17,295 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:17,305 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-6200-3400'
+2025-07-29 07:23:17,876 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:17,883 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-6300-4100'
+2025-07-29 07:23:18,456 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:18,463 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-6400-4800'
+2025-07-29 07:23:19,036 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:19,043 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para '1-6500-5500'
+2025-07-29 07:23:19,543 - advanced_daticos_extractor - INFO - 🔄 Ejecutando estrategia: nombre
+2025-07-29 07:23:19,614 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:19,621 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María'
+2025-07-29 07:23:20,195 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:20,202 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María González'
+2025-07-29 07:23:20,774 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:20,784 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Rodríguez'
+2025-07-29 07:23:21,356 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:21,363 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María García'
+2025-07-29 07:23:21,936 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:21,943 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Fernández'
+2025-07-29 07:23:22,519 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:22,526 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María López'
+2025-07-29 07:23:23,097 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:23,104 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Martínez'
+2025-07-29 07:23:23,675 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:23,682 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Sánchez'
+2025-07-29 07:23:24,254 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:24,264 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Pérez'
+2025-07-29 07:23:24,836 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:24,843 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Gómez'
+2025-07-29 07:23:25,416 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:25,423 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'María Martín'
+2025-07-29 07:23:25,998 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:26,007 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José'
+2025-07-29 07:23:26,581 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:26,588 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José González'
+2025-07-29 07:23:27,159 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:27,166 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Rodríguez'
+2025-07-29 07:23:27,735 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:27,746 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José García'
+2025-07-29 07:23:28,316 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:28,323 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Fernández'
+2025-07-29 07:23:28,895 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:28,902 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José López'
+2025-07-29 07:23:29,474 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:29,482 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Martínez'
+2025-07-29 07:23:30,054 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:30,061 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Sánchez'
+2025-07-29 07:23:30,634 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:30,644 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Pérez'
+2025-07-29 07:23:31,216 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:31,223 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Gómez'
+2025-07-29 07:23:31,795 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:31,802 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'José Martín'
+2025-07-29 07:23:32,374 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:32,381 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana'
+2025-07-29 07:23:32,952 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:32,959 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana González'
+2025-07-29 07:23:33,532 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:33,539 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Rodríguez'
+2025-07-29 07:23:34,110 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:34,121 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana García'
+2025-07-29 07:23:34,692 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:34,699 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Fernández'
+2025-07-29 07:23:35,272 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:35,279 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana López'
+2025-07-29 07:23:35,893 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:35,900 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Martínez'
+2025-07-29 07:23:36,466 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:36,473 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Sánchez'
+2025-07-29 07:23:37,036 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:37,043 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Pérez'
+2025-07-29 07:23:37,607 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:37,617 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Gómez'
+2025-07-29 07:23:38,182 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:38,189 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Ana Martín'
+2025-07-29 07:23:38,758 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:38,765 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos'
+2025-07-29 07:23:39,331 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:39,338 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos González'
+2025-07-29 07:23:39,903 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:39,910 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Rodríguez'
+2025-07-29 07:23:40,475 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:40,482 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos García'
+2025-07-29 07:23:41,049 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:41,059 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Fernández'
+2025-07-29 07:23:41,624 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:41,631 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos López'
+2025-07-29 07:23:42,195 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:42,202 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Martínez'
+2025-07-29 07:23:42,766 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:42,773 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Sánchez'
+2025-07-29 07:23:43,339 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:43,346 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Pérez'
+2025-07-29 07:23:43,909 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:43,917 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Gómez'
+2025-07-29 07:23:44,482 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:44,492 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carlos Martín'
+2025-07-29 07:23:45,058 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:45,065 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis'
+2025-07-29 07:23:45,630 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:45,637 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis González'
+2025-07-29 07:23:46,201 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:46,208 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Rodríguez'
+2025-07-29 07:23:46,776 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:46,783 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis García'
+2025-07-29 07:23:47,348 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:47,358 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Fernández'
+2025-07-29 07:23:47,923 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:47,931 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis López'
+2025-07-29 07:23:48,495 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:48,502 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Martínez'
+2025-07-29 07:23:49,067 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:49,074 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Sánchez'
+2025-07-29 07:23:49,639 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:49,646 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Pérez'
+2025-07-29 07:23:50,211 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:50,219 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Gómez'
+2025-07-29 07:23:50,783 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:50,793 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Luis Martín'
+2025-07-29 07:23:51,357 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:51,365 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen'
+2025-07-29 07:23:51,929 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:51,936 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen González'
+2025-07-29 07:23:52,500 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:52,507 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Rodríguez'
+2025-07-29 07:23:53,073 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:53,080 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen García'
+2025-07-29 07:23:53,645 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:53,652 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Fernández'
+2025-07-29 07:23:54,216 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:54,226 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen López'
+2025-07-29 07:23:54,792 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:54,799 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Martínez'
+2025-07-29 07:23:55,365 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:55,373 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Sánchez'
+2025-07-29 07:23:55,938 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:55,945 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Pérez'
+2025-07-29 07:23:56,512 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:56,519 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Gómez'
+2025-07-29 07:23:57,084 - httpx - INFO - HTTP Request: POST https://www.daticos.com/buscedglobal.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:57,091 - advanced_daticos_extractor - INFO - ✅ Encontrados 3 registros para 'Carmen Martín'
+2025-07-29 07:23:57,592 - advanced_daticos_extractor - INFO - 📊 Extracción global completada: 396 registros
+2025-07-29 07:23:57,592 - advanced_daticos_extractor - INFO - ✅ global: 396 registros extraídos
+2025-07-29 07:23:59,594 - advanced_daticos_extractor - INFO - 🔍 Procesando telefono (/bustel.php)...
+2025-07-29 07:23:59,594 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: telefono (/bustel.php)
+2025-07-29 07:23:59,657 - httpx - INFO - HTTP Request: GET https://www.daticos.com/bustel.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:59,668 - advanced_daticos_extractor - INFO - ✅ Endpoint telefono: 1 formularios, 0 tablas
+2025-07-29 07:23:59,731 - httpx - INFO - HTTP Request: GET https://www.daticos.com/bustel.php "HTTP/1.1 200 OK"
+2025-07-29 07:23:59,738 - advanced_daticos_extractor - INFO - ✅ telefono: 0 registros extraídos
+2025-07-29 07:24:01,740 - advanced_daticos_extractor - INFO - 🔍 Procesando nombres (/busnom.php)...
+2025-07-29 07:24:01,741 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: nombres (/busnom.php)
+2025-07-29 07:24:01,808 - httpx - INFO - HTTP Request: GET https://www.daticos.com/busnom.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:01,822 - advanced_daticos_extractor - INFO - ✅ Endpoint nombres: 1 formularios, 0 tablas
+2025-07-29 07:24:01,889 - httpx - INFO - HTTP Request: GET https://www.daticos.com/busnom.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:01,903 - advanced_daticos_extractor - INFO - ✅ nombres: 0 registros extraídos
+2025-07-29 07:24:03,906 - advanced_daticos_extractor - INFO - 📂 Procesando categoría: consultas_masivas
+2025-07-29 07:24:03,906 - advanced_daticos_extractor - INFO - 🔍 Procesando patronos (/buspat.php)...
+2025-07-29 07:24:03,906 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: patronos (/buspat.php)
+2025-07-29 07:24:03,972 - httpx - INFO - HTTP Request: GET https://www.daticos.com/buspat.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:04,043 - advanced_daticos_extractor - INFO - ✅ Endpoint patronos: 1 formularios, 0 tablas
+2025-07-29 07:24:04,108 - httpx - INFO - HTTP Request: GET https://www.daticos.com/buspat.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:04,117 - advanced_daticos_extractor - INFO - ✅ patronos: 0 registros extraídos
+2025-07-29 07:24:06,119 - advanced_daticos_extractor - INFO - 🔍 Procesando geografica (/masgeo/index.php)...
+2025-07-29 07:24:06,119 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: geografica (/masgeo/index.php)
+2025-07-29 07:24:06,184 - httpx - INFO - HTTP Request: GET https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:06,195 - advanced_daticos_extractor - INFO - ✅ Endpoint geografica: 1 formularios, 0 tablas
+2025-07-29 07:24:06,195 - advanced_daticos_extractor - INFO - 🗺️ Iniciando extracción masiva geográfica...
+2025-07-29 07:24:06,195 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: Consulta Geográfica (/masgeo/index.php)
+2025-07-29 07:24:06,261 - httpx - INFO - HTTP Request: GET https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:06,272 - advanced_daticos_extractor - INFO - ✅ Endpoint Consulta Geográfica: 1 formularios, 0 tablas
+2025-07-29 07:24:06,272 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de San José...
+2025-07-29 07:24:06,341 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:07,352 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de Alajuela...
+2025-07-29 07:24:07,417 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:08,428 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de Cartago...
+2025-07-29 07:24:08,496 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:09,507 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de Heredia...
+2025-07-29 07:24:09,575 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:10,589 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de Guanacaste...
+2025-07-29 07:24:10,654 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:11,665 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de Puntarenas...
+2025-07-29 07:24:11,730 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:12,742 - advanced_daticos_extractor - INFO - 📍 Extrayendo datos de Limón...
+2025-07-29 07:24:12,807 - httpx - INFO - HTTP Request: POST https://www.daticos.com/masgeo/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:13,819 - advanced_daticos_extractor - INFO - 🗺️ Extracción geográfica completada: 0 registros
+2025-07-29 07:24:13,819 - advanced_daticos_extractor - INFO - ✅ geografica: 0 registros extraídos
+2025-07-29 07:24:15,821 - advanced_daticos_extractor - INFO - 🔍 Procesando colegiados (/mascol/index.php)...
+2025-07-29 07:24:15,821 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: colegiados (/mascol/index.php)
+2025-07-29 07:24:15,886 - httpx - INFO - HTTP Request: GET https://www.daticos.com/mascol/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:15,899 - advanced_daticos_extractor - INFO - ✅ Endpoint colegiados: 2 formularios, 0 tablas
+2025-07-29 07:24:15,965 - httpx - INFO - HTTP Request: GET https://www.daticos.com/mascol/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:15,974 - advanced_daticos_extractor - INFO - ✅ colegiados: 0 registros extraídos
+2025-07-29 07:24:17,976 - advanced_daticos_extractor - INFO - 🔍 Procesando pensionados (/maspen/index.php)...
+2025-07-29 07:24:17,976 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: pensionados (/maspen/index.php)
+2025-07-29 07:24:18,039 - httpx - INFO - HTTP Request: GET https://www.daticos.com/maspen/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:18,049 - advanced_daticos_extractor - INFO - ✅ Endpoint pensionados: 2 formularios, 0 tablas
+2025-07-29 07:24:18,113 - httpx - INFO - HTTP Request: GET https://www.daticos.com/maspen/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:18,122 - advanced_daticos_extractor - INFO - ✅ pensionados: 0 registros extraídos
+2025-07-29 07:24:20,124 - advanced_daticos_extractor - INFO - 🔍 Procesando independientes (/masind/index.php)...
+2025-07-29 07:24:20,124 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: independientes (/masind/index.php)
+2025-07-29 07:24:20,190 - httpx - INFO - HTTP Request: GET https://www.daticos.com/masind/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:20,202 - advanced_daticos_extractor - INFO - ✅ Endpoint independientes: 2 formularios, 0 tablas
+2025-07-29 07:24:20,268 - httpx - INFO - HTTP Request: GET https://www.daticos.com/masind/index.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:20,277 - advanced_daticos_extractor - INFO - ✅ independientes: 0 registros extraídos
+2025-07-29 07:24:22,279 - advanced_daticos_extractor - INFO - 📂 Procesando categoría: consultas_especiales
+2025-07-29 07:24:22,279 - advanced_daticos_extractor - INFO - 🔍 Procesando bloque_personales (/bloque/bloquecedulas.php)...
+2025-07-29 07:24:22,279 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: bloque_personales (/bloque/bloquecedulas.php)
+2025-07-29 07:24:22,345 - httpx - INFO - HTTP Request: GET https://www.daticos.com/bloque/bloquecedulas.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:22,352 - advanced_daticos_extractor - INFO - ✅ Endpoint bloque_personales: 1 formularios, 1 tablas
+2025-07-29 07:24:22,419 - httpx - INFO - HTTP Request: GET https://www.daticos.com/bloque/bloquecedulas.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:22,426 - advanced_daticos_extractor - INFO - ✅ bloque_personales: 0 registros extraídos
+2025-07-29 07:24:24,429 - advanced_daticos_extractor - INFO - 📂 Procesando categoría: otros
+2025-07-29 07:24:24,429 - advanced_daticos_extractor - INFO - 🔍 Procesando bitacora_csv (/consultasusr.php)...
+2025-07-29 07:24:24,429 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: bitacora_csv (/consultasusr.php)
+2025-07-29 07:24:24,498 - httpx - INFO - HTTP Request: GET https://www.daticos.com/consultasusr.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:24,505 - advanced_daticos_extractor - INFO - ✅ Endpoint bitacora_csv: 0 formularios, 0 tablas
+2025-07-29 07:24:24,571 - httpx - INFO - HTTP Request: GET https://www.daticos.com/consultasusr.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:24,581 - advanced_daticos_extractor - INFO - ✅ bitacora_csv: 0 registros extraídos
+2025-07-29 07:24:26,584 - advanced_daticos_extractor - INFO - 🔍 Procesando telegram (/telegram.php)...
+2025-07-29 07:24:26,584 - advanced_daticos_extractor - INFO - 🔍 Explorando endpoint: telegram (/telegram.php)
+2025-07-29 07:24:26,649 - httpx - INFO - HTTP Request: GET https://www.daticos.com/telegram.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:26,657 - advanced_daticos_extractor - INFO - ✅ Endpoint telegram: 0 formularios, 0 tablas
+2025-07-29 07:24:26,719 - httpx - INFO - HTTP Request: GET https://www.daticos.com/telegram.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:26,727 - advanced_daticos_extractor - INFO - ✅ telegram: 0 registros extraídos
+2025-07-29 07:24:28,728 - advanced_daticos_extractor - INFO - 🎉 Extracción COMPLETA finalizada: 396 registros totales
+2025-07-29 07:24:28,740 - massive_data_extractor - INFO - 📂 Procesando categoría Daticos: consultas_individuales
+2025-07-29 07:24:28,795 - massive_data_extractor - INFO - 📂 Procesando categoría Daticos: consultas_masivas
+2025-07-29 07:24:28,795 - massive_data_extractor - INFO - 📂 Procesando categoría Daticos: consultas_especiales
+2025-07-29 07:24:28,795 - massive_data_extractor - INFO - 📂 Procesando categoría Daticos: otros
+2025-07-29 07:24:28,815 - massive_data_extractor - INFO - 💾 Insertado lote Daticos: 396 registros
+2025-07-29 07:24:28,815 - massive_data_extractor - INFO - ✅ Daticos extracción completada: 396 registros
+2025-07-29 07:24:28,815 - __main__ - INFO - ✅ Daticos completado: 396 registros
+2025-07-29 07:24:28,815 - __main__ - INFO - 3️⃣ Probando extracción mercantiles
+2025-07-29 07:24:28,816 - massive_data_extractor - INFO - 🏢 Iniciando extracción especializada de datos mercantiles...
+2025-07-29 07:24:28,879 - httpx - INFO - HTTP Request: GET https://www.daticos.com/buspat.php "HTTP/1.1 200 OK"
+2025-07-29 07:24:28,888 - massive_data_extractor - INFO - 📊 Daticos mercantiles: 0 registros
+2025-07-29 07:24:28,888 - __main__ - INFO - ✅ Mercantiles completado: 0 registros
+2025-07-29 07:24:28,888 - __main__ - INFO - 📊 RESULTADOS DE PRUEBA:
+2025-07-29 07:24:28,889 - __main__ - INFO -    🗳️  TSE: 1,000
+2025-07-29 07:24:28,889 - __main__ - INFO -    🏛️  Daticos: 396
+2025-07-29 07:24:28,889 - __main__ - INFO -    🏢 Mercantiles: 0
+2025-07-29 07:24:28,889 - __main__ - INFO -    📱 Teléfonos: 1,515
+2025-07-29 07:24:28,889 - __main__ - INFO -    💼 Total estimado para 2M: 1,396,000
+
+🎯 Resultado final: {'tse': 1000, 'daticos': 396, 'mercantile': 0, 'phones': 1515}

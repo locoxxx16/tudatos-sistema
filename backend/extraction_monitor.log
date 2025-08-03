@@ -1,0 +1,326 @@
+🚀 Iniciando monitor de extracción...
+🔄 El monitoreo se actualizará cada 2 minutos
+⚠️  Presiona Ctrl+C para cancelar
+
+🔍 MONITOR DE EXTRACCIÓN ULTRA PROFUNDA
+==================================================
+📅 Inicio del monitoreo: 2025-08-02 03:15:39.508257
+🌐 Base de datos: test_database
+==================================================
+📊 ESTADO INICIAL:
+   👥 Personas físicas: 310,040
+   🏢 Personas jurídicas: 800
+   📈 Total inicial: 310,840
+   🎯 Meta 3M: 10.36%
+==================================================
+
+🔄 ITERACIÓN #1 - 03:15:39
+⏱️  Tiempo transcurrido: 0.0 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 1,078
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #2 - 03:17:40
+⏱️  Tiempo transcurrido: 2.0 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 1,652
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #3 - 03:19:40
+⏱️  Tiempo transcurrido: 4.0 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 2,239
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #4 - 03:21:41
+⏱️  Tiempo transcurrido: 6.0 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 3,289
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #5 - 03:23:41
+⏱️  Tiempo transcurrido: 8.0 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 4,325
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #6 - 03:25:42
+⏱️  Tiempo transcurrido: 10.0 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 4,885
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #7 - 03:27:42
+⏱️  Tiempo transcurrido: 12.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 5,473
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #8 - 03:29:43
+⏱️  Tiempo transcurrido: 14.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 6,075
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #9 - 03:31:43
+⏱️  Tiempo transcurrido: 16.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 6,607
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #10 - 03:33:44
+⏱️  Tiempo transcurrido: 18.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 7,041
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #11 - 03:35:45
+⏱️  Tiempo transcurrido: 20.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 7,657
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #12 - 03:37:45
+⏱️  Tiempo transcurrido: 22.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 8,259
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #13 - 03:39:46
+⏱️  Tiempo transcurrido: 24.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 8,259
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #14 - 03:41:46
+⏱️  Tiempo transcurrido: 26.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 8,595
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+==================================================
+
+🔄 ITERACIÓN #15 - 03:43:47
+⏱️  Tiempo transcurrido: 28.1 min
+📊 REGISTROS ACTUALES:
+   👥 Personas físicas: 310,040 (+0)
+   🏢 Personas jurídicas: 800 (+0)
+   📈 TOTAL: 310,840 (+0)
+   ⚡ Incremento reciente: +0
+🔥 ULTRA DEEP ESPECÍFICOS:
+   👥 Ultra Deep físicas: 0
+   🏢 Ultra Deep jurídicas: 0
+   📄 Registros raw: 9,197
+🚗 COSEVI DATA:
+   🚙 Vehículos: 0
+   🏠 Propiedades: 0
+📈 PROGRESO META 3M:
+   ███░░░░░░░░░░░░░░░░░░░░░░░░░░░ 10.36%
+   🎯 Faltan: 2,689,160 registros
+   ⚡ Velocidad: 0.0 registros/min
+
+⚠️  POSIBLE FINALIZACIÓN: Sin cambios por 30 minutos
+🔄 Extracción puede estar en proceso o finalizada prematuramente
+
+==================================================
+📊 RESUMEN FINAL
+==================================================
+⏱️  Tiempo total: 28.1 minutos (0.5 horas)
+📈 Registros extraídos: 0
+📊 Total final: 310,840
+🎯 Meta 3M: ❌ NO ALCANZADA
+⚡ Velocidad promedio: 0.0 registros/min

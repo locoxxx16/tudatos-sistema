@@ -1,0 +1,521 @@
+2025-08-02 03:26:09,484 - mega_aggressive_extractor - INFO - 🔍 Endpoints descubiertos: 198
+2025-08-02 03:26:09,485 - mega_aggressive_extractor - INFO - 🔍 Términos mega generados: 603
+2025-08-02 03:26:09,487 - mega_aggressive_extractor - INFO - 🔥🔥🔥 INICIANDO MEGA AGGRESSIVE EXTRACTION COMPLETA 🔥🔥🔥
+2025-08-02 03:26:09,487 - mega_aggressive_extractor - INFO - 🎯 OBJETIVO: EXTRAER TODA LA BASE DE DATOS DE DATICOS (5+ MILLONES)
+2025-08-02 03:26:09,487 - mega_aggressive_extractor - INFO - ⚡ MODO: MEGA AGRESIVO - MÁXIMO PARALELISMO - SIN LÍMITES
+2025-08-02 03:26:09,487 - mega_aggressive_extractor - INFO - 🚀 INICIALIZANDO MEGA AGGRESSIVE SYSTEM
+2025-08-02 03:26:09,495 - mega_aggressive_extractor - INFO - ✅ MongoDB Mega Connection - OK
+2025-08-02 03:26:17,483 - mega_aggressive_extractor - INFO - ✅ Índices mega optimizados creados
+2025-08-02 03:26:18,278 - mega_aggressive_extractor - INFO - ✅ Pool de 20 sesiones mega inicializado
+2025-08-02 03:26:18,452 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,499 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,510 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,513 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,515 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,517 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,518 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,521 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,523 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,524 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,527 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,528 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,532 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,539 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,541 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,543 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,555 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,558 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:18,612 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,685 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,727 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,735 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,768 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,841 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,871 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,873 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,944 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,964 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:18,977 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,069 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,077 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,109 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,172 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,185 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,210 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,219 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,246 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,251 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,254 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,283 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,288 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,327 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,343 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,344 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,345 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,367 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,384 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,395 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,401 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,415 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,439 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,446 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,457 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,458 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,470 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,525 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,615 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,722 - httpx - INFO - HTTP Request: GET https://www.daticos.com/login.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,906 - httpx - INFO - HTTP Request: POST https://www.daticos.com/login.php "HTTP/1.1 302 Found"
+2025-08-02 03:26:19,996 - httpx - INFO - HTTP Request: GET https://www.daticos.com/index.php "HTTP/1.1 200 OK"
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔐 Logins mega completados: 0/20
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - ERROR - ❌ CRÍTICO: Ningún login fue exitoso
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔥 MEGA AGGRESSIVE SYSTEM INITIALIZED
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🎯 OBJETIVO: 5+ MILLONES DE REGISTROS
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔐 CREDENCIALES: 2 disponibles
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🌐 ENDPOINTS: 198 mega endpoints
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔍 TÉRMINOS: 603 términos mega
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - ⚡ SESIONES: Pool de 20 sesiones
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔥🔥🔥 INICIANDO MEGA AGGRESSIVE EXTRACTION 🔥🔥🔥
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🎯 META: 5,000,000 registros
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - ⚡ SESIONES ACTIVAS: 20
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🌐 ENDPOINTS A EXPLORAR: 198
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔍 TÉRMINOS DE BÚSQUEDA: 603
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🚀 Ejecutando 22 tareas paralelas...
+2025-08-02 03:26:19,997 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom2.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_search.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_v2.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_v2.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_new.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic2.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_query.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_new.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /registro.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_search.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_list.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_list.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_v2.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /matrimonio.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /lookup.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /fisica.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /asset.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_advanced.php
+2025-08-02 03:26:19,998 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_query.php
+2025-08-02 03:26:20,119 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,119 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_new.php
+2025-08-02 03:26:20,142 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,142 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_all.php
+2025-08-02 03:26:20,171 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,171 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_v2.php
+2025-08-02 03:26:20,206 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,206 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /negocio.php
+2025-08-02 03:26:20,248 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,248 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /consulta.php
+2025-08-02 03:26:20,297 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,297 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_advanced.php
+2025-08-02 03:26:20,358 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,358 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit2.php
+2025-08-02 03:26:20,430 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,430 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /email.php
+2025-08-02 03:26:20,514 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,515 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_new.php
+2025-08-02 03:26:20,619 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,619 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_search.php
+2025-08-02 03:26:20,741 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,742 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /credito.php
+2025-08-02 03:26:20,891 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:20,891 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp2.php
+2025-08-02 03:26:21,069 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:21,069 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral.php
+2025-08-02 03:26:21,283 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:21,283 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc2.php
+2025-08-02 03:26:21,540 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:21,540 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir2.php
+2025-08-02 03:26:21,848 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:21,849 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral2.php
+2025-08-02 03:26:22,218 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:22,218 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_search.php
+2025-08-02 03:26:22,662 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:22,662 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel2.php
+2025-08-02 03:26:23,195 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:23,195 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /vehiculo.php
+2025-08-02 03:26:23,834 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:23,834 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /juridica.php
+2025-08-02 03:26:24,721 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:24,721 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_search.php
+2025-08-02 03:26:25,664 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:25,665 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh2.php
+2025-08-02 03:26:26,797 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:26,797 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /datos.php
+2025-08-02 03:26:28,158 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:28,158 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit.php
+2025-08-02 03:26:29,790 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:29,790 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_query.php
+2025-08-02 03:26:30,299 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,299 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_search.php
+2025-08-02 03:26:30,359 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,359 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt.php
+2025-08-02 03:26:30,432 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,432 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_advanced.php
+2025-08-02 03:26:30,515 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,515 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_query.php
+2025-08-02 03:26:30,621 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,621 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_advanced.php
+2025-08-02 03:26:30,742 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,742 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_search.php
+2025-08-02 03:26:30,892 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:30,892 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_query.php
+2025-08-02 03:26:31,069 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:31,069 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_list.php
+2025-08-02 03:26:31,284 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:31,284 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /identificacion.php
+2025-08-02 03:26:31,541 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:31,541 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat.php
+2025-08-02 03:26:31,849 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:31,849 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_query.php
+2025-08-02 03:26:32,219 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:32,219 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_query.php
+2025-08-02 03:26:32,663 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:32,663 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_query.php
+2025-08-02 03:26:33,196 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:33,196 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_list.php
+2025-08-02 03:26:33,836 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:33,836 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep2.php
+2025-08-02 03:26:34,723 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:34,723 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_all.php
+2025-08-02 03:26:35,666 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:35,666 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_v2.php
+2025-08-02 03:26:36,798 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:36,798 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_list.php
+2025-08-02 03:26:38,160 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:38,161 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /persona.php
+2025-08-02 03:26:39,793 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:39,793 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /laboral.php
+2025-08-02 03:26:40,300 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,300 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_query.php
+2025-08-02 03:26:40,361 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,361 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_list.php
+2025-08-02 03:26:40,433 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,433 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_new.php
+2025-08-02 03:26:40,516 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,516 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /direccion.php
+2025-08-02 03:26:40,621 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,621 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_list.php
+2025-08-02 03:26:40,743 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,743 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_all.php
+2025-08-02 03:26:40,892 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:40,892 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_new.php
+2025-08-02 03:26:41,070 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:41,070 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_list.php
+2025-08-02 03:26:41,284 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:41,285 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_v2.php
+2025-08-02 03:26:41,542 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:41,542 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /ubicacion.php
+2025-08-02 03:26:41,851 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:41,851 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_v2.php
+2025-08-02 03:26:42,221 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:42,221 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_v2.php
+2025-08-02 03:26:42,664 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:42,665 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_query.php
+2025-08-02 03:26:43,197 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:43,198 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_list.php
+2025-08-02 03:26:43,837 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:43,838 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_query.php
+2025-08-02 03:26:44,725 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:44,725 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_new.php
+2025-08-02 03:26:45,668 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:45,668 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_all.php
+2025-08-02 03:26:46,800 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:46,800 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_search.php
+2025-08-02 03:26:48,162 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:48,163 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_advanced.php
+2025-08-02 03:26:49,795 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:49,796 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_search.php
+2025-08-02 03:26:50,301 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,302 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_list.php
+2025-08-02 03:26:50,362 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,362 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_v2.php
+2025-08-02 03:26:50,435 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,435 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_query.php
+2025-08-02 03:26:50,517 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,517 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_new.php
+2025-08-02 03:26:50,622 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,622 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bien.php
+2025-08-02 03:26:50,744 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,744 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_new.php
+2025-08-02 03:26:50,893 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:50,893 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /query.php
+2025-08-02 03:26:51,071 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:51,071 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_advanced.php
+2025-08-02 03:26:51,285 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:51,286 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_v2.php
+2025-08-02 03:26:51,543 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:51,543 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_new.php
+2025-08-02 03:26:51,852 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:51,852 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /comercial.php
+2025-08-02 03:26:52,221 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:52,221 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_new.php
+2025-08-02 03:26:52,666 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:52,666 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /find.php
+2025-08-02 03:26:53,199 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:53,199 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc.php
+2025-08-02 03:26:53,839 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:53,840 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_all.php
+2025-08-02 03:26:54,726 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:54,726 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_advanced.php
+2025-08-02 03:26:55,670 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:55,670 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext2.php
+2025-08-02 03:26:56,801 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:56,801 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc2.php
+2025-08-02 03:26:58,165 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:58,165 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /info.php
+2025-08-02 03:26:59,798 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:26:59,798 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_v2.php
+2025-08-02 03:27:00,303 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,303 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_new.php
+2025-08-02 03:27:00,363 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,364 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_all.php
+2025-08-02 03:27:00,437 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,437 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_v2.php
+2025-08-02 03:27:00,517 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,518 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv.php
+2025-08-02 03:27:00,623 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,623 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_advanced.php
+2025-08-02 03:27:00,744 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,745 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_advanced.php
+2025-08-02 03:27:00,894 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:00,894 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_query.php
+2025-08-02 03:27:01,072 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:01,073 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_advanced.php
+2025-08-02 03:27:01,286 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:01,286 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /actividad.php
+2025-08-02 03:27:01,544 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:01,544 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_advanced.php
+2025-08-02 03:27:01,852 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:01,853 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced.php
+2025-08-02 03:27:02,222 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:02,222 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_advanced.php
+2025-08-02 03:27:02,668 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:02,668 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_search.php
+2025-08-02 03:27:03,201 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:03,201 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_all.php
+2025-08-02 03:27:03,841 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:03,841 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /financiero.php
+2025-08-02 03:27:04,728 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:04,729 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_list.php
+2025-08-02 03:27:05,672 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:05,672 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_v2.php
+2025-08-02 03:27:06,802 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:06,803 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri2.php
+2025-08-02 03:27:08,167 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:08,167 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_all.php
+2025-08-02 03:27:09,800 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:09,800 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_list.php
+2025-08-02 03:27:10,304 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,304 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop2.php
+2025-08-02 03:27:10,365 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,365 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom.php
+2025-08-02 03:27:10,438 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,438 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_new.php
+2025-08-02 03:27:10,519 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,519 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_all.php
+2025-08-02 03:27:10,624 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,624 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel.php
+2025-08-02 03:27:10,746 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,746 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_list.php
+2025-08-02 03:27:10,895 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:10,895 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_query.php
+2025-08-02 03:27:11,074 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:11,074 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_list.php
+2025-08-02 03:27:11,287 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:11,288 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /banco.php
+2025-08-02 03:27:11,545 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:11,545 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_advanced.php
+2025-08-02 03:27:11,854 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:11,854 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_advanced.php
+2025-08-02 03:27:12,223 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:12,224 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_v2.php
+2025-08-02 03:27:12,669 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:12,669 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /trabajo.php
+2025-08-02 03:27:13,202 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:13,203 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_v2.php
+2025-08-02 03:27:13,842 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:13,843 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_new.php
+2025-08-02 03:27:14,731 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:14,731 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic.php
+2025-08-02 03:27:15,673 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:15,674 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat2.php
+2025-08-02 03:27:16,804 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:16,805 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /empleo.php
+2025-08-02 03:27:18,169 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:18,169 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busqueda.php
+2025-08-02 03:27:19,803 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:19,803 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_all.php
+2025-08-02 03:27:20,305 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,305 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_new.php
+2025-08-02 03:27:20,366 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,366 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_advanced.php
+2025-08-02 03:27:20,439 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,439 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_query.php
+2025-08-02 03:27:20,520 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,520 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_search.php
+2025-08-02 03:27:20,625 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,625 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busasoc_search.php
+2025-08-02 03:27:20,747 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,747 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh.php
+2025-08-02 03:27:20,896 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:20,896 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /propiedad.php
+2025-08-02 03:27:21,075 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:21,075 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_v2.php
+2025-08-02 03:27:21,288 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:21,289 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_list.php
+2025-08-02 03:27:21,546 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:21,546 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_advanced.php
+2025-08-02 03:27:21,855 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:21,855 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp_query.php
+2025-08-02 03:27:22,224 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:22,225 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_all.php
+2025-08-02 03:27:22,670 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:22,670 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri.php
+2025-08-02 03:27:23,204 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:23,204 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_all.php
+2025-08-02 03:27:23,844 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:23,844 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslaboral_new.php
+2025-08-02 03:27:24,731 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:24,732 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_search.php
+2025-08-02 03:27:25,677 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:25,677 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt_advanced.php
+2025-08-02 03:27:26,805 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:26,806 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_list.php
+2025-08-02 03:27:28,171 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:28,171 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_all.php
+2025-08-02 03:27:29,806 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:29,806 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv2.php
+2025-08-02 03:27:30,306 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,306 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /search.php
+2025-08-02 03:27:30,367 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,367 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep.php
+2025-08-02 03:27:30,440 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,440 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_new.php
+2025-08-02 03:27:30,521 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,521 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busrep_query.php
+2025-08-02 03:27:30,626 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,626 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /telefono.php
+2025-08-02 03:27:30,748 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,748 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busemp.php
+2025-08-02 03:27:30,897 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:30,897 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busalt2.php
+2025-08-02 03:27:31,076 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:31,076 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busveh_search.php
+2025-08-02 03:27:31,289 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:31,290 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_all.php
+2025-08-02 03:27:31,547 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:31,547 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bustel_search.php
+2025-08-02 03:27:31,856 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:31,856 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_query.php
+2025-08-02 03:27:32,225 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:32,226 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced2.php
+2025-08-02 03:27:32,671 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:32,672 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busprop_search.php
+2025-08-02 03:27:33,205 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:33,205 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext.php
+2025-08-02 03:27:33,845 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:33,845 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir.php
+2025-08-02 03:27:34,732 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:34,733 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /documento.php
+2025-08-02 03:27:35,679 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:35,680 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /prestamo.php
+2025-08-02 03:27:36,807 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:38,174 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:39,809 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,307 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,368 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,441 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,522 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,627 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,749 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:40,898 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:41,076 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:41,291 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:41,548 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:41,857 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:42,227 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:42,673 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:43,206 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:43,846 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:44,735 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:44,735 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /cedula.php
+2025-08-02 03:27:45,682 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:45,682 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc.php
+2025-08-02 03:27:54,737 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:54,737 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busced_list.php
+2025-08-02 03:27:55,685 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:27:55,685 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_search.php
+2025-08-02 03:28:04,742 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:04,742 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buscredit_all.php
+2025-08-02 03:28:05,687 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:05,688 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_search.php
+2025-08-02 03:28:14,743 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:14,743 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buspat_all.php
+2025-08-02 03:28:15,690 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:15,691 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /mercantil.php
+2025-08-02 03:28:24,753 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:24,753 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busnom_v2.php
+2025-08-02 03:28:25,692 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:25,692 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busext_list.php
+2025-08-02 03:28:34,758 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:34,758 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busdir_advanced.php
+2025-08-02 03:28:35,694 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:35,694 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /buslic_v2.php
+2025-08-02 03:28:44,766 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:44,766 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busmatri_new.php
+2025-08-02 03:28:45,696 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:45,697 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /bussoc_all.php
+2025-08-02 03:28:54,775 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:54,776 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /empresa.php
+2025-08-02 03:28:55,698 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:28:55,699 - mega_aggressive_extractor - INFO - 🔥 Procesando endpoint mega: /busactiv_all.php
+2025-08-02 03:29:04,782 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:29:05,700 - mega_aggressive_extractor - INFO - 📈 Progreso chunk: 0/250,000
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 0 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 1 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 2 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 3 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 4 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 5 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 6 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 7 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 8 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 9 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 10 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 11 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 12 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 13 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 14 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 15 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 16 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 17 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 18 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 19 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 20 completada: +0 registros
+2025-08-02 03:29:05,701 - mega_aggressive_extractor - INFO - ✅ Tarea 21 completada: +0 registros
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 🔥 REPORTE FINAL MEGA AGGRESSIVE EXTRACTION 🔥
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 🎯 Meta 5M alcanzada: False
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 👥 Personas físicas: 310,040
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 🏢 Personas jurídicas: 800
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 📊 Total registros principales: 310,840
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 📄 Raw mega extraction: 0
+2025-08-02 03:29:05,898 - mega_aggressive_extractor - INFO - 📱 Teléfonos únicos CR: 0
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - 📧 Emails únicos: 0
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - 🚀 Requests realizadas: 0
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - ✅ Tasa de éxito: 0.0%
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - ⚡ Velocidad: 0.0 registros/segundo
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - 🎉🎉🎉 MEGA AGGRESSIVE EXTRACTION COMPLETADA! 🎉🎉🎉
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - 📊 TOTAL EXTRAÍDO: 0 registros
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - ⏱️ TIEMPO: 2.76 minutos
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - ⚡ VELOCIDAD: 0.0 registros/segundo
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - 🎉🎉🎉 MEGA AGGRESSIVE EXTRACTION COMPLETADA! 🎉🎉🎉
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - 📊 REGISTROS EXTRAÍDOS: 0
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - ⏱️ TIEMPO TOTAL: 2.94 minutos
+2025-08-02 03:29:05,899 - mega_aggressive_extractor - INFO - ⚡ VELOCIDAD PROMEDIO: 0.0 registros/minuto
+2025-08-02 03:29:05,902 - mega_aggressive_extractor - INFO - ✅ Sistema Mega Aggressive cerrado correctamente

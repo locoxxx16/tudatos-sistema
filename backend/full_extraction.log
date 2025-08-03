@@ -1,0 +1,381 @@
+2025-07-29 07:28:47,891 - __main__ - INFO - 🚀 INICIANDO EXTRACCIÓN MASIVA PARA 2+ MILLONES DE REGISTROS...
+2025-07-29 07:28:47,966 - __main__ - INFO - ✅ Sistema inicializado: MongoDB, Session HTTP y Daticos listos
+2025-07-29 07:28:47,966 - __main__ - INFO - 1️⃣ FASE 1: Extracción híbrida TSE (1M cédulas)
+2025-07-29 07:28:47,966 - __main__ - INFO - 🗳️ Iniciando extracción HÍBRIDA del TSE - Target: 1000000 cédulas...
+2025-07-29 07:28:47,966 - __main__ - INFO - 📍 Generando cédulas para San José (código 1)
+2025-07-29 07:28:48,094 - __main__ - INFO - 📍 Generando cédulas para Alajuela (código 2)
+2025-07-29 07:28:48,218 - __main__ - INFO - 📍 Generando cédulas para Cartago (código 3)
+2025-07-29 07:28:48,342 - __main__ - INFO - 📍 Generando cédulas para Heredia (código 4)
+2025-07-29 07:28:48,469 - __main__ - INFO - 📍 Generando cédulas para Guanacaste (código 5)
+2025-07-29 07:28:48,595 - __main__ - INFO - 📍 Generando cédulas para Puntarenas (código 6)
+2025-07-29 07:28:48,735 - __main__ - INFO - 📍 Generando cédulas para Limón (código 7)
+2025-07-29 07:28:48,857 - __main__ - INFO - 📍 Generando cédulas para Naturalizados (código 8)
+2025-07-29 07:28:48,981 - __main__ - INFO - 📍 Generando cédulas para Residentes (código 9)
+2025-07-29 07:28:49,109 - __main__ - INFO - 📋 Generadas 1000000 cédulas para procesamiento
+2025-07-29 07:28:49,109 - __main__ - INFO - 📊 Procesando lote TSE 1: 5000 cédulas
+2025-07-29 07:28:58,172 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:28:58,172 - __main__ - INFO - 📈 Progreso TSE: 5,000 registros extraídos
+2025-07-29 07:28:58,172 - __main__ - INFO - 📊 Procesando lote TSE 2: 5000 cédulas
+2025-07-29 07:29:07,271 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:29:07,271 - __main__ - INFO - 📈 Progreso TSE: 10,000 registros extraídos
+2025-07-29 07:29:07,271 - __main__ - INFO - 📊 Procesando lote TSE 3: 5000 cédulas
+2025-07-29 07:29:16,274 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:29:16,274 - __main__ - INFO - 📈 Progreso TSE: 15,000 registros extraídos
+2025-07-29 07:29:16,274 - __main__ - INFO - 📊 Procesando lote TSE 4: 5000 cédulas
+2025-07-29 07:29:26,084 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:29:26,084 - __main__ - INFO - 📈 Progreso TSE: 20,000 registros extraídos
+2025-07-29 07:29:26,084 - __main__ - INFO - 📊 Procesando lote TSE 5: 5000 cédulas
+2025-07-29 07:29:35,226 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:29:35,226 - __main__ - INFO - 📈 Progreso TSE: 25,000 registros extraídos
+2025-07-29 07:29:35,226 - __main__ - INFO - 📊 Procesando lote TSE 6: 5000 cédulas
+2025-07-29 07:29:44,333 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:29:44,333 - __main__ - INFO - 📈 Progreso TSE: 30,000 registros extraídos
+2025-07-29 07:29:44,333 - __main__ - INFO - 📊 Procesando lote TSE 7: 5000 cédulas
+2025-07-29 07:29:53,647 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:29:53,647 - __main__ - INFO - 📈 Progreso TSE: 35,000 registros extraídos
+2025-07-29 07:29:53,647 - __main__ - INFO - 📊 Procesando lote TSE 8: 5000 cédulas
+2025-07-29 07:30:02,768 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:02,768 - __main__ - INFO - 📈 Progreso TSE: 40,000 registros extraídos
+2025-07-29 07:30:02,768 - __main__ - INFO - 📊 Procesando lote TSE 9: 5000 cédulas
+2025-07-29 07:30:11,646 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:11,646 - __main__ - INFO - 📈 Progreso TSE: 45,000 registros extraídos
+2025-07-29 07:30:11,646 - __main__ - INFO - 📊 Procesando lote TSE 10: 5000 cédulas
+2025-07-29 07:30:20,854 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:20,854 - __main__ - INFO - 📈 Progreso TSE: 50,000 registros extraídos
+2025-07-29 07:30:20,854 - __main__ - INFO - 📊 Procesando lote TSE 11: 5000 cédulas
+2025-07-29 07:30:29,875 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:29,875 - __main__ - INFO - 📈 Progreso TSE: 55,000 registros extraídos
+2025-07-29 07:30:29,876 - __main__ - INFO - 📊 Procesando lote TSE 12: 5000 cédulas
+2025-07-29 07:30:38,839 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:38,839 - __main__ - INFO - 📈 Progreso TSE: 60,000 registros extraídos
+2025-07-29 07:30:38,839 - __main__ - INFO - 📊 Procesando lote TSE 13: 5000 cédulas
+2025-07-29 07:30:48,073 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:48,073 - __main__ - INFO - 📈 Progreso TSE: 65,000 registros extraídos
+2025-07-29 07:30:48,073 - __main__ - INFO - 📊 Procesando lote TSE 14: 5000 cédulas
+2025-07-29 07:30:57,164 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:30:57,164 - __main__ - INFO - 📈 Progreso TSE: 70,000 registros extraídos
+2025-07-29 07:30:57,164 - __main__ - INFO - 📊 Procesando lote TSE 15: 5000 cédulas
+2025-07-29 07:31:06,201 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:31:06,201 - __main__ - INFO - 📈 Progreso TSE: 75,000 registros extraídos
+2025-07-29 07:31:06,201 - __main__ - INFO - 📊 Procesando lote TSE 16: 5000 cédulas
+2025-07-29 07:31:15,388 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:31:15,388 - __main__ - INFO - 📈 Progreso TSE: 80,000 registros extraídos
+2025-07-29 07:31:15,388 - __main__ - INFO - 📊 Procesando lote TSE 17: 5000 cédulas
+2025-07-29 07:31:24,513 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:31:24,513 - __main__ - INFO - 📈 Progreso TSE: 85,000 registros extraídos
+2025-07-29 07:31:24,513 - __main__ - INFO - 📊 Procesando lote TSE 18: 5000 cédulas
+2025-07-29 07:31:33,777 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:31:33,777 - __main__ - INFO - 📈 Progreso TSE: 90,000 registros extraídos
+2025-07-29 07:31:33,777 - __main__ - INFO - 📊 Procesando lote TSE 19: 5000 cédulas
+2025-07-29 07:31:44,291 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:31:44,291 - __main__ - INFO - 📈 Progreso TSE: 95,000 registros extraídos
+2025-07-29 07:31:44,291 - __main__ - INFO - 📊 Procesando lote TSE 20: 5000 cédulas
+2025-07-29 07:31:54,411 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:31:54,412 - __main__ - INFO - 📈 Progreso TSE: 100,000 registros extraídos
+2025-07-29 07:31:54,412 - __main__ - INFO - 📊 Procesando lote TSE 21: 5000 cédulas
+2025-07-29 07:32:03,947 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:32:03,947 - __main__ - INFO - 📈 Progreso TSE: 105,000 registros extraídos
+2025-07-29 07:32:03,947 - __main__ - INFO - 📊 Procesando lote TSE 22: 5000 cédulas
+2025-07-29 07:32:14,113 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:32:14,113 - __main__ - INFO - 📈 Progreso TSE: 110,000 registros extraídos
+2025-07-29 07:32:14,113 - __main__ - INFO - 📊 Procesando lote TSE 23: 5000 cédulas
+2025-07-29 07:32:23,720 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:32:23,720 - __main__ - INFO - 📈 Progreso TSE: 115,000 registros extraídos
+2025-07-29 07:32:23,720 - __main__ - INFO - 📊 Procesando lote TSE 24: 5000 cédulas
+2025-07-29 07:32:33,474 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:32:33,474 - __main__ - INFO - 📈 Progreso TSE: 120,000 registros extraídos
+2025-07-29 07:32:33,474 - __main__ - INFO - 📊 Procesando lote TSE 25: 5000 cédulas
+2025-07-29 07:32:43,064 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:32:43,064 - __main__ - INFO - 📈 Progreso TSE: 125,000 registros extraídos
+2025-07-29 07:32:43,064 - __main__ - INFO - 📊 Procesando lote TSE 26: 5000 cédulas
+2025-07-29 07:32:52,664 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:32:52,664 - __main__ - INFO - 📈 Progreso TSE: 130,000 registros extraídos
+2025-07-29 07:32:52,664 - __main__ - INFO - 📊 Procesando lote TSE 27: 5000 cédulas
+2025-07-29 07:33:02,077 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:33:02,077 - __main__ - INFO - 📈 Progreso TSE: 135,000 registros extraídos
+2025-07-29 07:33:02,077 - __main__ - INFO - 📊 Procesando lote TSE 28: 5000 cédulas
+2025-07-29 07:33:12,483 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:33:12,483 - __main__ - INFO - 📈 Progreso TSE: 140,000 registros extraídos
+2025-07-29 07:33:12,483 - __main__ - INFO - 📊 Procesando lote TSE 29: 5000 cédulas
+2025-07-29 07:33:22,421 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:33:22,421 - __main__ - INFO - 📈 Progreso TSE: 145,000 registros extraídos
+2025-07-29 07:33:22,421 - __main__ - INFO - 📊 Procesando lote TSE 30: 5000 cédulas
+2025-07-29 07:33:32,021 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:33:32,021 - __main__ - INFO - 📈 Progreso TSE: 150,000 registros extraídos
+2025-07-29 07:33:32,021 - __main__ - INFO - 📊 Procesando lote TSE 31: 5000 cédulas
+2025-07-29 07:33:41,655 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:33:41,655 - __main__ - INFO - 📈 Progreso TSE: 155,000 registros extraídos
+2025-07-29 07:33:41,656 - __main__ - INFO - 📊 Procesando lote TSE 32: 5000 cédulas
+2025-07-29 07:33:51,717 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:33:51,717 - __main__ - INFO - 📈 Progreso TSE: 160,000 registros extraídos
+2025-07-29 07:33:51,717 - __main__ - INFO - 📊 Procesando lote TSE 33: 5000 cédulas
+2025-07-29 07:34:01,460 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:34:01,460 - __main__ - INFO - 📈 Progreso TSE: 165,000 registros extraídos
+2025-07-29 07:34:01,460 - __main__ - INFO - 📊 Procesando lote TSE 34: 5000 cédulas
+2025-07-29 07:34:12,642 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:34:12,642 - __main__ - INFO - 📈 Progreso TSE: 170,000 registros extraídos
+2025-07-29 07:34:12,642 - __main__ - INFO - 📊 Procesando lote TSE 35: 5000 cédulas
+2025-07-29 07:34:24,266 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:34:24,266 - __main__ - INFO - 📈 Progreso TSE: 175,000 registros extraídos
+2025-07-29 07:34:24,266 - __main__ - INFO - 📊 Procesando lote TSE 36: 5000 cédulas
+2025-07-29 07:34:34,246 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:34:34,246 - __main__ - INFO - 📈 Progreso TSE: 180,000 registros extraídos
+2025-07-29 07:34:34,247 - __main__ - INFO - 📊 Procesando lote TSE 37: 5000 cédulas
+2025-07-29 07:34:43,956 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:34:43,956 - __main__ - INFO - 📈 Progreso TSE: 185,000 registros extraídos
+2025-07-29 07:34:43,956 - __main__ - INFO - 📊 Procesando lote TSE 38: 5000 cédulas
+2025-07-29 07:34:54,192 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:34:54,192 - __main__ - INFO - 📈 Progreso TSE: 190,000 registros extraídos
+2025-07-29 07:34:54,192 - __main__ - INFO - 📊 Procesando lote TSE 39: 5000 cédulas
+2025-07-29 07:35:03,924 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:35:03,924 - __main__ - INFO - 📈 Progreso TSE: 195,000 registros extraídos
+2025-07-29 07:35:03,924 - __main__ - INFO - 📊 Procesando lote TSE 40: 5000 cédulas
+2025-07-29 07:35:13,566 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:35:13,566 - __main__ - INFO - 📈 Progreso TSE: 200,000 registros extraídos
+2025-07-29 07:35:13,566 - __main__ - INFO - 📊 Procesando lote TSE 41: 5000 cédulas
+2025-07-29 07:35:30,219 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:35:30,220 - __main__ - INFO - 📈 Progreso TSE: 205,000 registros extraídos
+2025-07-29 07:35:30,220 - __main__ - INFO - 📊 Procesando lote TSE 42: 5000 cédulas
+2025-07-29 07:35:39,700 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:35:39,701 - __main__ - INFO - 📈 Progreso TSE: 210,000 registros extraídos
+2025-07-29 07:35:39,701 - __main__ - INFO - 📊 Procesando lote TSE 43: 5000 cédulas
+2025-07-29 07:35:50,279 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:35:50,280 - __main__ - INFO - 📈 Progreso TSE: 215,000 registros extraídos
+2025-07-29 07:35:50,280 - __main__ - INFO - 📊 Procesando lote TSE 44: 5000 cédulas
+2025-07-29 07:35:59,773 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:35:59,773 - __main__ - INFO - 📈 Progreso TSE: 220,000 registros extraídos
+2025-07-29 07:35:59,773 - __main__ - INFO - 📊 Procesando lote TSE 45: 5000 cédulas
+2025-07-29 07:36:09,170 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:36:09,170 - __main__ - INFO - 📈 Progreso TSE: 225,000 registros extraídos
+2025-07-29 07:36:09,171 - __main__ - INFO - 📊 Procesando lote TSE 46: 5000 cédulas
+2025-07-29 07:36:19,109 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:36:19,109 - __main__ - INFO - 📈 Progreso TSE: 230,000 registros extraídos
+2025-07-29 07:36:19,109 - __main__ - INFO - 📊 Procesando lote TSE 47: 5000 cédulas
+2025-07-29 07:36:29,944 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:36:29,944 - __main__ - INFO - 📈 Progreso TSE: 235,000 registros extraídos
+2025-07-29 07:36:29,944 - __main__ - INFO - 📊 Procesando lote TSE 48: 5000 cédulas
+2025-07-29 07:36:39,906 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:36:39,906 - __main__ - INFO - 📈 Progreso TSE: 240,000 registros extraídos
+2025-07-29 07:36:39,906 - __main__ - INFO - 📊 Procesando lote TSE 49: 5000 cédulas
+2025-07-29 07:36:49,383 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:36:49,383 - __main__ - INFO - 📈 Progreso TSE: 245,000 registros extraídos
+2025-07-29 07:36:49,383 - __main__ - INFO - 📊 Procesando lote TSE 50: 5000 cédulas
+2025-07-29 07:36:58,915 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:36:58,915 - __main__ - INFO - 📈 Progreso TSE: 250,000 registros extraídos
+2025-07-29 07:36:58,915 - __main__ - INFO - 📊 Procesando lote TSE 51: 5000 cédulas
+2025-07-29 07:37:08,796 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:37:08,796 - __main__ - INFO - 📈 Progreso TSE: 255,000 registros extraídos
+2025-07-29 07:37:08,796 - __main__ - INFO - 📊 Procesando lote TSE 52: 5000 cédulas
+2025-07-29 07:37:18,477 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:37:18,477 - __main__ - INFO - 📈 Progreso TSE: 260,000 registros extraídos
+2025-07-29 07:37:18,478 - __main__ - INFO - 📊 Procesando lote TSE 53: 5000 cédulas
+2025-07-29 07:37:28,765 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:37:28,765 - __main__ - INFO - 📈 Progreso TSE: 265,000 registros extraídos
+2025-07-29 07:37:28,765 - __main__ - INFO - 📊 Procesando lote TSE 54: 5000 cédulas
+2025-07-29 07:37:38,280 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:37:38,280 - __main__ - INFO - 📈 Progreso TSE: 270,000 registros extraídos
+2025-07-29 07:37:38,280 - __main__ - INFO - 📊 Procesando lote TSE 55: 5000 cédulas
+2025-07-29 07:37:47,703 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:37:47,703 - __main__ - INFO - 📈 Progreso TSE: 275,000 registros extraídos
+2025-07-29 07:37:47,703 - __main__ - INFO - 📊 Procesando lote TSE 56: 5000 cédulas
+2025-07-29 07:37:57,586 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:37:57,586 - __main__ - INFO - 📈 Progreso TSE: 280,000 registros extraídos
+2025-07-29 07:37:57,586 - __main__ - INFO - 📊 Procesando lote TSE 57: 5000 cédulas
+2025-07-29 07:38:07,225 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:38:07,225 - __main__ - INFO - 📈 Progreso TSE: 285,000 registros extraídos
+2025-07-29 07:38:07,225 - __main__ - INFO - 📊 Procesando lote TSE 58: 5000 cédulas
+2025-07-29 07:38:16,612 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:38:16,612 - __main__ - INFO - 📈 Progreso TSE: 290,000 registros extraídos
+2025-07-29 07:38:16,612 - __main__ - INFO - 📊 Procesando lote TSE 59: 5000 cédulas
+2025-07-29 07:38:26,194 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:38:26,194 - __main__ - INFO - 📈 Progreso TSE: 295,000 registros extraídos
+2025-07-29 07:38:26,194 - __main__ - INFO - 📊 Procesando lote TSE 60: 5000 cédulas
+2025-07-29 07:38:36,295 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:38:36,295 - __main__ - INFO - 📈 Progreso TSE: 300,000 registros extraídos
+2025-07-29 07:38:36,295 - __main__ - INFO - 📊 Procesando lote TSE 61: 5000 cédulas
+2025-07-29 07:38:45,733 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:38:45,733 - __main__ - INFO - 📈 Progreso TSE: 305,000 registros extraídos
+2025-07-29 07:38:45,733 - __main__ - INFO - 📊 Procesando lote TSE 62: 5000 cédulas
+2025-07-29 07:38:55,633 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:38:55,633 - __main__ - INFO - 📈 Progreso TSE: 310,000 registros extraídos
+2025-07-29 07:38:55,633 - __main__ - INFO - 📊 Procesando lote TSE 63: 5000 cédulas
+2025-07-29 07:39:05,351 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:39:05,351 - __main__ - INFO - 📈 Progreso TSE: 315,000 registros extraídos
+2025-07-29 07:39:05,351 - __main__ - INFO - 📊 Procesando lote TSE 64: 5000 cédulas
+2025-07-29 07:39:15,913 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:39:15,913 - __main__ - INFO - 📈 Progreso TSE: 320,000 registros extraídos
+2025-07-29 07:39:15,913 - __main__ - INFO - 📊 Procesando lote TSE 65: 5000 cédulas
+2025-07-29 07:39:27,909 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:39:27,909 - __main__ - INFO - 📈 Progreso TSE: 325,000 registros extraídos
+2025-07-29 07:39:27,909 - __main__ - INFO - 📊 Procesando lote TSE 66: 5000 cédulas
+2025-07-29 07:39:40,968 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:39:40,968 - __main__ - INFO - 📈 Progreso TSE: 330,000 registros extraídos
+2025-07-29 07:39:40,968 - __main__ - INFO - 📊 Procesando lote TSE 67: 5000 cédulas
+2025-07-29 07:39:53,077 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:39:53,077 - __main__ - INFO - 📈 Progreso TSE: 335,000 registros extraídos
+2025-07-29 07:39:53,077 - __main__ - INFO - 📊 Procesando lote TSE 68: 5000 cédulas
+2025-07-29 07:40:05,410 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:40:05,410 - __main__ - INFO - 📈 Progreso TSE: 340,000 registros extraídos
+2025-07-29 07:40:05,410 - __main__ - INFO - 📊 Procesando lote TSE 69: 5000 cédulas
+2025-07-29 07:40:20,550 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:40:20,551 - __main__ - INFO - 📈 Progreso TSE: 345,000 registros extraídos
+2025-07-29 07:40:20,551 - __main__ - INFO - 📊 Procesando lote TSE 70: 5000 cédulas
+2025-07-29 07:40:33,478 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:40:33,479 - __main__ - INFO - 📈 Progreso TSE: 350,000 registros extraídos
+2025-07-29 07:40:33,479 - __main__ - INFO - 📊 Procesando lote TSE 71: 5000 cédulas
+2025-07-29 07:40:43,057 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:40:43,058 - __main__ - INFO - 📈 Progreso TSE: 355,000 registros extraídos
+2025-07-29 07:40:43,058 - __main__ - INFO - 📊 Procesando lote TSE 72: 5000 cédulas
+2025-07-29 07:40:52,917 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:40:52,917 - __main__ - INFO - 📈 Progreso TSE: 360,000 registros extraídos
+2025-07-29 07:40:52,918 - __main__ - INFO - 📊 Procesando lote TSE 73: 5000 cédulas
+2025-07-29 07:41:02,045 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:02,045 - __main__ - INFO - 📈 Progreso TSE: 365,000 registros extraídos
+2025-07-29 07:41:02,045 - __main__ - INFO - 📊 Procesando lote TSE 74: 5000 cédulas
+2025-07-29 07:41:11,423 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:11,423 - __main__ - INFO - 📈 Progreso TSE: 370,000 registros extraídos
+2025-07-29 07:41:11,423 - __main__ - INFO - 📊 Procesando lote TSE 75: 5000 cédulas
+2025-07-29 07:41:20,605 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:20,605 - __main__ - INFO - 📈 Progreso TSE: 375,000 registros extraídos
+2025-07-29 07:41:20,605 - __main__ - INFO - 📊 Procesando lote TSE 76: 5000 cédulas
+2025-07-29 07:41:29,640 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:29,641 - __main__ - INFO - 📈 Progreso TSE: 380,000 registros extraídos
+2025-07-29 07:41:29,641 - __main__ - INFO - 📊 Procesando lote TSE 77: 5000 cédulas
+2025-07-29 07:41:38,724 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:38,724 - __main__ - INFO - 📈 Progreso TSE: 385,000 registros extraídos
+2025-07-29 07:41:38,724 - __main__ - INFO - 📊 Procesando lote TSE 78: 5000 cédulas
+2025-07-29 07:41:48,114 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:48,114 - __main__ - INFO - 📈 Progreso TSE: 390,000 registros extraídos
+2025-07-29 07:41:48,114 - __main__ - INFO - 📊 Procesando lote TSE 79: 5000 cédulas
+2025-07-29 07:41:57,176 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:41:57,176 - __main__ - INFO - 📈 Progreso TSE: 395,000 registros extraídos
+2025-07-29 07:41:57,176 - __main__ - INFO - 📊 Procesando lote TSE 80: 5000 cédulas
+2025-07-29 07:42:06,286 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:42:06,286 - __main__ - INFO - 📈 Progreso TSE: 400,000 registros extraídos
+2025-07-29 07:42:06,286 - __main__ - INFO - 📊 Procesando lote TSE 81: 5000 cédulas
+2025-07-29 07:42:15,426 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:42:15,427 - __main__ - INFO - 📈 Progreso TSE: 405,000 registros extraídos
+2025-07-29 07:42:15,427 - __main__ - INFO - 📊 Procesando lote TSE 82: 5000 cédulas
+2025-07-29 07:42:24,526 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:42:24,526 - __main__ - INFO - 📈 Progreso TSE: 410,000 registros extraídos
+2025-07-29 07:42:24,526 - __main__ - INFO - 📊 Procesando lote TSE 83: 5000 cédulas
+2025-07-29 07:42:33,597 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:42:33,597 - __main__ - INFO - 📈 Progreso TSE: 415,000 registros extraídos
+2025-07-29 07:42:33,597 - __main__ - INFO - 📊 Procesando lote TSE 84: 5000 cédulas
+2025-07-29 07:42:42,723 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:42:42,723 - __main__ - INFO - 📈 Progreso TSE: 420,000 registros extraídos
+2025-07-29 07:42:42,723 - __main__ - INFO - 📊 Procesando lote TSE 85: 5000 cédulas
+2025-07-29 07:42:52,825 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:42:52,825 - __main__ - INFO - 📈 Progreso TSE: 425,000 registros extraídos
+2025-07-29 07:42:52,825 - __main__ - INFO - 📊 Procesando lote TSE 86: 5000 cédulas
+2025-07-29 07:43:01,939 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:01,939 - __main__ - INFO - 📈 Progreso TSE: 430,000 registros extraídos
+2025-07-29 07:43:01,939 - __main__ - INFO - 📊 Procesando lote TSE 87: 5000 cédulas
+2025-07-29 07:43:10,973 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:10,973 - __main__ - INFO - 📈 Progreso TSE: 435,000 registros extraídos
+2025-07-29 07:43:10,973 - __main__ - INFO - 📊 Procesando lote TSE 88: 5000 cédulas
+2025-07-29 07:43:20,170 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:20,170 - __main__ - INFO - 📈 Progreso TSE: 440,000 registros extraídos
+2025-07-29 07:43:20,170 - __main__ - INFO - 📊 Procesando lote TSE 89: 5000 cédulas
+2025-07-29 07:43:29,235 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:29,235 - __main__ - INFO - 📈 Progreso TSE: 445,000 registros extraídos
+2025-07-29 07:43:29,235 - __main__ - INFO - 📊 Procesando lote TSE 90: 5000 cédulas
+2025-07-29 07:43:38,241 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:38,241 - __main__ - INFO - 📈 Progreso TSE: 450,000 registros extraídos
+2025-07-29 07:43:38,241 - __main__ - INFO - 📊 Procesando lote TSE 91: 5000 cédulas
+2025-07-29 07:43:47,656 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:47,656 - __main__ - INFO - 📈 Progreso TSE: 455,000 registros extraídos
+2025-07-29 07:43:47,656 - __main__ - INFO - 📊 Procesando lote TSE 92: 5000 cédulas
+2025-07-29 07:43:56,705 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:43:56,705 - __main__ - INFO - 📈 Progreso TSE: 460,000 registros extraídos
+2025-07-29 07:43:56,705 - __main__ - INFO - 📊 Procesando lote TSE 93: 5000 cédulas
+2025-07-29 07:44:05,787 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:44:05,787 - __main__ - INFO - 📈 Progreso TSE: 465,000 registros extraídos
+2025-07-29 07:44:05,787 - __main__ - INFO - 📊 Procesando lote TSE 94: 5000 cédulas
+2025-07-29 07:44:14,990 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:44:14,990 - __main__ - INFO - 📈 Progreso TSE: 470,000 registros extraídos
+2025-07-29 07:44:14,990 - __main__ - INFO - 📊 Procesando lote TSE 95: 5000 cédulas
+2025-07-29 07:44:23,946 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:44:23,946 - __main__ - INFO - 📈 Progreso TSE: 475,000 registros extraídos
+2025-07-29 07:44:23,946 - __main__ - INFO - 📊 Procesando lote TSE 96: 5000 cédulas
+2025-07-29 07:44:33,130 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:44:33,130 - __main__ - INFO - 📈 Progreso TSE: 480,000 registros extraídos
+2025-07-29 07:44:33,130 - __main__ - INFO - 📊 Procesando lote TSE 97: 5000 cédulas
+2025-07-29 07:44:42,825 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:44:42,826 - __main__ - INFO - 📈 Progreso TSE: 485,000 registros extraídos
+2025-07-29 07:44:42,826 - __main__ - INFO - 📊 Procesando lote TSE 98: 5000 cédulas
+2025-07-29 07:44:51,975 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:44:51,975 - __main__ - INFO - 📈 Progreso TSE: 490,000 registros extraídos
+2025-07-29 07:44:51,975 - __main__ - INFO - 📊 Procesando lote TSE 99: 5000 cédulas
+2025-07-29 07:45:01,165 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:01,165 - __main__ - INFO - 📈 Progreso TSE: 495,000 registros extraídos
+2025-07-29 07:45:01,165 - __main__ - INFO - 📊 Procesando lote TSE 100: 5000 cédulas
+2025-07-29 07:45:11,134 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:11,134 - __main__ - INFO - 📈 Progreso TSE: 500,000 registros extraídos
+2025-07-29 07:45:11,134 - __main__ - INFO - 📊 Procesando lote TSE 101: 5000 cédulas
+2025-07-29 07:45:20,106 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:20,107 - __main__ - INFO - 📈 Progreso TSE: 505,000 registros extraídos
+2025-07-29 07:45:20,107 - __main__ - INFO - 📊 Procesando lote TSE 102: 5000 cédulas
+2025-07-29 07:45:29,093 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:29,093 - __main__ - INFO - 📈 Progreso TSE: 510,000 registros extraídos
+2025-07-29 07:45:29,093 - __main__ - INFO - 📊 Procesando lote TSE 103: 5000 cédulas
+2025-07-29 07:45:38,179 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:38,179 - __main__ - INFO - 📈 Progreso TSE: 515,000 registros extraídos
+2025-07-29 07:45:38,179 - __main__ - INFO - 📊 Procesando lote TSE 104: 5000 cédulas
+2025-07-29 07:45:47,284 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:47,284 - __main__ - INFO - 📈 Progreso TSE: 520,000 registros extraídos
+2025-07-29 07:45:47,284 - __main__ - INFO - 📊 Procesando lote TSE 105: 5000 cédulas
+2025-07-29 07:45:56,436 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:45:56,437 - __main__ - INFO - 📈 Progreso TSE: 525,000 registros extraídos
+2025-07-29 07:45:56,437 - __main__ - INFO - 📊 Procesando lote TSE 106: 5000 cédulas
+2025-07-29 07:46:05,858 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:46:05,858 - __main__ - INFO - 📈 Progreso TSE: 530,000 registros extraídos
+2025-07-29 07:46:05,858 - __main__ - INFO - 📊 Procesando lote TSE 107: 5000 cédulas
+2025-07-29 07:46:14,949 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:46:14,949 - __main__ - INFO - 📈 Progreso TSE: 535,000 registros extraídos
+2025-07-29 07:46:14,949 - __main__ - INFO - 📊 Procesando lote TSE 108: 5000 cédulas
+2025-07-29 07:46:24,003 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:46:24,004 - __main__ - INFO - 📈 Progreso TSE: 540,000 registros extraídos
+2025-07-29 07:46:24,004 - __main__ - INFO - 📊 Procesando lote TSE 109: 5000 cédulas
+2025-07-29 07:46:33,081 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:46:33,081 - __main__ - INFO - 📈 Progreso TSE: 545,000 registros extraídos
+2025-07-29 07:46:33,081 - __main__ - INFO - 📊 Procesando lote TSE 110: 5000 cédulas
+2025-07-29 07:46:42,433 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:46:42,433 - __main__ - INFO - 📈 Progreso TSE: 550,000 registros extraídos
+2025-07-29 07:46:42,433 - __main__ - INFO - 📊 Procesando lote TSE 111: 5000 cédulas
+2025-07-29 07:46:51,496 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:46:51,499 - __main__ - INFO - 📈 Progreso TSE: 555,000 registros extraídos
+2025-07-29 07:46:51,499 - __main__ - INFO - 📊 Procesando lote TSE 112: 5000 cédulas
+2025-07-29 07:47:00,520 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:00,520 - __main__ - INFO - 📈 Progreso TSE: 560,000 registros extraídos
+2025-07-29 07:47:00,520 - __main__ - INFO - 📊 Procesando lote TSE 113: 5000 cédulas
+2025-07-29 07:47:09,661 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:09,662 - __main__ - INFO - 📈 Progreso TSE: 565,000 registros extraídos
+2025-07-29 07:47:09,662 - __main__ - INFO - 📊 Procesando lote TSE 114: 5000 cédulas
+2025-07-29 07:47:19,516 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:19,516 - __main__ - INFO - 📈 Progreso TSE: 570,000 registros extraídos
+2025-07-29 07:47:19,516 - __main__ - INFO - 📊 Procesando lote TSE 115: 5000 cédulas
+2025-07-29 07:47:28,613 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:28,614 - __main__ - INFO - 📈 Progreso TSE: 575,000 registros extraídos
+2025-07-29 07:47:28,614 - __main__ - INFO - 📊 Procesando lote TSE 116: 5000 cédulas
+2025-07-29 07:47:38,002 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:38,002 - __main__ - INFO - 📈 Progreso TSE: 580,000 registros extraídos
+2025-07-29 07:47:38,002 - __main__ - INFO - 📊 Procesando lote TSE 117: 5000 cédulas
+2025-07-29 07:47:47,248 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:47,252 - __main__ - INFO - 📈 Progreso TSE: 585,000 registros extraídos
+2025-07-29 07:47:47,252 - __main__ - INFO - 📊 Procesando lote TSE 118: 5000 cédulas
+2025-07-29 07:47:57,633 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:47:57,633 - __main__ - INFO - 📈 Progreso TSE: 590,000 registros extraídos
+2025-07-29 07:47:57,633 - __main__ - INFO - 📊 Procesando lote TSE 119: 5000 cédulas
+2025-07-29 07:48:07,466 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:48:07,466 - __main__ - INFO - 📈 Progreso TSE: 595,000 registros extraídos
+2025-07-29 07:48:07,466 - __main__ - INFO - 📊 Procesando lote TSE 120: 5000 cédulas
+2025-07-29 07:48:17,207 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:48:17,207 - __main__ - INFO - 📈 Progreso TSE: 600,000 registros extraídos
+2025-07-29 07:48:17,207 - __main__ - INFO - 📊 Procesando lote TSE 121: 5000 cédulas
+2025-07-29 07:48:26,278 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:48:26,279 - __main__ - INFO - 📈 Progreso TSE: 605,000 registros extraídos
+2025-07-29 07:48:26,279 - __main__ - INFO - 📊 Procesando lote TSE 122: 5000 cédulas
+2025-07-29 07:48:35,630 - __main__ - INFO - 💾 Insertados 5000 registros TSE en MongoDB
+2025-07-29 07:48:35,631 - __main__ - INFO - 📈 Progreso TSE: 610,000 registros extraídos
+2025-07-29 07:48:35,631 - __main__ - INFO - 📊 Procesando lote TSE 123: 5000 cédulas

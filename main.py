@@ -287,7 +287,7 @@ extractors_system = {
         "name": "Registro Nacional Properties & Vehicles",
         "description": "Propiedades, vehículos y bienes registrados",
         "status": "active",
-        "last_run": (datetime.utcnov() - timedelta(hours=2)).isoformat(),
+        "last_run": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
         "next_run": (datetime.utcnow() + timedelta(hours=4)).isoformat(),
         "records_extracted": 1892456,
         "properties": 892456,

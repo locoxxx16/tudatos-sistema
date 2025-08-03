@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException, Form, Query, BackgroundTasks, Request, File, UploadFile
-from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse, RedirectResponse
+from fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import Optional, Dict, List, Any, Union
+from typing import Optional, Dict, List, Any
 import json
 import random
 import uuid
@@ -9,22 +9,10 @@ from datetime import datetime, timedelta
 import hashlib
 import asyncio
 import aiohttp
-import time
-import logging
-from concurrent.futures import ThreadPoolExecutor
-import threading
-import queue
-import re
 from dataclasses import dataclass, asdict
 from enum import Enum
-import statistics
-# import smtplib
-# from email.mime.text import MimeText
-# from email.mime.multipart import MimeMultipart
+import logging
 import secrets
-import base64
-from PIL import Image
-import io
 import os
 
 # Configurar logging avanzado

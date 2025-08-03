@@ -1398,6 +1398,350 @@ async def stop_autonomous_system(current_user=Depends(get_current_user)):
         logger.error(f"❌ Error deteniendo sistema autónomo: {e}")
         raise HTTPException(status_code=500, detail=f"Error deteniendo sistema autónomo: {str(e)}")
 
+@api_router.post("/admin/mega-extraction/start")
+async def start_mega_extraction(current_user=Depends(get_current_user)):
+    """Iniciar extracción masiva de TODAS las fuentes de Costa Rica"""
+    try:
+        logger.info("🚀 API: Iniciando MEGA EXTRACCIÓN de Costa Rica")
+        logger.info("📋 FUENTES: Páginas Amarillas, Empleo, Ministerios, Colegios")
+        
+        # Ejecutar en background
+        import asyncio
+        
+        async def run_background_mega():
+            try:
+                from costa_rica_mega_extractor import run_mega_extraction
+                result = await run_mega_extraction()
+                logger.info(f"✅ Mega extracción completada: {result}")
+            except Exception as e:
+                logger.error(f"❌ Error en mega extracción background: {e}")
+        
+        # Iniciar en background
+        task = asyncio.create_task(run_background_mega())
+        
+        return {
+            "status": "success", 
+            "message": "MEGA EXTRACCIÓN iniciada en background",
+            "details": {
+                "objetivo": "Extraer datos de TODAS las fuentes de Costa Rica",
+                "fuentes": [
+                    "Páginas Amarillas (yellowpages.cr, yelu.cr, eldirectorio.co)",
+                    "Portales Empleo (computrabajo.co.cr, empleos.net)",
+                    "Ministerios (TSE, CCSS, Hacienda, MTSS)",
+                    "Colegios Profesionales (médicos, abogados, ingenieros)"
+                ],
+                "estimado_registros": "500,000+ nuevos registros",
+                "metodo": "WEB_SCRAPING_MASIVO",
+                "incluye": [
+                    "Teléfonos validados +506",
+                    "Emails verificados",
+                    "Nombres y empresas",
+                    "Información profesional",
+                    "Datos de contacto oficiales"
+                ]
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error iniciando mega extracción: {e}")
+        raise HTTPException(status_code=500, detail=f"Error iniciando mega extracción: {str(e)}")
+
+@api_router.get("/admin/mega-extraction/status")
+async def get_mega_extraction_status(current_user=Depends(get_current_user)):
+    """Obtener estado de la mega extracción"""
+    try:
+        # Contar registros en colecciones de mega extracción
+        total_mega_fisicas = 0
+        total_mega_juridicas = 0
+        total_profesionales = 0
+        
+        try:
+            total_mega_fisicas = await db.personas_fisicas_mega.count_documents({})
+            total_mega_juridicas = await db.personas_juridicas_mega.count_documents({})
+            total_profesionales = await db.profesionales_cr.count_documents({})
+        except:
+            pass
+        
+        # Obtener últimas estadísticas
+        latest_stats = None
+        try:
+            latest_stats = await db.mega_extraction_stats.find_one(
+                {}, sort=[('fecha_extraccion', -1)]
+            )
+        except:
+            pass
+        
+        # Contar registros totales del sistema
+        total_general_fisicas = await db.personas_fisicas.count_documents({})
+        total_general_juridicas = await db.personas_juridicas.count_documents({})
+        
+        total_mega = total_mega_fisicas + total_mega_juridicas + total_profesionales
+        total_general = total_general_fisicas + total_general_juridicas
+        grand_total = total_general + total_mega
+        
+        return {
+            "status": "success",
+            "data": {
+                "mega_extraction_especifica": {
+                    "personas_fisicas_mega": total_mega_fisicas,
+                    "personas_juridicas_mega": total_mega_juridicas,
+                    "profesionales_cr": total_profesionales,
+                    "total_mega_extraction": total_mega
+                },
+                "sistema_general": {
+                    "personas_fisicas_general": total_general_fisicas,
+                    "personas_juridicas_general": total_general_juridicas,
+                    "total_sistema_general": total_general
+                },
+                "totales_combinados": {
+                    "gran_total": grand_total,
+                    "progreso_hacia_3M": f"{(grand_total / 3000000) * 100:.2f}%",
+                    "registros_faltantes": max(0, 3000000 - grand_total),
+                    "objetivo_3M_alcanzado": grand_total >= 3000000
+                },
+                "ultima_mega_extraccion": {
+                    "fecha": latest_stats.get('fecha_extraccion').isoformat() if latest_stats and latest_stats.get('fecha_extraccion') else None,
+                    "total_extraido": latest_stats.get('total_extraido') if latest_stats else 0,
+                    "fuentes_procesadas": latest_stats.get('fuentes_procesadas') if latest_stats else 0,
+                    "estado": latest_stats.get('estado') if latest_stats else "PENDIENTE"
+                } if latest_stats else {
+                    "mensaje": "No se ha ejecutado mega extracción aún"
+                }
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo estado mega extracción: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo estado: {str(e)}")
+
+# Endpoint para buscar en TODAS las bases de datos combinadas
+@api_router.get("/search/mega/{query}")
+async def search_mega_database(query: str, limit: int = 100, current_user=Depends(get_current_user)):
+    """Buscar en TODAS las bases de datos (general + mega extraction)"""
+    try:
+        results = []
+        search_regex = {"$regex": query, "$options": "i"}
+        
+        # Buscar en personas físicas generales
+        fisica_general = await db.personas_fisicas.find({
+            "$or": [
+                {"nombre": search_regex},
+                {"primer_apellido": search_regex},
+                {"telefono": search_regex},
+                {"email": search_regex}
+            ]
+        }).limit(limit // 4).to_list(limit // 4)
+        
+        for persona in fisica_general:
+            persona = convert_objectid_to_string(persona)
+            results.append({
+                "type": "fisica_general",
+                "source": "BASE_DATOS_PRINCIPAL",
+                "data": persona
+            })
+        
+        # Buscar en personas físicas mega
+        try:
+            fisica_mega = await db.personas_fisicas_mega.find({
+                "$or": [
+                    {"nombre": search_regex},
+                    {"telefono": search_regex},
+                    {"email": search_regex}
+                ]
+            }).limit(limit // 4).to_list(limit // 4)
+            
+            for persona in fisica_mega:
+                results.append({
+                    "type": "fisica_mega",
+                    "source": persona.get('fuente', 'MEGA_EXTRACTION'),
+                    "data": persona
+                })
+        except:
+            pass
+        
+        # Buscar en profesionales
+        try:
+            profesionales = await db.profesionales_cr.find({
+                "$or": [
+                    {"nombre": search_regex},
+                    {"telefono": search_regex},
+                    {"email": search_regex}
+                ]
+            }).limit(limit // 4).to_list(limit // 4)
+            
+            for prof in profesionales:
+                results.append({
+                    "type": "profesional",
+                    "source": prof.get('fuente', 'PROFESIONALES_CR'),
+                    "data": prof
+                })
+        except:
+            pass
+        
+        # Buscar en personas jurídicas
+        juridica_general = await db.personas_juridicas.find({
+            "$or": [
+                {"nombre_comercial": search_regex},
+                {"razon_social": search_regex},
+                {"telefono": search_regex},
+                {"email": search_regex}
+            ]
+        }).limit(limit // 4).to_list(limit // 4)
+        
+        for empresa in juridica_general:
+            empresa = convert_objectid_to_string(empresa)
+            results.append({
+                "type": "juridica_general",
+                "source": "BASE_DATOS_PRINCIPAL",
+                "data": empresa
+            })
+        
+        return {
+            "results": results,
+            "total": len(results),
+            "query": query,
+            "sources_searched": [
+                "BASE_DATOS_PRINCIPAL",
+                "MEGA_EXTRACTION",
+                "PROFESIONALES_CR"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en mega búsqueda: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en búsqueda: {str(e)}")
+
+@api_router.post("/admin/database/mega-cleanup")
+async def cleanup_mega_database(current_user=Depends(get_current_user)):
+    """Limpiar y optimizar base de datos después de mega extracción"""
+    try:
+        logger.info("🧹 Iniciando limpieza de base de datos mega")
+        
+        # Eliminar duplicados en mega collections
+        duplicates_removed = 0
+        
+        # Limpiar duplicados en personas_fisicas_mega por teléfono
+        try:
+            pipeline = [
+                {"$group": {
+                    "_id": "$telefono",
+                    "count": {"$sum": 1},
+                    "docs": {"$push": "$$ROOT"}
+                }},
+                {"$match": {"count": {"$gt": 1}}}
+            ]
+            
+            duplicates = await db.personas_fisicas_mega.aggregate(pipeline).to_list(None)
+            for duplicate_group in duplicates:
+                docs_to_keep = duplicate_group["docs"][0]  # Mantener el primero
+                docs_to_remove = duplicate_group["docs"][1:]  # Eliminar el resto
+                
+                for doc in docs_to_remove:
+                    await db.personas_fisicas_mega.delete_one({"_id": doc["_id"]})
+                    duplicates_removed += 1
+                    
+        except Exception as e:
+            logger.warning(f"Error limpiando duplicados físicas mega: {e}")
+        
+        # Crear índices para mejor performance
+        try:
+            await db.personas_fisicas_mega.create_index("telefono")
+            await db.personas_fisicas_mega.create_index("email")
+            await db.personas_fisicas_mega.create_index("nombre")
+            await db.profesionales_cr.create_index("nombre")
+            await db.profesionales_cr.create_index("telefono")
+            logger.info("✅ Índices creados para mejor performance")
+        except Exception as e:
+            logger.warning(f"Error creando índices: {e}")
+        
+        return {
+            "status": "success",
+            "message": "Limpieza de mega base de datos completada",
+            "duplicates_removed": duplicates_removed,
+            "indexes_created": ["telefono", "email", "nombre"],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en limpieza mega: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en limpieza: {str(e)}")
+
+# Endpoint NUEVO para obtener resumen completo del sistema
+@api_router.get("/admin/system/complete-overview") 
+async def get_complete_system_overview(current_user=Depends(get_current_user)):
+    """Obtener resumen COMPLETO de todo el sistema TuDatos"""
+    try:
+        # Contar todas las colecciones
+        overview = {
+            "base_datos_principal": {
+                "personas_fisicas": await db.personas_fisicas.count_documents({}),
+                "personas_juridicas": await db.personas_juridicas.count_documents({})
+            },
+            "mega_extraction": {
+                "personas_fisicas_mega": 0,
+                "personas_juridicas_mega": 0,
+                "profesionales_cr": 0
+            },
+            "ultra_deep": {
+                "registros_ultra_deep": 0,
+                "vehiculos_cr": 0,
+                "propiedades_cr": 0
+            },
+            "extractores_especializados": {
+                "portal_datos_abiertos": 0,
+                "colegios_profesionales": 0,
+                "registro_nacional": 0
+            }
+        }
+        
+        # Contar mega extraction
+        try:
+            overview["mega_extraction"]["personas_fisicas_mega"] = await db.personas_fisicas_mega.count_documents({})
+            overview["mega_extraction"]["personas_juridicas_mega"] = await db.personas_juridicas_mega.count_documents({})
+            overview["mega_extraction"]["profesionales_cr"] = await db.profesionales_cr.count_documents({})
+        except:
+            pass
+        
+        # Contar ultra deep
+        try:
+            overview["ultra_deep"]["registros_ultra_deep"] = await db.ultra_deep_extraction.count_documents({})
+            overview["ultra_deep"]["vehiculos_cr"] = await db.vehiculos_cr.count_documents({})
+            overview["ultra_deep"]["propiedades_cr"] = await db.propiedades_cr.count_documents({})
+        except:
+            pass
+        
+        # Calcular totales
+        total_principal = overview["base_datos_principal"]["personas_fisicas"] + overview["base_datos_principal"]["personas_juridicas"]
+        total_mega = sum(overview["mega_extraction"].values())
+        total_ultra = sum(overview["ultra_deep"].values())
+        total_especializados = sum(overview["extractores_especializados"].values())
+        
+        gran_total = total_principal + total_mega + total_ultra + total_especializados
+        
+        overview["resumen"] = {
+            "total_principal": total_principal,
+            "total_mega_extraction": total_mega,
+            "total_ultra_deep": total_ultra,
+            "total_especializados": total_especializados,
+            "gran_total": gran_total,
+            "progreso_3M": f"{(gran_total / 3000000) * 100:.2f}%",
+            "objetivo_3M_alcanzado": gran_total >= 3000000,
+            "registros_faltantes": max(0, 3000000 - gran_total)
+        }
+        
+        return {
+            "status": "success",
+            "overview": overview,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo overview completo: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo overview: {str(e)}")
+
 @api_router.post("/admin/daticos/run-full-extraction")
 async def run_full_daticos_extraction(current_user=Depends(get_current_user)):
     """DEPRECATED: Usar ultra-massive-extraction en su lugar"""

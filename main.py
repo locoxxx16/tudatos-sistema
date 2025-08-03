@@ -179,7 +179,7 @@ advanced_database = {
             "servicios": ["Agua", "Electricidad", "Internet", "Cable"],
             "estado": "Excelente",
             "hipotecas": [],
-            "impuestos_al_dia": true,
+            "impuestos_al_dia": True,
             "created_at": datetime.utcnow().isoformat()
         }
     ]

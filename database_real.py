@@ -3,6 +3,10 @@ import random
 import uuid
 from datetime import datetime, timedelta
 
+# Variables globales para lazy loading
+DATABASE_REAL_COMPLETE = None
+STATS_CALCULATOR = None
+
 def generate_complete_database():
     """Generar base de datos REAL completa"""
     
@@ -22,8 +26,6 @@ def generate_complete_database():
                   "Florida Bebidas", "Grupo Nación", "CEMEX", "Walmart", "Auto Mercado"]
     
     database_real = []
-    
-    print("🔄 Generando base de datos COMPLETA...")
     
     for i in range(5000):
         primer_nombre = random.choice(nombres_cr)
@@ -208,28 +210,25 @@ def generate_complete_database():
         }
         
         database_real.append(persona_completa)
-        
-        if i % 1000 == 0 and i > 0:
-            print(f"✅ Generados {i:,} registros...")
     
-    print(f"🎉 Base de datos REAL: {len(database_real):,} registros con fotos integradas")
     return database_real
 
-# Generar base de datos al importar
-DATABASE_REAL_COMPLETE = generate_complete_database()
+def get_database():
+    """Lazy loading de la base de datos"""
+    global DATABASE_REAL_COMPLETE
+    if DATABASE_REAL_COMPLETE is None:
+        DATABASE_REAL_COMPLETE = generate_complete_database()
+    return DATABASE_REAL_COMPLETE
 
-# Estadísticas reales calculadas
-STATS_CALCULATOR = {
-    "total_personas": len(DATABASE_REAL_COMPLETE),
-    "total_fotos": sum([p.get("total_fotos", 0) for p in DATABASE_REAL_COMPLETE]),
-    "total_telefonos": sum([len(p.get("telefonos_todos", [])) for p in DATABASE_REAL_COMPLETE]),
-    "total_emails": sum([len(p.get("emails_todos", [])) for p in DATABASE_REAL_COMPLETE])
-}
-
-print(f"""
-🎉 ESTADÍSTICAS SISTEMA REAL:
-📊 Personas: {STATS_CALCULATOR['total_personas']:,}
-📸 Fotos: {STATS_CALCULATOR['total_fotos']:,}  
-📞 Teléfonos: {STATS_CALCULATOR['total_telefonos']:,}
-📧 Emails: {STATS_CALCULATOR['total_emails']:,}
-""")
+def get_stats():
+    """Lazy loading de estadísticas"""
+    global STATS_CALCULATOR
+    if STATS_CALCULATOR is None:
+        db = get_database()
+        STATS_CALCULATOR = {
+            "total_personas": len(db),
+            "total_fotos": sum([p.get("total_fotos", 0) for p in db]),
+            "total_telefonos": sum([len(p.get("telefonos_todos", [])) for p in db]),
+            "total_emails": sum([len(p.get("emails_todos", [])) for p in db])
+        }
+    return STATS_CALCULATOR

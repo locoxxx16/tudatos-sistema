@@ -167,15 +167,18 @@ backend:
 
   - task: "Sistema Integrado Ultra Extractor"
     implemented: true
-    working: true
+    working: false
     file: "backend/integrated_ultra_extractor.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "SISTEMA INTEGRADO IMPLEMENTADO. Ejecuta TODOS los extractores en secuencia optimizada: Ultra Deep + Registro Nacional + Portal Datos Abiertos + Colegios Profesionales. Meta: 5M+ registros con máxima cobertura de datos de Costa Rica."
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: Sistema Integrado Ultra Extractor endpoints timeout during testing. Since this system integrates all other extractors that are also timing out, the issue is likely compounded. Needs background processing implementation for long-running extraction tasks."
 
   - task: "Nuevos Endpoints API Backend"
     implemented: true

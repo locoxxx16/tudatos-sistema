@@ -335,7 +335,7 @@ async def pagina_principal():
 </html>
     """)
 
-# Login endpoints y resto del código continúa igual...
+# Login endpoints y TODOS los endpoints completos
 @app.post("/api/user/login")
 async def user_login(request: Request):
     """Login de usuario REAL"""
@@ -389,6 +389,379 @@ async def admin_login(request: Request):
         }
     
     return {"success": False, "message": "Credenciales admin incorrectas"}
+
+# =============================================================================
+# PANEL DE USUARIO CON CONSULTAS REALES FUNCIONANDO
+# =============================================================================
+
+@app.get("/user/dashboard")
+async def user_dashboard():
+    """Panel usuario con consultas REALES funcionando"""
+    return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Usuario - TuDatos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {{ font-family: 'Inter', sans-serif; }}
+        .gradient-user {{ background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #ec4899 100%); }}
+        .glass {{ background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }}
+    </style>
+</head>
+<body class="bg-gray-900 text-white" x-data="userApp()">
+    <!-- Header Usuario -->
+    <header class="gradient-user shadow-2xl">
+        <div class="max-w-7xl mx-auto px-6 py-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-4xl font-black">🔍 Sistema de Consultas REAL</h1>
+                    <p class="text-xl">Base de Datos Completa - {STATS_CALCULATOR['total_personas']:,} registros</p>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="glass rounded-lg px-6 py-3">
+                        <p class="text-lg font-bold" x-text="currentUser.username"></p>
+                        <p class="text-sm" x-text="currentUser.credits + ' créditos'"></p>
+                    </div>
+                    <button @click="logout()" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-bold">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Salir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Stats Usuario -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass rounded-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-blue-300 text-lg">Créditos</p>
+                        <p class="text-4xl font-black" x-text="currentUser.credits"></p>
+                    </div>
+                    <i class="fas fa-coins text-5xl text-yellow-400"></i>
+                </div>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-green-300 text-lg">Consultas</p>
+                        <p class="text-4xl font-black" x-text="userStats.totalSearches"></p>
+                    </div>
+                    <i class="fas fa-search text-5xl text-green-400"></i>
+                </div>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-300 text-lg">Plan</p>
+                        <p class="text-2xl font-bold" x-text="currentUser.plan"></p>
+                    </div>
+                    <i class="fas fa-star text-5xl text-purple-400"></i>
+                </div>
+            </div>
+            <div class="glass rounded-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-300 text-lg">Registros</p>
+                        <p class="text-2xl font-bold">{STATS_CALCULATOR['total_personas']:,}</p>
+                    </div>
+                    <i class="fas fa-database text-5xl text-blue-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sistema de Consultas REAL FUNCIONANDO -->
+        <div class="glass rounded-2xl p-8">
+            <h2 class="text-4xl font-bold mb-8 text-center">🔍 CONSULTA ULTRA COMPLETA</h2>
+            
+            <!-- Barra de Búsqueda REAL -->
+            <div class="relative mb-8">
+                <input type="text" x-model="searchQuery" @keydown.enter="performRealSearch()"
+                       class="w-full px-8 py-6 text-2xl bg-white bg-opacity-10 border-2 border-white border-opacity-30 rounded-2xl focus:border-blue-400 focus:outline-none text-white placeholder-gray-300"
+                       placeholder="🔍 Buscar por nombre, cédula, teléfono, email...">
+                <button @click="performRealSearch()" :disabled="searching || currentUser.credits <= 0"
+                        class="absolute right-3 top-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 text-xl">
+                    <i class="fas fa-search mr-3" :class="{ 'fa-spin fa-spinner': searching }"></i>
+                    <span x-text="searching ? 'Buscando...' : 'CONSULTAR'"></span>
+                </button>
+            </div>
+
+            <!-- Advertencia Créditos -->
+            <div x-show="currentUser.credits <= 0" class="bg-red-600 bg-opacity-30 border-2 border-red-400 rounded-2xl p-6 mb-8">
+                <p class="text-red-200 font-bold text-xl text-center">⚠️ SIN CRÉDITOS - Contacta al administrador</p>
+            </div>
+
+            <!-- Info Búsqueda -->
+            <div class="text-center mb-8">
+                <p class="text-2xl text-gray-300">
+                    Búsqueda en <span class="font-black text-yellow-300">{STATS_CALCULATOR['total_personas']:,}</span> registros con 
+                    <span class="font-black text-green-300">{STATS_CALCULATOR['total_fotos']:,}</span> fotos
+                </p>
+                <p class="text-lg text-gray-400 mt-2">⚡ Cada consulta = 1 crédito</p>
+            </div>
+
+            <!-- Resultados REALES -->
+            <div x-show="searchResults.length > 0" class="border-t-2 border-white border-opacity-30 pt-8">
+                <h3 class="text-3xl font-bold mb-8 text-center">
+                    🔍 RESULTADOS ENCONTRADOS (<span x-text="searchResults.length"></span>)
+                </h3>
+                
+                <div class="space-y-8">
+                    <template x-for="result in searchResults" :key="result.id">
+                        <div class="glass rounded-2xl p-8 border-2 border-white border-opacity-20">
+                            <!-- Header Resultado -->
+                            <div class="flex justify-between items-start mb-8">
+                                <div>
+                                    <h4 class="text-3xl font-black" x-text="result.nombre_completo"></h4>
+                                    <p class="text-2xl text-blue-300 font-bold">🆔 <span x-text="result.cedula"></span></p>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <span class="px-4 py-2 bg-green-600 rounded-full font-bold">✅ VERIFICADO</span>
+                                    <span class="px-4 py-2 bg-purple-600 rounded-full font-bold">📸 <span x-text="result.total_fotos"></span> fotos</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Información COMPLETA -->
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <!-- CONTACTOS -->
+                                <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                    <h5 class="text-xl font-bold text-yellow-300 mb-4">📞 CONTACTOS</h5>
+                                    <div class="space-y-3">
+                                        <div class="font-bold text-green-300">Teléfonos:</div>
+                                        <template x-for="tel in result.telefonos_todos" :key="tel.numero">
+                                            <div class="bg-gray-800 rounded p-3">
+                                                <p class="font-bold text-white" x-text="tel.numero"></p>
+                                                <p class="text-sm text-gray-400" x-text="tel.tipo + ' - ' + tel.fuente"></p>
+                                            </div>
+                                        </template>
+                                        
+                                        <div class="font-bold text-blue-300 mt-4">Emails:</div>
+                                        <template x-for="email in result.emails_todos" :key="email.email">
+                                            <div class="bg-gray-800 rounded p-3">
+                                                <p class="font-bold text-white" x-text="email.email"></p>
+                                                <p class="text-sm text-gray-400" x-text="email.tipo + ' - ' + email.fuente"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <!-- FAMILIA -->
+                                <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                    <h5 class="text-xl font-bold text-yellow-300 mb-4">👨‍👩‍👧‍👦 FAMILIA</h5>
+                                    <div class="space-y-3">
+                                        <div x-show="result.padre_nombre_completo">
+                                            <p class="font-bold text-green-300">Padre:</p>
+                                            <p class="text-white" x-text="result.padre_nombre_completo"></p>
+                                            <p class="text-sm text-gray-400" x-text="result.padre_cedula"></p>
+                                        </div>
+                                        <div x-show="result.madre_nombre_completo">
+                                            <p class="font-bold text-pink-300">Madre:</p>
+                                            <p class="text-white" x-text="result.madre_nombre_completo"></p>
+                                            <p class="text-sm text-gray-400" x-text="result.madre_cedula"></p>
+                                        </div>
+                                        <div x-show="result.conyuge_nombre_completo">
+                                            <p class="font-bold text-purple-300">Cónyuge:</p>
+                                            <p class="text-white" x-text="result.conyuge_nombre_completo"></p>
+                                        </div>
+                                        <div x-show="result.hijos_completos && result.hijos_completos.length > 0">
+                                            <p class="font-bold text-yellow-300">Hijos (<span x-text="result.hijos_completos.length"></span>):</p>
+                                            <template x-for="hijo in result.hijos_completos" :key="hijo.cedula">
+                                                <div class="bg-gray-800 rounded p-2 mt-2">
+                                                    <p class="text-white font-bold" x-text="hijo.nombre"></p>
+                                                    <p class="text-sm text-gray-400" x-text="hijo.edad + ' años'"></p>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- DATOS LABORALES -->
+                                <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                    <h5 class="text-xl font-bold text-yellow-300 mb-4">💼 LABORAL</h5>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <p class="font-bold text-green-300">Cargo:</p>
+                                            <p class="text-white text-lg" x-text="result.ocupacion_actual_detalle?.cargo || 'N/A'"></p>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-blue-300">Empresa:</p>
+                                            <p class="text-white text-lg" x-text="result.empresa_actual_completa?.nombre || 'N/A'"></p>
+                                        </div>
+                                        <div x-show="result.salario_actual">
+                                            <p class="font-bold text-green-300">Salario:</p>
+                                            <p class="text-white text-lg">₡<span x-text="formatMoney(result.salario_actual)"></span></p>
+                                        </div>
+                                        <div x-show="result.orden_patronal_numero">
+                                            <p class="font-bold text-purple-300">Orden Patronal:</p>
+                                            <p class="text-white" x-text="result.orden_patronal_numero"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BIENES Y FOTOS -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                                <!-- BIENES -->
+                                <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                    <h5 class="text-xl font-bold text-yellow-300 mb-4">🏠 BIENES</h5>
+                                    <div class="space-y-3">
+                                        <p><strong>Propiedades:</strong> <span x-text="result.propiedades_todas?.length || 0"></span></p>
+                                        <p><strong>Vehículos:</strong> <span x-text="result.vehiculos_todos?.length || 0"></span></p>
+                                        <p><strong>Score Crediticio:</strong> <span x-text="result.score_crediticio_actual"></span></p>
+                                    </div>
+                                </div>
+
+                                <!-- FOTOS DATICOS -->
+                                <div class="bg-white bg-opacity-10 rounded-xl p-6">
+                                    <h5 class="text-xl font-bold text-yellow-300 mb-4">📸 FOTOS DATICOS</h5>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="text-center bg-blue-600 bg-opacity-30 rounded p-3">
+                                            <i class="fas fa-id-card text-3xl mb-2"></i>
+                                            <p class="font-bold">Cédula</p>
+                                            <p class="text-xl font-black" x-text="result.fotos_cedula?.length || 0"></p>
+                                        </div>
+                                        <div class="text-center bg-green-600 bg-opacity-30 rounded p-3">
+                                            <i class="fas fa-user-circle text-3xl mb-2"></i>
+                                            <p class="font-bold">Perfil</p>
+                                            <p class="text-xl font-black" x-text="result.fotos_perfil?.length || 0"></p>
+                                        </div>
+                                    </div>
+                                    <button @click="viewPhotos(result)" class="w-full mt-4 px-4 py-3 bg-purple-600 rounded-lg font-bold hover:bg-purple-700">
+                                        <i class="fas fa-images mr-2"></i>Ver Fotos
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Fuentes -->
+                            <div class="mt-8 pt-6 border-t border-white border-opacity-20">
+                                <p class="font-bold text-yellow-300 mb-3">🔍 Fuentes:</p>
+                                <div class="flex flex-wrap gap-2">
+                                    <template x-for="fuente in result.fuentes_datos_utilizadas" :key="fuente">
+                                        <span class="px-3 py-1 bg-green-600 rounded-full text-sm font-bold uppercase" x-text="fuente"></span>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Sin Resultados -->
+            <div x-show="searchPerformed && searchResults.length === 0" class="text-center py-16">
+                <i class="fas fa-search-minus text-8xl text-gray-500 mb-6"></i>
+                <p class="text-3xl text-gray-400">No se encontraron resultados</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function userApp() {{
+            return {{
+                currentUser: {{}},
+                searchQuery: '',
+                searching: false,
+                searchPerformed: false,
+                searchResults: [],
+                userStats: {{ totalSearches: 0 }},
+                
+                init() {{
+                    const token = localStorage.getItem('user_token');
+                    if (!token) {{
+                        window.location.href = '/';
+                        return;
+                    }}
+                    this.loadUserProfile(token);
+                }},
+                
+                async loadUserProfile(token) {{
+                    try {{
+                        const response = await fetch('/api/user/profile', {{
+                            headers: {{ 'Authorization': `Bearer ${{token}}` }}
+                        }});
+                        const result = await response.json();
+                        if (result.success) {{
+                            this.currentUser = result.user;
+                        }} else {{
+                            localStorage.removeItem('user_token');
+                            window.location.href = '/';
+                        }}
+                    }} catch (error) {{
+                        localStorage.removeItem('user_token');
+                        window.location.href = '/';
+                    }}
+                }},
+                
+                async performRealSearch() {{
+                    if (!this.searchQuery.trim()) {{
+                        alert('⚠️ Ingresa un término de búsqueda');
+                        return;
+                    }}
+                    
+                    if (this.currentUser.credits <= 0) {{
+                        alert('❌ Sin créditos suficientes');
+                        return;
+                    }}
+                    
+                    this.searching = true;
+                    this.searchPerformed = true;
+                    
+                    try {{
+                        const token = localStorage.getItem('user_token');
+                        const response = await fetch(`/api/search/complete?q=${{encodeURIComponent(this.searchQuery)}}`, {{
+                            headers: {{ 'Authorization': `Bearer ${{token}}` }}
+                        }});
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {{
+                            this.searchResults = result.data;
+                            this.currentUser.credits = result.credits_remaining;
+                            this.userStats.totalSearches++;
+                            
+                            if (result.data.length > 0) {{
+                                alert(`✅ ${{result.data.length}} resultados encontrados! Créditos: ${{result.credits_remaining}}`);
+                            }} else {{
+                                alert('ℹ️ No se encontraron resultados');
+                            }}
+                        }} else {{
+                            alert('❌ ' + result.message);
+                        }}
+                        
+                    }} catch (error) {{
+                        alert('🔥 Error en la búsqueda');
+                    }} finally {{
+                        this.searching = false;
+                    }}
+                }},
+                
+                viewPhotos(person) {{
+                    alert(`📸 FOTOS DE ${{person.nombre_completo}}:\\n\\n` +
+                          `✅ Fotos de cédula: ${{person.fotos_cedula?.length || 0}}\\n` +
+                          `✅ Fotos de perfil: ${{person.fotos_perfil?.length || 0}}\\n` +
+                          `✅ Total: ${{person.total_fotos}} fotos\\n\\n` +
+                          `🔍 Extraídas con cuentas Daticos reales`);
+                }},
+                
+                formatMoney(amount) {{
+                    return new Intl.NumberFormat('es-CR').format(amount);
+                }},
+                
+                logout() {{
+                    localStorage.removeItem('user_token');
+                    window.location.href = '/';
+                }}
+            }}
+        }}
+    </script>
+</body>
+</html>
+    """)
 
 # Health check
 @app.get("/api/health")

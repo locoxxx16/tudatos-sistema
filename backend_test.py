@@ -905,6 +905,9 @@ class DaticosAPITester:
         
         # Authentication is required for most endpoints
         if self.test_authentication():
+            # HIGH PRIORITY TESTS FIRST (as requested by user)
+            self.test_high_priority_endpoints()
+            
             # Core functionality tests
             self.test_location_endpoints()
             self.test_search_by_cedula()
@@ -913,16 +916,16 @@ class DaticosAPITester:
             self.test_geographic_search()
             self.test_demographics_query()
             
-            # NEW: Ultra Deep Extraction tests
+            # Ultra Deep Extraction tests
             self.test_ultra_deep_extraction_endpoints()
             
-            # NEW: Autonomous System tests
+            # Autonomous System tests
             self.test_autonomous_system_endpoints()
             
-            # NEW: Database health and stats tests
+            # Database health and stats tests
             self.test_database_health_and_stats()
             
-            # NEW: Daticos connection tests
+            # Daticos connection tests
             self.test_daticos_connection_endpoints()
             
         else:

@@ -122,15 +122,18 @@ backend:
 
   - task: "Portal Datos Abiertos Extractor"
     implemented: true
-    working: true
+    working: false
     file: "backend/portal_datos_abiertos_extractor.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "NUEVO EXTRACTOR IMPLEMENTADO. Extrae datos del Portal de Datos Abiertos de Costa Rica. Incluye funcionarios públicos, empresas contratistas, licencias comerciales, datasets gubernamentales, APIs REST, scraping de portales ministeriales. Meta: 800k+ registros adicionales."
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: Portal Datos Abiertos extractor endpoints timeout during testing. Start endpoint /admin/portal-datos-abiertos/start causes connection timeout (15+ seconds). This indicates potential issues with the extractor implementation or external API dependencies. Needs investigation and optimization."
 
   - task: "Colegios Profesionales Extractor"
     implemented: true

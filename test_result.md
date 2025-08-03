@@ -152,15 +152,18 @@ backend:
 
   - task: "Registro Nacional Extractor"
     implemented: true
-    working: true
+    working: false
     file: "backend/registro_nacional_extractor.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "NUEVO EXTRACTOR IMPLEMENTADO. Extrae datos REALES del Registro Nacional: propiedades inmobiliarias, vehículos registrados oficiales, empresas y sociedades registradas, hipotecas y gravámenes. Meta: 500k+ registros oficiales."
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: Registro Nacional extractor endpoints timeout during testing. Same timeout issue as other new extractors. The pattern suggests these extractors may be making synchronous calls to external APIs that take too long, blocking the HTTP response."
 
   - task: "Sistema Integrado Ultra Extractor"
     implemented: true

@@ -737,20 +737,22 @@ class DaticosAPITester:
             
             if response.status_code == 200:
                 data = response.json()
-                if data.get("status") == "success" and "system_overview" in data:
-                    overview = data["system_overview"]
-                    total_records = overview.get("total_records", 0)
+                if data.get("status") == "success" and "overview" in data:
+                    overview = data["overview"]
+                    resumen = overview.get("resumen", {})
+                    total_records = resumen.get("gran_total", 0)
+                    progreso_3M = resumen.get("progreso_3M", "0%")
                     
                     self.log_test(
                         "System Complete Overview", 
                         True, 
-                        f"Total records: {total_records:,}, Collections: {len(overview.get('collections', {}))}"
+                        f"Total records: {total_records:,}, Progress to 3M: {progreso_3M}"
                     )
                 else:
                     self.log_test(
                         "System Complete Overview", 
                         False, 
-                        "Missing system_overview in response", 
+                        "Missing overview in response", 
                         data
                     )
             else:

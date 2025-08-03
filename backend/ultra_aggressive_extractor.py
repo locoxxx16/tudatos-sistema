@@ -29,7 +29,7 @@ class UltraAggressiveExtractor:
     def __init__(self):
         self.mongo_client = None
         self.db = None
-        self.fake = Faker('es_CR')  # Costa Rica locale
+        self.fake = Faker('es_ES')  # Spanish locale (closest to Costa Rica)
         self.sessions = []
         self.total_inserted = 0
         

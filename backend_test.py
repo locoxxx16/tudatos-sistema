@@ -724,6 +724,176 @@ class DaticosAPITester:
         except Exception as e:
             self.log_test("Daticos Connection Test", False, f"Exception: {str(e)}")
     
+    def test_high_priority_endpoints(self):
+        """Test the 4 HIGH PRIORITY endpoints requested by user"""
+        print("🔥 Testing HIGH PRIORITY ENDPOINTS - TuDatos System...")
+        
+        # Test 1: GET /api/admin/system/complete-overview
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/system/complete-overview", 
+                timeout=20
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "system_overview" in data:
+                    overview = data["system_overview"]
+                    total_records = overview.get("total_records", 0)
+                    
+                    self.log_test(
+                        "System Complete Overview", 
+                        True, 
+                        f"Total records: {total_records:,}, Collections: {len(overview.get('collections', {}))}"
+                    )
+                else:
+                    self.log_test(
+                        "System Complete Overview", 
+                        False, 
+                        "Missing system_overview in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "System Complete Overview", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("System Complete Overview", False, f"Exception: {str(e)}")
+        
+        # Test 2: GET /api/admin/mega-extraction/status
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/mega-extraction/status", 
+                timeout=20
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "data" in data:
+                    mega_data = data["data"]
+                    mega_total = mega_data.get("mega_extraction_especifica", {}).get("total_mega_extraction", 0)
+                    grand_total = mega_data.get("totales_combinados", {}).get("gran_total", 0)
+                    
+                    self.log_test(
+                        "Mega Extraction Status", 
+                        True, 
+                        f"Mega records: {mega_total:,}, Grand total: {grand_total:,}"
+                    )
+                else:
+                    self.log_test(
+                        "Mega Extraction Status", 
+                        False, 
+                        "Missing data in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Mega Extraction Status", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Mega Extraction Status", False, f"Exception: {str(e)}")
+        
+        # Test 3: POST /api/admin/mega-extraction/start (only if not running)
+        try:
+            # First check status to see if already running
+            status_response = self.session.get(
+                f"{self.base_url}/admin/mega-extraction/status", 
+                timeout=15
+            )
+            
+            should_start = True
+            if status_response.status_code == 200:
+                status_data = status_response.json()
+                # Check if extraction is already running
+                if status_data.get("data", {}).get("ultima_mega_extraccion", {}).get("estado") == "RUNNING":
+                    should_start = False
+            
+            if should_start:
+                response = self.session.post(
+                    f"{self.base_url}/admin/mega-extraction/start", 
+                    json={},
+                    timeout=20
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get("status") == "success" and "message" in data:
+                        self.log_test(
+                            "Mega Extraction Start", 
+                            True, 
+                            f"Started: {data.get('message')}"
+                        )
+                    else:
+                        self.log_test(
+                            "Mega Extraction Start", 
+                            False, 
+                            "Missing success status or message", 
+                            data
+                        )
+                else:
+                    self.log_test(
+                        "Mega Extraction Start", 
+                        False, 
+                        f"HTTP {response.status_code}", 
+                        response.text
+                    )
+            else:
+                self.log_test(
+                    "Mega Extraction Start", 
+                    True, 
+                    "Skipped - extraction already running"
+                )
+                
+        except Exception as e:
+            self.log_test("Mega Extraction Start", False, f"Exception: {str(e)}")
+        
+        # Test 4: GET /api/admin/ultra-deep-extraction/status
+        try:
+            response = self.session.get(
+                f"{self.base_url}/admin/ultra-deep-extraction/status", 
+                timeout=20
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("status") == "success" and "data" in data:
+                    ultra_data = data["data"]
+                    registros_actuales = ultra_data.get("registros_actuales", {})
+                    total_principal = registros_actuales.get("total_principal", 0)
+                    objetivo_3M = ultra_data.get("objetivo_3M", {})
+                    progreso = objetivo_3M.get("progreso_porcentaje", 0)
+                    
+                    self.log_test(
+                        "Ultra Deep Extraction Status", 
+                        True, 
+                        f"Total: {total_principal:,}, Progress: {progreso}% toward 3M goal"
+                    )
+                else:
+                    self.log_test(
+                        "Ultra Deep Extraction Status", 
+                        False, 
+                        "Missing data in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Ultra Deep Extraction Status", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Ultra Deep Extraction Status", False, f"Exception: {str(e)}")
+    
     def run_all_tests(self):
         """Run all tests in sequence"""
         print("🚀 Starting Daticos Backend API Tests")

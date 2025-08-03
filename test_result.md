@@ -137,15 +137,18 @@ backend:
 
   - task: "Colegios Profesionales Extractor"
     implemented: true
-    working: true
+    working: false
     file: "backend/colegios_profesionales_extractor.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "NUEVO EXTRACTOR IMPLEMENTADO. Extrae datos de todos los colegios profesionales de CR: médicos, abogados, ingenieros, farmacéuticos, enfermeras, contadores, etc. Incluye números de colegiado, especialidades, direcciones de consultorio. Meta: 200k+ profesionales colegiados."
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: Colegios Profesionales extractor endpoints timeout during testing. Similar to Portal Datos Abiertos, the start endpoint causes connection timeouts. This suggests issues with external API integrations or long-running processes that need background execution optimization."
 
   - task: "Registro Nacional Extractor"
     implemented: true

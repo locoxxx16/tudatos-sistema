@@ -182,15 +182,18 @@ backend:
 
   - task: "Nuevos Endpoints API Backend"
     implemented: true
-    working: true
+    working: false
     file: "backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "NUEVOS ENDPOINTS IMPLEMENTADOS: /api/admin/portal-datos-abiertos/start, /api/admin/colegios-profesionales/start, /api/admin/registro-nacional/start, /api/admin/extraction-methods-comparison, /api/admin/integrated-ultra-extraction/start. Sistema completo con 5 extractores independientes + 1 integrado."
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: New API endpoints have critical issues. /admin/update-stats returns 500 Internal Server Error. New extractor endpoints (portal-datos-abiertos, colegios-profesionales, registro-nacional, integrated-ultra-extraction) all timeout during POST requests. Only status endpoints work properly. Core issue: synchronous processing of long-running extraction tasks blocks HTTP responses."
 
   - task: "Sistema Autónomo Diario (5am)"
     implemented: true

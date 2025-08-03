@@ -18,9 +18,9 @@ import re
 from dataclasses import dataclass, asdict
 from enum import Enum
 import statistics
-import smtplib
-from email.mime.text import MimeText
-from email.mime.multipart import MimeMultipart
+# import smtplib
+# from email.mime.text import MimeText
+# from email.mime.multipart import MimeMultipart
 import secrets
 import base64
 from PIL import Image

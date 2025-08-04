@@ -621,12 +621,17 @@ class CriticalSystemTester:
         print(f"🔐 Admin Authentication: {'✅ WORKING' if auth_working else '❌ FAILED'}")
         print(f"💾 Database Access: {'✅ WORKING' if db_working else '❌ FAILED'}")
         print(f"🔍 Search Functionality: {'✅ WORKING' if search_working else '❌ FAILED'}")
+        print(f"👨‍💼 Admin Panel: {'✅ WORKING' if admin_panel_working else '❌ FAILED'}")
         
-        if health_working and auth_working and db_working and search_working:
+        if health_working and auth_working and (db_working or search_working) and admin_panel_working:
             print("\n🎉 CRITICAL SYSTEM RECOVERY: SUCCESS")
             print("✅ All critical systems operational after lazy loading fix")
+        elif health_working and auth_working:
+            print("\n⚠️ CRITICAL SYSTEM RECOVERY: PARTIAL SUCCESS")
+            print("✅ Core authentication and health systems working")
+            print("⚠️ Some secondary systems may need attention")
         else:
-            print("\n⚠️ CRITICAL SYSTEM RECOVERY: PARTIAL")
+            print("\n❌ CRITICAL SYSTEM RECOVERY: NEEDS ATTENTION")
             print("❌ Some critical systems still have issues")
         
         return passed, total

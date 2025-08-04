@@ -6,7 +6,7 @@ Simple test to verify search endpoints work with actual data
 import requests
 import json
 
-BACKEND_URL = "https://37735176-6152-46aa-8c58-184988c5ed57.preview.emergentagent.com/api"
+BACKEND_URL = "https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagent.com/api"
 
 # Login first
 login_response = requests.post(f"{BACKEND_URL}/auth/login", json={

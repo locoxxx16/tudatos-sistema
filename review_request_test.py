@@ -357,7 +357,7 @@ class ReviewRequestTester:
             
             try:
                 response = self.session.get(
-                    f"{self.base_url}/search/ultra-complete?query={query}", 
+                    f"{self.base_url}/search/ultra-complete?q={query}", 
                     timeout=15
                 )
                 

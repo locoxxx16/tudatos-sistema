@@ -191,9 +191,13 @@ def get_stats_sync():
 def search_all_data_sync(query: str, limit: int = 10):
     """Buscar datos de forma síncrona (para compatibilidad)"""
     try:
-        loop = asyncio.get_event_loop()
-    except RuntimeError:
+        import asyncio
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-    
-    return loop.run_until_complete(search_all_data(query, limit))
+        results = loop.run_until_complete(search_all_data(query, limit))
+        loop.close()
+        logger.info(f"✅ Búsqueda síncrona: '{query}' - {len(results)} resultados")
+        return results
+    except Exception as e:
+        logger.error(f"❌ Error en búsqueda síncrona: {e}")
+        return []

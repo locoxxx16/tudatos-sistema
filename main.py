@@ -425,7 +425,12 @@ async def admin_login(request: Request):
 @app.get("/user/dashboard")
 async def user_dashboard():
     """Panel usuario con consultas REALES funcionando"""
-    stats = get_stats()
+    try:
+        stats = get_stats_sync()
+        logger.info(f"🎯 Dashboard usuario con {stats['total_personas']:,} registros integrados")
+    except Exception as e:
+        logger.error(f"Error obteniendo estadísticas integradas: {e}")
+        stats = get_stats()
     
     return HTMLResponse(content=f"""
 <!DOCTYPE html>

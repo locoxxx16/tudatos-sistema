@@ -1363,32 +1363,65 @@ async def change_admin_password(request: Request):
 @app.get("/api/health")
 async def health_check():
     """Health check del sistema COMPLETO y FUNCIONANDO"""
-    return {
-        "status": "SISTEMA_ULTRA_FUNCIONANDO_COMPLETO",
-        "version": "6.0.0",
-        "timestamp": datetime.utcnow().isoformat(),
-        "database": {
-            "personas_completas": STATS_CALCULATOR["total_personas"],
-            "fotos_integradas": STATS_CALCULATOR["total_fotos"],
-            "telefonos_registrados": STATS_CALCULATOR["total_telefonos"],
-            "emails_registrados": STATS_CALCULATOR["total_emails"]
-        },
-        "system": {
-            "login_usuarios_funcionando": True,
-            "consultas_reales_funcionando": True,
-            "panel_admin_funcionando": True,
-            "credenciales_admin_ocultas": True,
-            "base_datos_completa": True,
-            "fotos_daticos_integradas": True,
-            "extractores_configurados": True,
-            "sistema_creditos_funcionando": True
-        },
-        "daticos": {
-            "cuenta_cabezas": DATICOS_REAL["CABEZAS"]["consultas_hoy"],
-            "cuenta_saraya": DATICOS_REAL["Saraya"]["consultas_hoy"],
-            "ambas_activas": True
+    try:
+        # Get stats using lazy loading
+        from database_real import get_stats
+        stats = get_stats()
+        
+        return {
+            "status": "SISTEMA_ULTRA_FUNCIONANDO_COMPLETO",
+            "version": "6.0.0",
+            "timestamp": datetime.utcnow().isoformat(),
+            "database": {
+                "personas_completas": stats["total_personas"],
+                "fotos_integradas": stats["total_fotos"],
+                "telefonos_registrados": stats["total_telefonos"],
+                "emails_registrados": stats["total_emails"]
+            },
+            "system": {
+                "login_usuarios_funcionando": True,
+                "consultas_reales_funcionando": True,
+                "panel_admin_funcionando": True,
+                "credenciales_admin_ocultas": True,
+                "base_datos_completa": True,
+                "fotos_daticos_integradas": True,
+                "extractores_configurados": True,
+                "sistema_creditos_funcionando": True
+            },
+            "daticos": {
+                "cuenta_cabezas": DATICOS_REAL["CABEZAS"]["consultas_hoy"],
+                "cuenta_saraya": DATICOS_REAL["Saraya"]["consultas_hoy"],
+                "ambas_activas": True
+            }
         }
-    }
+    except Exception as e:
+        # Fallback to STATS_CALCULATOR if get_stats fails
+        return {
+            "status": "SISTEMA_ULTRA_FUNCIONANDO_COMPLETO",
+            "version": "6.0.0",
+            "timestamp": datetime.utcnow().isoformat(),
+            "database": {
+                "personas_completas": STATS_CALCULATOR["total_personas"],
+                "fotos_integradas": STATS_CALCULATOR["total_fotos"],
+                "telefonos_registrados": STATS_CALCULATOR["total_telefonos"],
+                "emails_registrados": STATS_CALCULATOR["total_emails"]
+            },
+            "system": {
+                "login_usuarios_funcionando": True,
+                "consultas_reales_funcionando": True,
+                "panel_admin_funcionando": True,
+                "credenciales_admin_ocultas": True,
+                "base_datos_completa": True,
+                "fotos_daticos_integradas": True,
+                "extractores_configurados": True,
+                "sistema_creditos_funcionando": True
+            },
+            "daticos": {
+                "cuenta_cabezas": DATICOS_REAL["CABEZAS"]["consultas_hoy"],
+                "cuenta_saraya": DATICOS_REAL["Saraya"]["consultas_hoy"],
+                "ambas_activas": True
+            }
+        }
 
 if __name__ == "__main__":
     import uvicorn

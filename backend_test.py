@@ -322,49 +322,66 @@ class CriticalSystemTester:
         """Test 7: Admin panel functionality - Test admin dashboard and user creation"""
         print("👨‍💼 Testing Admin Panel Functionality...")
         
-        # Test admin dashboard stats
+        # Test admin users list
         try:
-            response = self.session.get(f"{self.base_url}/admin/dashboard/stats", timeout=15)
+            response = self.session.get(f"{self.base_url}/admin/users", timeout=15)
             
             if response.status_code == 200:
                 data = response.json()
-                self.log_test(
-                    "Admin Dashboard Stats", 
-                    True, 
-                    f"Stats retrieved with {len(data)} fields"
-                )
+                if data.get("success"):
+                    users = data.get("users", [])
+                    self.log_test(
+                        "Admin Users List", 
+                        True, 
+                        f"Successfully retrieved {len(users)} users"
+                    )
+                else:
+                    self.log_test(
+                        "Admin Users List", 
+                        False, 
+                        f"API returned success=false: {data.get('message')}", 
+                        data
+                    )
             else:
                 self.log_test(
-                    "Admin Dashboard Stats", 
+                    "Admin Users List", 
                     False, 
                     f"HTTP {response.status_code}", 
                     response.text
                 )
                 
         except Exception as e:
-            self.log_test("Admin Dashboard Stats", False, f"Exception: {str(e)}")
+            self.log_test("Admin Users List", False, f"Exception: {str(e)}")
         
-        # Test admin update stats endpoint
+        # Test admin dashboard page
         try:
-            response = self.session.get(f"{self.base_url}/admin/update-stats", timeout=15)
+            response = self.session.get(f"https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagent.com/admin/dashboard", timeout=15)
             
             if response.status_code == 200:
-                data = response.json()
-                self.log_test(
-                    "Admin Update Stats", 
-                    True, 
-                    f"Update stats retrieved successfully"
-                )
+                content = response.text
+                if "Panel Admin" in content and "Dashboard" in content:
+                    self.log_test(
+                        "Admin Dashboard Page", 
+                        True, 
+                        "Admin dashboard page loaded successfully"
+                    )
+                else:
+                    self.log_test(
+                        "Admin Dashboard Page", 
+                        False, 
+                        "Missing expected admin dashboard content", 
+                        content[:200]
+                    )
             else:
                 self.log_test(
-                    "Admin Update Stats", 
+                    "Admin Dashboard Page", 
                     False, 
                     f"HTTP {response.status_code}", 
-                    response.text
+                    response.text[:200]
                 )
                 
         except Exception as e:
-            self.log_test("Admin Update Stats", False, f"Exception: {str(e)}")
+            self.log_test("Admin Dashboard Page", False, f"Exception: {str(e)}")
     
     def test_daticos_credentials_validation(self):
         """Test 8: Daticos credentials validation - Test CABEZAS/Hola2022 and Saraya/12345"""

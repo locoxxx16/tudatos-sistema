@@ -26,9 +26,10 @@ class UltraCompleteSearch:
         self.db = None
         self.whatsapp_api_active = True  # Simular verificación WhatsApp
         
-        # Patrones de búsqueda inteligente
+        # Patrones de búsqueda inteligente para cédulas costarricenses
         self.cedula_patterns = [
             r'\b\d{1,2}-\d{4,8}-\d{4}\b',      # Formato estándar: 1-2345-6789
+            r'\b\d{1,2}-\d{8}-\d{1}\b',        # Formato alternativo: 1-23456789-0  
             r'\b\d{9,12}\b',                    # Solo números: 123456789
             r'\b\d{1,2}\d{4,8}\d{4}\b'         # Sin guiones: 123456789
         ]

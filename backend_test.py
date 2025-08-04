@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-CRITICAL SYSTEM RECOVERY TESTING - Post Bug Fix Verification
-Testing Costa Rica search system after major lazy loading fix in main.py
-Focus: Login systems, search functionality, admin panel, database access, system health
+🚀 TESTING COMPLETO SISTEMA ULTRA COMPLETO - 4.2M+ REGISTROS
+Testing the ultra complete system with intelligent data fusion from 7+ collections
+Focus: Ultra complete search, WhatsApp verification, credit analysis, business registration
 """
 
 import requests
@@ -23,11 +23,8 @@ ADMIN_CREDENTIALS = {
     "password": "TuDatos2025!Ultra"
 }
 
-# Daticos credentials for testing
-DATICOS_CREDENTIALS = [
-    {"username": "CABEZAS", "password": "Hola2022"},
-    {"username": "Saraya", "password": "12345"}
-]
+# Test notification email
+NOTIFICATION_EMAIL = "jykinternacional@gmail.com"
 
 class CriticalSystemTester:
     def __init__(self):

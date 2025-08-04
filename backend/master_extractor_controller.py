@@ -349,6 +349,76 @@ class MasterExtractorController:
         except Exception as e:
             logger.error(f"Error guardando estadísticas: {e}")
     
+    async def ejecutar_todos_extractores(self):
+        """🚀 Ejecutar TODOS los extractores en paralelo para máximo rendimiento"""
+        logger.info("🚀 EJECUTANDO TODOS LOS EXTRACTORES EN PARALELO")
+        
+        inicio_total = time.time()
+        resultados = []
+        
+        # Lista de tareas de extracción
+        tareas = [
+            ("Ultra Empresarial", self.activar_extractor_ultra_empresarial),
+            ("Fast 2M", self.activar_fast_2m_extractor),
+            ("Ultra Deep", self.activar_ultra_deep_extractor),
+            ("Mega Aggressive", self.activar_mega_aggressive_extractor),
+            ("Daticos Extractor", self.activar_daticos_extractor)
+        ]
+        
+        # Ejecutar en paralelo con límite de concurrencia
+        semaforo = asyncio.Semaphore(3)  # Max 3 extractores simultáneos
+        
+        async def ejecutar_con_limite(nombre, funcion):
+            async with semaforo:
+                logger.info(f"🎯 Iniciando {nombre}")
+                try:
+                    resultado = await funcion()
+                    return {"extractor": nombre, "exito": resultado, "error": None}
+                except Exception as e:
+                    logger.error(f"❌ Error en {nombre}: {e}")
+                    return {"extractor": nombre, "exito": False, "error": str(e)}
+        
+        # Crear tareas paralelas
+        tasks = [ejecutar_con_limite(nombre, funcion) for nombre, funcion in tareas]
+        
+        # Esperar resultados
+        resultados = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        # Procesar resultados
+        extractores_exitosos = 0
+        extractores_fallidos = 0
+        
+        for resultado in resultados:
+            if isinstance(resultado, dict):
+                if resultado.get('exito'):
+                    extractores_exitosos += 1
+                else:
+                    extractores_fallidos += 1
+        
+        duracion_total = time.time() - inicio_total
+        
+        # Actualizar estadísticas globales
+        self.stats_globales['extractores_ejecutados'] = extractores_exitosos
+        self.stats_globales['tiempo_total_extraccion'] = duracion_total
+        
+        # Estadísticas finales
+        logger.info("🎉 EJECUCIÓN MASIVA COMPLETADA")
+        logger.info("=" * 60)
+        logger.info(f"⚡ Extractores exitosos: {extractores_exitosos}")
+        logger.info(f"❌ Extractores fallidos: {extractores_fallidos}")
+        logger.info(f"⏱️  Tiempo total: {duracion_total/60:.2f} minutos")
+        logger.info(f"📊 Stats globales: {self.stats_globales}")
+        logger.info("=" * 60)
+        
+        return {
+            "exito": extractores_exitosos > 0,
+            "extractores_exitosos": extractores_exitosos,
+            "extractores_fallidos": extractores_fallidos,
+            "tiempo_minutos": duracion_total / 60,
+            "stats_globales": self.stats_globales,
+            "resultados_detallados": [r for r in resultados if isinstance(r, dict)]
+        }
+    
     async def cerrar_conexiones(self):
         """Cerrar conexiones"""
         if self.mongo_client:

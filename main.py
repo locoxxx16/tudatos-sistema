@@ -10,7 +10,13 @@ import hashlib
 import logging
 import secrets
 import os
-from database_real import DATABASE_REAL_COMPLETE, STATS_CALCULATOR
+# Import for lazy loading - keeping legacy import for fallbacks
+from database_real import get_database, get_stats
+try:
+    from database_real import DATABASE_REAL_COMPLETE, STATS_CALCULATOR
+except:
+    DATABASE_REAL_COMPLETE = None
+    STATS_CALCULATOR = None
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)

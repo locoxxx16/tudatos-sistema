@@ -315,11 +315,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Portal Datos Abiertos Extractor"
-    - "Colegios Profesionales Extractor" 
-    - "Registro Nacional Extractor"
-    - "Sistema Integrado Ultra Extractor"
-    - "Nuevos Endpoints API Backend"
+    - "Review Request Final Validation - Ultra Complete System"
   stuck_tasks:
     - "Portal Datos Abiertos Extractor"
     - "Colegios Profesionales Extractor"

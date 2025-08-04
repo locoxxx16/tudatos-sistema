@@ -879,7 +879,7 @@ async def admin_dashboard():
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-4xl font-black">🛡️ PANEL ADMIN ULTRA</h1>
-                    <p class="text-xl">Control Total - {STATS_CALCULATOR['total_personas']:,} registros con {STATS_CALCULATOR['total_fotos']:,} fotos</p>
+                    <p class="text-xl">Control Total - {stats['total_personas']:,} registros con {stats['total_fotos']:,} fotos</p>
                 </div>
                 <div class="flex items-center space-x-6">
                     <div class="glass rounded-lg px-6 py-3 text-center">

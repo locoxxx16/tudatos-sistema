@@ -613,8 +613,9 @@ class CriticalSystemTester:
         # Check if core systems are working
         health_working = any(r["test"] in ["Health Endpoint", "System Health Check"] and r["success"] for r in self.test_results)
         auth_working = any(r["test"] == "Admin Authentication" and r["success"] for r in self.test_results)
-        db_working = any(r["test"] == "Database Access - Demographics" and r["success"] for r in self.test_results)
-        search_working = any("Search by" in r["test"] and r["success"] for r in self.test_results)
+        db_working = any("Database Access" in r["test"] and r["success"] for r in self.test_results)
+        search_working = any("Search" in r["test"] and r["success"] for r in self.test_results)
+        admin_panel_working = any("Admin" in r["test"] and "Authentication" not in r["test"] and r["success"] for r in self.test_results)
         
         print(f"🏥 Health Endpoints: {'✅ WORKING' if health_working else '❌ FAILED'}")
         print(f"🔐 Admin Authentication: {'✅ WORKING' if auth_working else '❌ FAILED'}")

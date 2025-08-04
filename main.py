@@ -515,8 +515,8 @@ async def user_dashboard():
             <!-- Info Búsqueda -->
             <div class="text-center mb-8">
                 <p class="text-2xl text-gray-300">
-                    Búsqueda en <span class="font-black text-yellow-300">{STATS_CALCULATOR['total_personas']:,}</span> registros con 
-                    <span class="font-black text-green-300">{STATS_CALCULATOR['total_fotos']:,}</span> fotos
+                    Búsqueda en <span class="font-black text-yellow-300">{stats['total_personas']:,}</span> registros con 
+                    <span class="font-black text-green-300">{stats['total_fotos']:,}</span> fotos
                 </p>
                 <p class="text-lg text-gray-400 mt-2">⚡ Cada consulta = 1 crédito</p>
             </div>

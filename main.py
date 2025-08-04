@@ -1018,6 +1018,8 @@ async def ultra_complete_search(query: str):
         
         # Realizar búsqueda ultra completa con debugging
         try:
+            # Import local para evitar problemas de contexto
+            from ultra_complete_search import perform_ultra_search_sync
             result = perform_ultra_search_sync(query)
             logger.info(f"🔍 RESULTADO RAW: {result}")
         except Exception as search_error:

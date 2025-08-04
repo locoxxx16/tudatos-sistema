@@ -11,8 +11,8 @@ from datetime import datetime
 import time
 
 # Configuration
-BACKEND_URL = "https://f4a6491c-d5f2-4d11-ac86-be231aaccdad.preview.emergentagent.com/api"
-BASE_URL = "https://f4a6491c-d5f2-4d11-ac86-be231aaccdad.preview.emergentagent.com"
+BACKEND_URL = "https://89e24cda-edb1-49a8-aa6d-fa1a1226147e.preview.emergentagent.com/api"
+BASE_URL = "https://89e24cda-edb1-49a8-aa6d-fa1a1226147e.preview.emergentagent.com"
 
 # Admin credentials from review request
 ADMIN_CREDENTIALS = {

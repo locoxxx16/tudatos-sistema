@@ -940,7 +940,7 @@ async def admin_dashboard():
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-green-300 text-lg">Fotos</p>
-                                <p class="text-4xl font-black">{STATS_CALCULATOR['total_fotos']:,}</p>
+                                <p class="text-4xl font-black">{stats['total_fotos']:,}</p>
                             </div>
                             <i class="fas fa-images text-5xl text-green-400"></i>
                         </div>

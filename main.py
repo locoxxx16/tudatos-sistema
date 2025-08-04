@@ -188,7 +188,7 @@ async def pagina_principal():
                 <br>DE COSTA RICA
             </h1>
             <p class="text-3xl mb-12 max-w-4xl mx-auto">
-                <span class="font-black text-yellow-300">{STATS_CALCULATOR['total_personas']:,}</span> registros con 
+                <span class="font-black text-yellow-300">{stats['total_personas']:,}</span> registros con 
                 <span class="font-black text-green-300">FOTOS REALES</span>, 
                 <span class="font-black text-blue-300">DATOS FAMILIARES</span>, 
                 <span class="font-black text-purple-300">BIENES</span> y 

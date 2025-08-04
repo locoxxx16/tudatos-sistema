@@ -117,6 +117,10 @@ def buscar_en_base_completa(query: str, limit: int = 10):
 @app.get("/")
 async def pagina_principal():
     """Página principal SIN credenciales visibles"""
+    # Get stats using lazy loading
+    from database_real import get_stats
+    stats = get_stats()
+    
     return HTMLResponse(content=f"""
 <!DOCTYPE html>
 <html lang="es">
@@ -149,11 +153,11 @@ async def pagina_principal():
                 <!-- Stats REALES -->
                 <div class="hidden lg:flex items-center space-x-6">
                     <div class="glass rounded-xl px-4 py-3 text-center">
-                        <div class="text-2xl font-black text-yellow-300">{STATS_CALCULATOR['total_personas']:,}</div>
+                        <div class="text-2xl font-black text-yellow-300">{stats['total_personas']:,}</div>
                         <div class="text-sm">Registros</div>
                     </div>
                     <div class="glass rounded-xl px-4 py-3 text-center">
-                        <div class="text-2xl font-black text-green-300">{STATS_CALCULATOR['total_fotos']:,}</div>
+                        <div class="text-2xl font-black text-green-300">{stats['total_fotos']:,}</div>
                         <div class="text-sm">Fotos</div>
                     </div>
                     <div class="glass rounded-xl px-4 py-3 text-center">

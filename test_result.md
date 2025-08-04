@@ -106,39 +106,48 @@ user_problem_statement: "ACTUALIZADO ULTRA PROFUNDO: Sistema ULTRA DEEP EXTRACTI
 
   - task: "Sistema Ultra Empresarial Extractor (Nuevos Datos Jurídicos)"
     implemented: true
-    working: false
+    working: true
     file: "backend/ultra_empresarial_extractor.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "🔥 NUEVO SISTEMA EMPRESARIAL IMPLEMENTADO: Creado extractor masivo de empresas de Costa Rica con 5 fuentes especializadas: SICOP (5K contratos públicos), Ministerio Hacienda (3K datos tributarios), Registro Nacional (4K datos societarios), MEIC (2K patentes comerciales), CCSS (6K datos patronales). Total objetivo: 20K+ empresas con representantes legales completos, participantes, estructura accionaria detallada, contratos gubernamentales, información tributaria, datos de empleados. Sistema de extracción paralela optimizada."
+      - working: true
+        agent: "testing"
+        comment: "✅ IMPORT FIX SUCCESSFUL: Ultra Empresarial Extractor endpoints now working correctly after fixing import issues. POST /api/admin/ultra-empresarial-extraction/start successfully starts extraction with 5 sources (SICOP, Hacienda, Registro Nacional, MEIC, CCSS) targeting 20K+ empresas. GET /api/admin/ultra-empresarial-extraction/status returns proper status with extraction progress. System ready for full enterprise data extraction. Fixed by adding missing endpoints to main.py (system was running main.py instead of server.py)."
 
   - task: "Master Extractor Controller (Controlador de Todos los Extractores)"
     implemented: true
-    working: false
+    working: true
     file: "backend/master_extractor_controller.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "🎛️ CONTROLADOR MAESTRO IMPLEMENTADO: Sistema que orquesta y ejecuta TODOS los extractores en paralelo para máximo rendimiento. Controla Ultra Empresarial, Fast 2M, Ultra Deep, Mega Aggressive y Advanced Daticos. Incluye límite de concurrencia (3 extractores simultáneos), manejo de errores comprehensivo, estadísticas detalladas y logging avanzado. Función ejecutar_controlador_maestro() lista para API calls. Meta: crecimiento exponencial hacia 5M+ registros."
+      - working: true
+        agent: "testing"
+        comment: "✅ IMPORT FIX SUCCESSFUL: Master Extractor Controller endpoints now working correctly after fixing import issues. POST /api/admin/master-extractor-controller/start successfully starts orchestration of all 5 extractors (Ultra Empresarial, Ultra Deep, Portal Datos Abiertos, Colegios Profesionales, Registro Nacional) with parallel execution and concurrency limits. GET /api/admin/master-extractor-controller/status returns proper status showing 5 extractors available and 4,283,709 total records. System ready to orchestrate all extractors toward 5M+ records goal."
 
   - task: "Nuevos Endpoints API Empresariales (6 endpoints especializados)"
     implemented: true
-    working: false
-    file: "backend/server.py"
+    working: true
+    file: "main.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "📡 ENDPOINTS EMPRESARIALES AGREGADOS AL SERVER: Implementados 6 nuevos endpoints especializados en datos empresariales y jurídicos: /admin/ultra-empresarial-extraction/start (POST), /admin/ultra-empresarial-extraction/status (GET), /admin/master-extractor-controller/start (POST), /admin/master-extractor-controller/status (GET), /admin/empresas-juridicas/advanced-search (POST), /admin/empresas-juridicas/representantes/{cedula_juridica} (GET). Incluye funciones auxiliares para datos específicos por fuente y manejo avanzado de búsquedas empresariales."
+      - working: true
+        agent: "testing"
+        comment: "✅ ALL 6 ENTERPRISE ENDPOINTS WORKING: Fixed critical import issue - endpoints were implemented in server.py but system runs main.py. Successfully added all 6 enterprise endpoints to main.py: ✅ POST /admin/ultra-empresarial-extraction/start, ✅ GET /admin/ultra-empresarial-extraction/status, ✅ POST /admin/master-extractor-controller/start, ✅ GET /admin/master-extractor-controller/status, ✅ POST /admin/empresas-juridicas/advanced-search, ✅ GET /admin/empresas-juridicas/representantes/{cedula_juridica}. All endpoints now respond correctly (no more 404 errors) with proper JSON responses. Advanced business search shows 5 sources available. Legal representatives lookup working. System ready for full enterprise functionality."
 
 backend:
   - task: "Sistema ULTRA DEEP EXTRACTION (3M+ Registros COMPLETOS)"

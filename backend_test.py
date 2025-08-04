@@ -19,7 +19,7 @@ BACKEND_URL = "https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagen
 
 # Admin credentials from review request
 ADMIN_CREDENTIALS = {
-    "login": "master_admin",
+    "username": "master_admin",
     "password": "TuDatos2025!Ultra"
 }
 

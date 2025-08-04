@@ -85,16 +85,18 @@ class DatabaseIntegration:
         return stats
     
     async def search_integrated_data(self, query: str, limit: int = 10):
-        """Buscar en TODAS las colecciones integradas"""
+        """Buscar en TODAS las colecciones integradas - 4.2M+ registros"""
         results = []
         query_regex = {"$regex": query, "$options": "i"}
         
-        # Buscar en todas las colecciones principales
+        # Buscar en las colecciones principales con más datos
         search_collections = [
-            'personas_fisicas_fast2m',
-            'personas_juridicas_fast2m', 
-            'personas_fisicas_ultra',
-            'personas_juridicas_ultra'
+            'personas_fisicas_fast2m',     # 2.67M registros - PRINCIPAL
+            'personas_juridicas_fast2m',   # 668K registros
+            'tse_datos_hibridos',          # 611K registros
+            'personas_fisicas',            # 310K registros
+            'personas_juridicas',          # 800 registros
+            'ultra_deep_extraction'        # 19K registros
         ]
         
         for collection_name in search_collections:

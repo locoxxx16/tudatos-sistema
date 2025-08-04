@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🔥 TESTING NUEVAS FUNCIONALIDADES EMPRESARIALES - SISTEMA ULTRA EMPRESARIAL
-Testing the NEW BUSINESS FUNCTIONALITY endpoints from the review request
-Focus: Ultra Empresarial Extractor, Master Extractor Controller, Advanced Business Search
+🔥 COMPREHENSIVE BACKEND TESTING - SISTEMA TUDATOS COMPLETO
+Testing ALL CRITICAL ENDPOINTS from the review request after Vercel deployment fix
+Focus: All backend functionality including enterprise endpoints, search, and system health
 """
 
 import requests

@@ -435,7 +435,7 @@ async def user_dashboard():
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-4xl font-black">🔍 Sistema de Consultas REAL</h1>
-                    <p class="text-xl">Base de Datos Completa - {STATS_CALCULATOR['total_personas']:,} registros</p>
+                    <p class="text-xl">Base de Datos Completa - {stats['total_personas']:,} registros</p>
                 </div>
                 <div class="flex items-center space-x-6">
                     <div class="glass rounded-lg px-6 py-3">

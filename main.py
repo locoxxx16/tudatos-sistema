@@ -642,7 +642,7 @@ async def user_dashboard():
                        placeholder="🔍 Buscar por nombre, cédula, teléfono, email...">
                 <button @click="performRealSearch()" :disabled="searching || currentUser.credits <= 0"
                         class="absolute right-3 top-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 text-xl">
-                    <i class="fas fa-search mr-3" :class="{ 'fa-spin fa-spinner': searching }"></i>
+                    <i class="fas fa-search mr-3" :class="{{ 'fa-spin fa-spinner': searching }}"></i>
                     <span x-text="searching ? 'Buscando...' : 'CONSULTAR'"></span>
                 </button>
             </div>

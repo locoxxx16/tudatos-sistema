@@ -997,34 +997,31 @@ async def admin_system_complete_overview():
 async def ultra_complete_search(query: str):
     """
     🚀 BÚSQUEDA ULTRA COMPLETA CON FUSIÓN INTELIGENTE
-    """
-    print(f"🔍 ENDPOINT LLAMADO CON QUERY: {query}")
     
+    CARACTERÍSTICAS:
+    ✅ Fusiona datos de 7+ colecciones (4.2M+ registros)
+    ✅ Verificación WhatsApp automática
+    ✅ Análisis crediticio completo  
+    ✅ Redes sociales integradas
+    ✅ Múltiples fotos por persona
+    ✅ Datos familiares completos
+    ✅ Información laboral ultra detallada
+    ✅ Propiedades y vehículos
+    ✅ Datos mercantiles
+    ✅ Score de confiabilidad
+    """
     if not query or len(query.strip()) < 2:
         return {"success": False, "message": "Query muy corto. Mínimo 2 caracteres."}
     
     try:
-        print(f"🌟 BÚSQUEDA ULTRA COMPLETA INICIADA: '{query}'")
+        logger.info(f"🌟 BÚSQUEDA ULTRA COMPLETA INICIADA: '{query}'")
         
-        # Realizar búsqueda ultra completa ASYNC (sin crear nuevo loop)
-        try:
-            from ultra_complete_search import perform_ultra_search
-            print("📦 IMPORT EXITOSO")
-            
-            # Usar directamente la función async
-            result = await perform_ultra_search(query)
-            print(f"🔍 RESULTADO OBTENIDO: SUCCESS={result.get('success')}, PROFILES={result.get('total_profiles', 0)}")
-            
-        except Exception as search_error:
-            print(f"❌ ERROR EN perform_ultra_search: {search_error}")
-            return {
-                "success": False,
-                "message": f"Error interno en búsqueda: {str(search_error)}",
-                "query": query
-            }
+        # Realizar búsqueda ultra completa ASYNC
+        from ultra_complete_search import perform_ultra_search
+        result = await perform_ultra_search(query)
         
         if result and result.get("success"):
-            print(f"✅ BÚSQUEDA ULTRA EXITOSA: {result['total_profiles']} perfiles súper completos")
+            logger.info(f"✅ BÚSQUEDA ULTRA EXITOSA: {result['total_profiles']} perfiles súper completos")
             
             return {
                 "success": True,

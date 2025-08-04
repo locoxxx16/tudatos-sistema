@@ -1006,17 +1006,17 @@ async def ultra_complete_search(query: str):
     try:
         print(f"🌟 BÚSQUEDA ULTRA COMPLETA INICIADA: '{query}'")
         
-        # Realizar búsqueda ultra completa con debugging
+        # Realizar búsqueda ultra completa ASYNC (sin crear nuevo loop)
         try:
-            # Import local para evitar problemas de contexto
-            from ultra_complete_search import perform_ultra_search_sync
+            from ultra_complete_search import perform_ultra_search
             print("📦 IMPORT EXITOSO")
             
-            result = perform_ultra_search_sync(query)
+            # Usar directamente la función async
+            result = await perform_ultra_search(query)
             print(f"🔍 RESULTADO OBTENIDO: SUCCESS={result.get('success')}, PROFILES={result.get('total_profiles', 0)}")
             
         except Exception as search_error:
-            print(f"❌ ERROR EN perform_ultra_search_sync: {search_error}")
+            print(f"❌ ERROR EN perform_ultra_search: {search_error}")
             return {
                 "success": False,
                 "message": f"Error interno en búsqueda: {str(search_error)}",

@@ -37,15 +37,14 @@ class DatabaseIntegration:
     async def count_all_collections(self):
         """Contar registros en todas las colecciones relevantes"""
         collections_to_check = [
-            'personas_fisicas_fast2m',
-            'personas_juridicas_fast2m',
-            'personas_fisicas_ultra',
-            'personas_juridicas_ultra',
-            'personas_fisicas',
-            'personas_juridicas',
-            'daticos_personas',
+            'personas_fisicas_fast2m',     # 2.67M registros
+            'personas_juridicas_fast2m',   # 668K registros
+            'tse_datos_hibridos',          # 611K registros
+            'personas_fisicas',            # 310K registros
+            'personas_juridicas',          # 800 registros
+            'ultra_deep_extraction',       # 19K registros
+            'daticos_datos_masivos',
             'mega_extraction_data',
-            'ultra_deep_extraction',
             'portal_datos_abiertos',
             'colegios_profesionales',
             'registro_nacional_data'

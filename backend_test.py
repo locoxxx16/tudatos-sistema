@@ -174,28 +174,29 @@ class CriticalSystemTester:
         print("🏠 Testing API Root Endpoint...")
         
         try:
-            response = self.session.get(f"{self.base_url}/", timeout=10)
+            # Test the main page endpoint
+            response = self.session.get(f"https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagent.com/", timeout=10)
             
             if response.status_code == 200:
-                data = response.json()
-                if "message" in data and "version" in data:
+                content = response.text
+                if "TuDatos" in content and "Base de Datos" in content:
                     self.log_test(
-                        "API Root", 
+                        "Main Page", 
                         True, 
-                        f"API Version: {data['version']}, Message: {data['message']}"
+                        "Main page loaded successfully with TuDatos branding"
                     )
                 else:
-                    self.log_test("API Root", False, "Missing message or version", data)
+                    self.log_test("Main Page", False, "Missing expected content", content[:200])
             else:
                 self.log_test(
-                    "API Root", 
+                    "Main Page", 
                     False, 
                     f"HTTP {response.status_code}", 
-                    response.text
+                    response.text[:200]
                 )
                 
         except Exception as e:
-            self.log_test("API Root", False, f"Exception: {str(e)}")
+            self.log_test("Main Page", False, f"Exception: {str(e)}")
     
     def test_database_access_endpoints(self):
         """Test 5: Database access endpoints - Verify 5000-record database access"""

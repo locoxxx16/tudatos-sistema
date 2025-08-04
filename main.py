@@ -17,6 +17,8 @@ import os
 from ultra_complete_search import perform_ultra_search_sync
 # Import para integración completa de 2.8M+ registros
 from database_integration import get_stats_sync, search_all_data_sync
+# Import para sistema de auto-regeneración profesional
+from auto_regeneration_system import get_auto_regen_system
 # Import para lazy loading - keeping legacy import for fallbacks
 from database_real import get_database, get_stats
 try:

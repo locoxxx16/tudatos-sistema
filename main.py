@@ -484,7 +484,7 @@ async def user_dashboard():
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-yellow-300 text-lg">Registros</p>
-                        <p class="text-2xl font-bold">{STATS_CALCULATOR['total_personas']:,}</p>
+                        <p class="text-2xl font-bold">{stats['total_personas']:,}</p>
                     </div>
                     <i class="fas fa-database text-5xl text-blue-400"></i>
                 </div>

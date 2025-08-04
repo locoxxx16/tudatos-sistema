@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🔥 COMPREHENSIVE BACKEND TESTING - SISTEMA TUDATOS COMPLETO
-Testing ALL CRITICAL ENDPOINTS from the review request after Vercel deployment fix
-Focus: All backend functionality including enterprise endpoints, search, and system health
+🔥 TESTING ULTRA COMPLETO - VERIFICACIÓN FINAL ANTES DE REDEPLOY
+Testing ALL CRITICAL ENDPOINTS from the review request after BackgroundTasks timeout fixes
+Focus: Newly fixed extractors + all critical system endpoints
 """
 
 import requests
@@ -15,7 +15,8 @@ import os
 from typing import Dict, List, Any
 
 # Configuration - Updated with correct credentials from review request
-BACKEND_URL = "https://89e24cda-edb1-49a8-aa6d-fa1a1226147e.preview.emergentagent.com/api"
+BACKEND_URL = "https://89e24cda-edb1-49a8-aa6d-fa1a1226147e.preview.emergentagent.com"
+API_URL = f"{BACKEND_URL}/api"
 
 # Admin credentials from review request
 ADMIN_CREDENTIALS = {

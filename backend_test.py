@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-🚀 TESTING FINAL CRÍTICO - VALIDAR TODO EL SISTEMA PROFESIONAL
-Testing the critical endpoints from the review request
-Focus: Auto-regeneration system, ultra complete search, professional endpoints
+🔥 TESTING NUEVAS FUNCIONALIDADES EMPRESARIALES - SISTEMA ULTRA EMPRESARIAL
+Testing the NEW BUSINESS FUNCTIONALITY endpoints from the review request
+Focus: Ultra Empresarial Extractor, Master Extractor Controller, Advanced Business Search
 """
 
 import requests

@@ -948,6 +948,83 @@ async def get_user_profile(request: Request):
     except Exception as e:
         return {"success": False, "message": str(e)}
 
+# =============================================================================
+# 🌟 BÚSQUEDA ULTRA COMPLETA - LA BASE DE DATOS MÁS GRANDE DE COSTA RICA
+# =============================================================================
+
+@app.get("/api/search/ultra-complete")
+async def ultra_complete_search(query: str):
+    """
+    🚀 BÚSQUEDA ULTRA COMPLETA CON FUSIÓN INTELIGENTE
+    
+    CARACTERÍSTICAS:
+    ✅ Fusiona datos de 7+ colecciones (4.2M+ registros)
+    ✅ Verificación WhatsApp automática
+    ✅ Análisis crediticio completo  
+    ✅ Redes sociales integradas
+    ✅ Múltiples fotos por persona
+    ✅ Datos familiares completos
+    ✅ Información laboral ultra detallada
+    ✅ Propiedades y vehículos
+    ✅ Datos mercantiles
+    ✅ Score de confiabilidad
+    """
+    if not query or len(query.strip()) < 2:
+        return {"success": False, "message": "Query muy corto. Mínimo 2 caracteres."}
+    
+    try:
+        logger.info(f"🌟 BÚSQUEDA ULTRA COMPLETA INICIADA: '{query}'")
+        
+        # Realizar búsqueda ultra completa
+        result = perform_ultra_search_sync(query)
+        
+        if result.get("success"):
+            logger.info(f"✅ BÚSQUEDA ULTRA EXITOSA: {result['total_profiles']} perfiles súper completos")
+            
+            return {
+                "success": True,
+                "query": query,
+                "total_profiles": result["total_profiles"],
+                "search_type": result.get("search_type", "general"),
+                "profiles": result["profiles"],
+                "stats": {
+                    "database_size": "4,283,709 registros",
+                    "sources_consulted": result["search_stats"]["sources_consulted"],
+                    "raw_records_analyzed": result["search_stats"]["total_raw_records"],
+                    "data_fusion_applied": result["search_stats"]["data_fusion_applied"],
+                    "whatsapp_verification": result["search_stats"]["whatsapp_verification"],
+                    "social_media_scan": result["search_stats"]["social_media_scan"],
+                    "credit_analysis": result["search_stats"]["credit_analysis"]
+                },
+                "system_info": {
+                    "version": "Ultra Complete v6.0",
+                    "database": "La base de datos más grande de Costa Rica",
+                    "sources": [
+                        "personas_fisicas_fast2m (2.67M)",
+                        "personas_juridicas_fast2m (668K)", 
+                        "tse_datos_hibridos (611K)",
+                        "personas_fisicas (310K)",
+                        "ultra_deep_extraction (19K)",
+                        "daticos_datos_masivos (396)"
+                    ]
+                }
+            }
+        else:
+            return {
+                "success": False,
+                "message": "No se encontraron resultados",
+                "query": query,
+                "suggestion": "Intenta con términos más específicos o diferentes variantes del nombre"
+            }
+            
+    except Exception as e:
+        logger.error(f"❌ Error en búsqueda ultra completa: {e}")
+        return {
+            "success": False,
+            "message": "Error interno en búsqueda ultra completa",
+            "error": str(e),
+            "query": query
+        }
 @app.get("/api/search/complete")
 async def search_complete(request: Request, q: str, limit: int = 10):
     """Búsqueda COMPLETA REAL en base de datos"""

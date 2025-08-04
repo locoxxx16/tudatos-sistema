@@ -1324,7 +1324,7 @@ async def admin_dashboard():
                                placeholder="🔍 Búsqueda admin sin límites...">
                         <button @click="performAdminSearch()" :disabled="adminSearching"
                                 class="absolute right-3 top-3 bg-red-600 text-white px-6 py-3 rounded-lg font-bold hover:bg-red-700">
-                            <i class="fas fa-search-plus mr-2" :class="{ 'fa-spin fa-spinner': adminSearching }"></i>
+                            <i class="fas fa-search-plus mr-2" :class="{{ 'fa-spin fa-spinner': adminSearching }}"></i>
                             <span x-text="adminSearching ? 'Buscando...' : 'BUSCAR'"></span>
                         </button>
                     </div>

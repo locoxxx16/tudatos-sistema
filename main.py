@@ -854,6 +854,8 @@ async def search_complete(request: Request, q: str, limit: int = 10):
 @app.get("/admin/dashboard")
 async def admin_dashboard():
     """Panel admin ULTRA COMPLETO con todas las funciones"""
+    stats = get_stats()
+    
     return HTMLResponse(content=f"""
 <!DOCTYPE html>
 <html lang="es">

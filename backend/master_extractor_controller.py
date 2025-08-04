@@ -424,23 +424,19 @@ class MasterExtractorController:
         if self.mongo_client:
             self.mongo_client.close()
 
-# Función principal
-async def ejecutar_master_extractor():
-    """🎛️ Ejecutar Master Extractor Controller"""
+# Función principal para ser llamada desde el API
+async def ejecutar_controlador_maestro():
+    """🎛️ Función principal del controlador maestro"""
     controller = MasterExtractorController()
     
     try:
         await controller.initialize()
-        stats = await controller.ejecutar_extraccion_masiva_paralela()
-        return stats
+        resultado = await controller.ejecutar_todos_extractores()
+        return resultado
     finally:
         await controller.cerrar_conexiones()
 
 if __name__ == "__main__":
-    logger.info("🎛️ INICIANDO MASTER EXTRACTOR CONTROLLER")
-    logger.info("🔥 PREPARANDO PARA EXTRACCIÓN MASIVA")
-    
-    stats = asyncio.run(ejecutar_master_extractor())
-    
-    logger.info("🎉 MASTER EXTRACTOR CONTROLLER COMPLETADO")
-    logger.info(f"📊 ESTADÍSTICAS FINALES: {json.dumps(stats, indent=2, default=str)}")
+    logger.info("🎛️ MASTER EXTRACTOR CONTROLLER - INICIANDO PRUEBAS")
+    resultado = asyncio.run(ejecutar_controlador_maestro())
+    logger.info(f"✅ Controlador maestro completado: {resultado}")

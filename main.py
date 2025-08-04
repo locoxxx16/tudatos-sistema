@@ -1016,10 +1016,19 @@ async def ultra_complete_search(query: str):
     try:
         logger.info(f"🌟 BÚSQUEDA ULTRA COMPLETA INICIADA: '{query}'")
         
-        # Realizar búsqueda ultra completa
-        result = perform_ultra_search_sync(query)
+        # Realizar búsqueda ultra completa con debugging
+        try:
+            result = perform_ultra_search_sync(query)
+            logger.info(f"🔍 RESULTADO RAW: {result}")
+        except Exception as search_error:
+            logger.error(f"❌ ERROR EN perform_ultra_search_sync: {search_error}")
+            return {
+                "success": False,
+                "message": f"Error interno en búsqueda: {str(search_error)}",
+                "query": query
+            }
         
-        if result.get("success"):
+        if result and result.get("success"):
             logger.info(f"✅ BÚSQUEDA ULTRA EXITOSA: {result['total_profiles']} perfiles súper completos")
             
             return {

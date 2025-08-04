@@ -357,7 +357,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Review Request Final Validation - Ultra Complete System"
+    - "Sistema Ultra Empresarial Extractor (Nuevos Datos Jurídicos)"
+    - "Master Extractor Controller (Controlador de Todos los Extractores)"  
+    - "Nuevos Endpoints API Empresariales (6 endpoints especializados)"
   stuck_tasks:
     - "Portal Datos Abiertos Extractor"
     - "Colegios Profesionales Extractor"

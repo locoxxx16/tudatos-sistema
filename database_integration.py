@@ -27,8 +27,8 @@ class DatabaseIntegration:
         try:
             mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
             self.mongo_client = AsyncIOMotorClient(mongo_url)
-            self.db = self.mongo_client[os.environ.get('DB_NAME', 'tudatos_sistema')]
-            logger.info("🚀 DatabaseIntegration inicializado")
+            self.db = self.mongo_client[os.environ.get('DB_NAME', 'test_database')]  # Usar test_database que tiene 4.2M+ registros
+            logger.info("🚀 DatabaseIntegration inicializado con test_database")
             return True
         except Exception as e:
             logger.error(f"❌ Error inicializando: {e}")

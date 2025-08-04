@@ -110,7 +110,7 @@ def buscar_en_base_completa(query: str, limit: int = 10):
             persona.get("madre_nombre_completo", "")
         ]
         
-        texto_busqueda = " ".join(campos_busqueda).lower()
+        texto_busqueda = " ".join([str(campo) if campo is not None else "" for campo in campos_busqueda]).lower()
         
         if query_lower in texto_busqueda:
             results.append(persona)

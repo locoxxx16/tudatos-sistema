@@ -13,6 +13,8 @@ import hashlib
 import logging
 import secrets
 import os
+# Import para SISTEMA ULTRA COMPLETO DE BÚSQUEDA 🚀
+from ultra_complete_search import perform_ultra_search_sync
 # Import para integración completa de 2.8M+ registros
 from database_integration import get_stats_sync, search_all_data_sync
 # Import para lazy loading - keeping legacy import for fallbacks

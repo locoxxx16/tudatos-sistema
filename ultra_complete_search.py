@@ -148,22 +148,25 @@ class UltraCompleteSearch:
     
     def detect_search_type(self, query: str) -> str:
         """Detectar inteligentemente el tipo de búsqueda"""
-        # Cédula (debe ir PRIMERO para evitar confusión con teléfono)
-        for pattern in self.cedula_patterns:
-            if re.search(pattern, query):
-                return "cedula"
+        # Cédula costarricense - formato específico
+        if re.match(r'^\d{1,2}-\d{5,8}-\d{1,4}$', query.strip()):
+            return "cedula"
+        if re.match(r'^\d{9,12}$', query.strip()):
+            return "cedula"
         
         # Email
         if "@" in query and "." in query:
             return "email"
         
-        # Teléfono (después de cédula para evitar falsos positivos)
-        if re.search(r'[\+\d\-\(\)\s]{8,}', query) and any(c.isdigit() for c in query):
-            # Verificar que no sea cédula
-            if not any(re.search(pattern, query) for pattern in self.cedula_patterns):
-                return "telefono"
+        # Teléfono (formato +506 XXXX-XXXX)
+        if query.startswith('+506') or (query.startswith('506') and len(query) >= 11):
+            return "telefono"
         
-        # Nombre
+        # Si tiene guiones y números, probablemente es cédula
+        if '-' in query and any(c.isdigit() for c in query):
+            return "cedula"
+        
+        # Nombre (por defecto)
         return "nombre"
     
     async def search_multiple_collections(self, query: str, search_type: str) -> Dict:

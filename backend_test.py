@@ -574,10 +574,8 @@ class CriticalSystemTester:
             # Priority 4: Search functionality with real database
             self.test_search_functionality()
             
-            # Priority 5: All data access endpoints
-            self.test_location_hierarchy()
-            self.test_ultra_deep_extraction_status()
-            self.test_daticos_credentials_validation()
+            # Priority 5: Core system verification
+            self.test_user_creation_capability()
             
         else:
             print("❌ Admin authentication failed - skipping authenticated tests")

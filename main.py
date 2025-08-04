@@ -874,7 +874,12 @@ async def search_complete(request: Request, q: str, limit: int = 10):
 @app.get("/admin/dashboard")
 async def admin_dashboard():
     """Panel admin ULTRA COMPLETO con todas las funciones"""
-    stats = get_stats()
+    try:
+        stats = get_stats_sync()
+        logger.info(f"🎯 Dashboard admin con {stats['total_personas']:,} registros integrados")
+    except Exception as e:
+        logger.error(f"Error obteniendo estadísticas integradas: {e}")
+        stats = get_stats()
     
     return HTMLResponse(content=f"""
 <!DOCTYPE html>

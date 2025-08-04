@@ -1025,6 +1025,7 @@ async def ultra_complete_search(query: str):
             "error": str(e),
             "query": query
         }
+
 @app.get("/api/search/complete")
 async def search_complete(request: Request, q: str, limit: int = 10):
     """Búsqueda COMPLETA REAL en base de datos"""

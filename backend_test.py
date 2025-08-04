@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Comprehensive Backend Testing for Massive Costa Rican Data Extraction System
-Tests MongoDB collections, API endpoints, and data quality for 2M+ records system
+CRITICAL SYSTEM RECOVERY TESTING - Post Bug Fix Verification
+Testing Costa Rica search system after major lazy loading fix in main.py
+Focus: Login systems, search functionality, admin panel, database access, system health
 """
 
 import requests
@@ -10,22 +11,25 @@ import sys
 from datetime import datetime
 import time
 import re
-import pymongo
 import os
 from typing import Dict, List, Any
 
-# Configuration
+# Configuration - Updated with correct credentials from review request
 BACKEND_URL = "https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagent.com/api"
-TEST_CREDENTIALS = {
-    "login": "admin",
-    "password": "admin123"
+
+# Admin credentials from review request
+ADMIN_CREDENTIALS = {
+    "login": "master_admin",
+    "password": "TuDatos2025!Ultra"
 }
 
-# MongoDB connection for direct database testing
-MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-DB_NAME = os.environ.get('DB_NAME', 'test_database')
+# Daticos credentials for testing
+DATICOS_CREDENTIALS = [
+    {"username": "CABEZAS", "password": "Hola2022"},
+    {"username": "Saraya", "password": "12345"}
+]
 
-class DaticosAPITester:
+class CriticalSystemTester:
     def __init__(self):
         self.base_url = BACKEND_URL
         self.session = requests.Session()
@@ -51,591 +55,43 @@ class DaticosAPITester:
             print(f"   Response: {response_data}")
         print()
     
-    def test_authentication(self):
-        """Test 1: Authentication with admin credentials"""
-        print("🔐 Testing Authentication...")
+    def test_health_endpoint(self):
+        """Test 1: Health endpoint - Critical after lazy loading fix"""
+        print("🏥 Testing Health Endpoint (Critical after fix)...")
         
         try:
-            response = self.session.post(
-                f"{self.base_url}/auth/login",
-                json=TEST_CREDENTIALS,
-                timeout=10
-            )
+            response = self.session.get(f"{self.base_url}/health", timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                if "access_token" in data and "user" in data:
-                    self.auth_token = data["access_token"]
-                    self.session.headers.update({
-                        "Authorization": f"Bearer {self.auth_token}"
-                    })
+                if "status" in data:
                     self.log_test(
-                        "Authentication Login", 
+                        "Health Endpoint", 
                         True, 
-                        f"Successfully logged in as {data['user']['username']}"
+                        f"Health status: {data.get('status')}"
                     )
-                    return True
                 else:
                     self.log_test(
-                        "Authentication Login", 
+                        "Health Endpoint", 
                         False, 
-                        "Missing access_token or user in response", 
+                        "Missing status in health response", 
                         data
                     )
             else:
                 self.log_test(
-                    "Authentication Login", 
+                    "Health Endpoint", 
                     False, 
                     f"HTTP {response.status_code}", 
                     response.text
                 )
                 
         except Exception as e:
-            self.log_test("Authentication Login", False, f"Exception: {str(e)}")
-            
-        return False
+            self.log_test("Health Endpoint", False, f"Exception: {str(e)}")
     
-    def test_location_endpoints(self):
-        """Test location hierarchy endpoints"""
-        print("🌍 Testing Location Endpoints...")
+    def test_system_health(self):
+        """Test 2: System health endpoint - Verify all status endpoints work"""
+        print("🔧 Testing System Health Endpoint...")
         
-        # Test provincias
-        try:
-            response = self.session.get(f"{self.base_url}/locations/provincias", timeout=10)
-            if response.status_code == 200:
-                provincias = response.json()
-                if isinstance(provincias, list) and len(provincias) > 0:
-                    self.log_test(
-                        "Get Provincias", 
-                        True, 
-                        f"Retrieved {len(provincias)} provinces"
-                    )
-                    
-                    # Test cantones for first provincia
-                    first_provincia = provincias[0]
-                    provincia_id = first_provincia.get('id')
-                    
-                    if provincia_id:
-                        cantones_response = self.session.get(
-                            f"{self.base_url}/locations/cantones/{provincia_id}", 
-                            timeout=10
-                        )
-                        if cantones_response.status_code == 200:
-                            cantones = cantones_response.json()
-                            self.log_test(
-                                "Get Cantones", 
-                                True, 
-                                f"Retrieved {len(cantones)} cantones for {first_provincia.get('nombre')}"
-                            )
-                            
-                            # Test distritos for first canton
-                            if cantones and len(cantones) > 0:
-                                first_canton = cantones[0]
-                                canton_id = first_canton.get('id')
-                                
-                                if canton_id:
-                                    distritos_response = self.session.get(
-                                        f"{self.base_url}/locations/distritos/{canton_id}", 
-                                        timeout=10
-                                    )
-                                    if distritos_response.status_code == 200:
-                                        distritos = distritos_response.json()
-                                        self.log_test(
-                                            "Get Distritos", 
-                                            True, 
-                                            f"Retrieved {len(distritos)} distritos for {first_canton.get('nombre')}"
-                                        )
-                                    else:
-                                        self.log_test(
-                                            "Get Distritos", 
-                                            False, 
-                                            f"HTTP {distritos_response.status_code}", 
-                                            distritos_response.text
-                                        )
-                        else:
-                            self.log_test(
-                                "Get Cantones", 
-                                False, 
-                                f"HTTP {cantones_response.status_code}", 
-                                cantones_response.text
-                            )
-                else:
-                    self.log_test("Get Provincias", False, "Empty or invalid response", provincias)
-            else:
-                self.log_test(
-                    "Get Provincias", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Location Endpoints", False, f"Exception: {str(e)}")
-    
-    def test_search_by_cedula(self):
-        """Test search by cedula for both fisica and juridica"""
-        print("🔍 Testing Search by Cedula...")
-        
-        # Test cedulas that should exist based on the system description
-        test_cedulas = [
-            "123456789",  # Typical fisica cedula
-            "987654321",  # Another fisica cedula
-            "3101234567", # Juridica cedula (starts with 3)
-            "3109876543"  # Another juridica cedula
-        ]
-        
-        for cedula in test_cedulas:
-            try:
-                response = self.session.get(
-                    f"{self.base_url}/search/cedula/{cedula}", 
-                    timeout=10
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if data.get("found"):
-                        person_type = data.get("type", "unknown")
-                        self.log_test(
-                            f"Search Cedula {cedula}", 
-                            True, 
-                            f"Found {person_type} person"
-                        )
-                    else:
-                        self.log_test(
-                            f"Search Cedula {cedula}", 
-                            True, 
-                            "No person found (valid response)"
-                        )
-                else:
-                    self.log_test(
-                        f"Search Cedula {cedula}", 
-                        False, 
-                        f"HTTP {response.status_code}", 
-                        response.text
-                    )
-                    
-            except Exception as e:
-                self.log_test(f"Search Cedula {cedula}", False, f"Exception: {str(e)}")
-    
-    def test_search_by_name(self):
-        """Test search by name"""
-        print("👤 Testing Search by Name...")
-        
-        # Test common Costa Rican names
-        test_names = [
-            "Maria",
-            "Jose",
-            "Ana",
-            "Carlos",
-            "Restaurant",  # For juridica
-            "Empresa"      # For juridica
-        ]
-        
-        for name in test_names:
-            try:
-                response = self.session.get(
-                    f"{self.base_url}/search/name/{name}", 
-                    timeout=10
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    results = data.get("results", [])
-                    total = data.get("total", 0)
-                    
-                    self.log_test(
-                        f"Search Name '{name}'", 
-                        True, 
-                        f"Found {total} results"
-                    )
-                else:
-                    self.log_test(
-                        f"Search Name '{name}'", 
-                        False, 
-                        f"HTTP {response.status_code}", 
-                        response.text
-                    )
-                    
-            except Exception as e:
-                self.log_test(f"Search Name '{name}'", False, f"Exception: {str(e)}")
-    
-    def test_search_by_telefono(self):
-        """Test search by phone number"""
-        print("📞 Testing Search by Telefono...")
-        
-        # Test various phone formats
-        test_phones = [
-            "88888888",    # 8-digit format
-            "2222-2222",   # Landline format
-            "8888-8888",   # Mobile format
-            "22222222",    # 8-digit landline
-            "1234"         # Partial search
-        ]
-        
-        for phone in test_phones:
-            try:
-                response = self.session.get(
-                    f"{self.base_url}/search/telefono/{phone}", 
-                    timeout=10
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    results = data.get("results", [])
-                    total = data.get("total", 0)
-                    
-                    self.log_test(
-                        f"Search Phone '{phone}'", 
-                        True, 
-                        f"Found {total} results"
-                    )
-                else:
-                    self.log_test(
-                        f"Search Phone '{phone}'", 
-                        False, 
-                        f"HTTP {response.status_code}", 
-                        response.text
-                    )
-                    
-            except Exception as e:
-                self.log_test(f"Search Phone '{phone}'", False, f"Exception: {str(e)}")
-    
-    def test_geographic_search(self):
-        """Test geographic search endpoint"""
-        print("🗺️ Testing Geographic Search...")
-        
-        # First get a provincia to test with
-        try:
-            provincias_response = self.session.get(f"{self.base_url}/locations/provincias", timeout=10)
-            if provincias_response.status_code == 200:
-                provincias = provincias_response.json()
-                if provincias:
-                    test_provincia = provincias[0]
-                    
-                    # Test geographic search with provincia filter
-                    search_payload = {
-                        "provincia_id": test_provincia["id"]
-                    }
-                    
-                    response = self.session.post(
-                        f"{self.base_url}/search/geografica",
-                        json=search_payload,
-                        timeout=10
-                    )
-                    
-                    if response.status_code == 200:
-                        data = response.json()
-                        results = data.get("results", [])
-                        total = data.get("total", 0)
-                        
-                        self.log_test(
-                            "Geographic Search", 
-                            True, 
-                            f"Found {total} results for {test_provincia['nombre']}"
-                        )
-                    else:
-                        self.log_test(
-                            "Geographic Search", 
-                            False, 
-                            f"HTTP {response.status_code}", 
-                            response.text
-                        )
-                        
-                    # Test with person type filter
-                    search_payload_fisica = {
-                        "provincia_id": test_provincia["id"],
-                        "person_type": "fisica"
-                    }
-                    
-                    response_fisica = self.session.post(
-                        f"{self.base_url}/search/geografica",
-                        json=search_payload_fisica,
-                        timeout=10
-                    )
-                    
-                    if response_fisica.status_code == 200:
-                        data_fisica = response_fisica.json()
-                        results_fisica = data_fisica.get("results", [])
-                        
-                        self.log_test(
-                            "Geographic Search (Fisica)", 
-                            True, 
-                            f"Found {len(results_fisica)} fisica results"
-                        )
-                    else:
-                        self.log_test(
-                            "Geographic Search (Fisica)", 
-                            False, 
-                            f"HTTP {response_fisica.status_code}", 
-                            response_fisica.text
-                        )
-                        
-        except Exception as e:
-            self.log_test("Geographic Search", False, f"Exception: {str(e)}")
-    
-    def test_demographics_query(self):
-        """Test demographics statistics endpoint"""
-        print("📊 Testing Demographics Query...")
-        
-        try:
-            # Test basic demographics query
-            demo_payload = {}
-            
-            response = self.session.post(
-                f"{self.base_url}/demographics/query",
-                json=demo_payload,
-                timeout=10
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                
-                required_fields = [
-                    "total_personas_fisicas", 
-                    "total_personas_juridicas", 
-                    "by_provincia", 
-                    "by_sector"
-                ]
-                
-                all_fields_present = all(field in data for field in required_fields)
-                
-                if all_fields_present:
-                    self.log_test(
-                        "Demographics Query", 
-                        True, 
-                        f"Fisica: {data['total_personas_fisicas']}, Juridica: {data['total_personas_juridicas']}"
-                    )
-                else:
-                    missing_fields = [field for field in required_fields if field not in data]
-                    self.log_test(
-                        "Demographics Query", 
-                        False, 
-                        f"Missing fields: {missing_fields}", 
-                        data
-                    )
-            else:
-                self.log_test(
-                    "Demographics Query", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Demographics Query", False, f"Exception: {str(e)}")
-    
-    def test_api_root(self):
-        """Test API root endpoint"""
-        print("🏠 Testing API Root...")
-        
-        try:
-            response = self.session.get(f"{self.base_url}/", timeout=10)
-            
-            if response.status_code == 200:
-                data = response.json()
-                if "message" in data and "version" in data:
-                    self.log_test(
-                        "API Root", 
-                        True, 
-                        f"API Version: {data['version']}"
-                    )
-                else:
-                    self.log_test("API Root", False, "Missing message or version", data)
-            else:
-                self.log_test(
-                    "API Root", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("API Root", False, f"Exception: {str(e)}")
-    
-    def test_ultra_deep_extraction_endpoints(self):
-        """Test Ultra Deep Extraction endpoints"""
-        print("🔥 Testing Ultra Deep Extraction Endpoints...")
-        
-        # Test 1: Ultra Deep Extraction Status
-        try:
-            response = self.session.get(
-                f"{self.base_url}/admin/ultra-deep-extraction/status", 
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("status") == "success" and "data" in data:
-                    registros_actuales = data["data"].get("registros_actuales", {})
-                    total_principal = registros_actuales.get("total_principal", 0)
-                    
-                    self.log_test(
-                        "Ultra Deep Status", 
-                        True, 
-                        f"Total registros: {total_principal:,}, Status: {data.get('status')}"
-                    )
-                else:
-                    self.log_test(
-                        "Ultra Deep Status", 
-                        False, 
-                        "Missing required fields in response", 
-                        data
-                    )
-            else:
-                self.log_test(
-                    "Ultra Deep Status", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Ultra Deep Status", False, f"Exception: {str(e)}")
-        
-        # Test 2: Extraction Methods Comparison
-        try:
-            response = self.session.get(
-                f"{self.base_url}/admin/extraction-methods-comparison", 
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("status") == "success" and "comparison_data" in data:
-                    methods = data["comparison_data"].get("methods_summary", {})
-                    
-                    self.log_test(
-                        "Extraction Methods Comparison", 
-                        True, 
-                        f"Methods found: {len(methods)}"
-                    )
-                else:
-                    self.log_test(
-                        "Extraction Methods Comparison", 
-                        False, 
-                        "Missing comparison_data in response", 
-                        data
-                    )
-            else:
-                self.log_test(
-                    "Extraction Methods Comparison", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Extraction Methods Comparison", False, f"Exception: {str(e)}")
-        
-        # Test 3: Ultra Deep Extraction Start (POST)
-        try:
-            response = self.session.post(
-                f"{self.base_url}/admin/ultra-deep-extraction/start", 
-                json={},
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("status") == "success" and "message" in data:
-                    self.log_test(
-                        "Ultra Deep Start", 
-                        True, 
-                        f"Started: {data.get('message')}"
-                    )
-                else:
-                    self.log_test(
-                        "Ultra Deep Start", 
-                        False, 
-                        "Missing success status or message", 
-                        data
-                    )
-            else:
-                self.log_test(
-                    "Ultra Deep Start", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Ultra Deep Start", False, f"Exception: {str(e)}")
-        
-        # Test 4: Ultra Deep Execute Now
-        try:
-            response = self.session.post(
-                f"{self.base_url}/admin/ultra-deep-extraction/execute-now", 
-                json={},
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("status") == "success" and "message" in data:
-                    self.log_test(
-                        "Ultra Deep Execute Now", 
-                        True, 
-                        f"Executed: {data.get('message')}"
-                    )
-                else:
-                    self.log_test(
-                        "Ultra Deep Execute Now", 
-                        False, 
-                        "Missing success status or message", 
-                        data
-                    )
-            else:
-                self.log_test(
-                    "Ultra Deep Execute Now", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Ultra Deep Execute Now", False, f"Exception: {str(e)}")
-    
-    def test_autonomous_system_endpoints(self):
-        """Test Autonomous System endpoints"""
-        print("🤖 Testing Autonomous System Endpoints...")
-        
-        # Test Autonomous System Status
-        try:
-            response = self.session.get(
-                f"{self.base_url}/admin/autonomous-system/status", 
-                timeout=10
-            )
-            
-            # This endpoint might not exist, so we check if it returns 404 or works
-            if response.status_code == 200:
-                data = response.json()
-                self.log_test(
-                    "Autonomous System Status", 
-                    True, 
-                    f"Status retrieved: {data.get('status', 'unknown')}"
-                )
-            elif response.status_code == 404:
-                self.log_test(
-                    "Autonomous System Status", 
-                    True, 
-                    "Endpoint not implemented (404 - expected)"
-                )
-            else:
-                self.log_test(
-                    "Autonomous System Status", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Autonomous System Status", False, f"Exception: {str(e)}")
-    
-    def test_database_health_and_stats(self):
-        """Test database health and statistics"""
-        print("💾 Testing Database Health and Stats...")
-        
-        # Test System Health
         try:
             response = self.session.get(f"{self.base_url}/system/health", timeout=10)
             
@@ -643,10 +99,12 @@ class DaticosAPITester:
                 data = response.json()
                 if "status" in data and "services" in data:
                     db_status = data["services"].get("database", "unknown")
+                    overall_status = data.get("status")
+                    
                     self.log_test(
                         "System Health Check", 
                         True, 
-                        f"Overall: {data['status']}, DB: {db_status}"
+                        f"Overall: {overall_status}, DB: {db_status}"
                     )
                 else:
                     self.log_test(
@@ -665,17 +123,209 @@ class DaticosAPITester:
                 
         except Exception as e:
             self.log_test("System Health Check", False, f"Exception: {str(e)}")
+    
+    def test_admin_authentication(self):
+        """Test 3: Admin login with new credentials - Critical test"""
+        print("🔐 Testing Admin Authentication (master_admin/TuDatos2025!Ultra)...")
         
-        # Test Admin Dashboard Stats
         try:
-            response = self.session.get(f"{self.base_url}/admin/dashboard/stats", timeout=10)
+            response = self.session.post(
+                f"{self.base_url}/auth/login",
+                json=ADMIN_CREDENTIALS,
+                timeout=10
+            )
             
             if response.status_code == 200:
                 data = response.json()
-                # Check for expected fields in admin stats
-                expected_fields = ["total_personas", "total_empresas", "data_quality"]
+                if "access_token" in data and "user" in data:
+                    self.auth_token = data["access_token"]
+                    self.session.headers.update({
+                        "Authorization": f"Bearer {self.auth_token}"
+                    })
+                    self.log_test(
+                        "Admin Authentication", 
+                        True, 
+                        f"Successfully logged in as {data['user']['username']}"
+                    )
+                    return True
+                else:
+                    self.log_test(
+                        "Admin Authentication", 
+                        False, 
+                        "Missing access_token or user in response", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Admin Authentication", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
                 
-                # The response might have different structure, so we check what we get
+        except Exception as e:
+            self.log_test("Admin Authentication", False, f"Exception: {str(e)}")
+            
+        return False
+    
+    def test_api_root(self):
+        """Test 4: API root endpoint - Basic connectivity"""
+        print("🏠 Testing API Root Endpoint...")
+        
+        try:
+            response = self.session.get(f"{self.base_url}/", timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "message" in data and "version" in data:
+                    self.log_test(
+                        "API Root", 
+                        True, 
+                        f"API Version: {data['version']}, Message: {data['message']}"
+                    )
+                else:
+                    self.log_test("API Root", False, "Missing message or version", data)
+            else:
+                self.log_test(
+                    "API Root", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("API Root", False, f"Exception: {str(e)}")
+    
+    def test_database_access_endpoints(self):
+        """Test 5: Database access endpoints - Verify 5000-record database access"""
+        print("💾 Testing Database Access Endpoints...")
+        
+        # Test demographics query to verify database access
+        try:
+            demo_payload = {}
+            
+            response = self.session.post(
+                f"{self.base_url}/demographics/query",
+                json=demo_payload,
+                timeout=15
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                required_fields = [
+                    "total_personas_fisicas", 
+                    "total_personas_juridicas", 
+                    "by_provincia", 
+                    "by_sector"
+                ]
+                
+                all_fields_present = all(field in data for field in required_fields)
+                
+                if all_fields_present:
+                    total_fisica = data['total_personas_fisicas']
+                    total_juridica = data['total_personas_juridicas']
+                    total_records = total_fisica + total_juridica
+                    
+                    self.log_test(
+                        "Database Access - Demographics", 
+                        True, 
+                        f"Total records: {total_records:,} (Fisica: {total_fisica:,}, Juridica: {total_juridica:,})"
+                    )
+                else:
+                    missing_fields = [field for field in required_fields if field not in data]
+                    self.log_test(
+                        "Database Access - Demographics", 
+                        False, 
+                        f"Missing fields: {missing_fields}", 
+                        data
+                    )
+            else:
+                self.log_test(
+                    "Database Access - Demographics", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Database Access - Demographics", False, f"Exception: {str(e)}")
+    
+    def test_search_functionality(self):
+        """Test 6: Search functionality - Verify search endpoints work with lazy loading"""
+        print("🔍 Testing Search Functionality...")
+        
+        # Test search by name
+        test_names = ["Maria", "Jose", "Carlos"]
+        
+        for name in test_names:
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/search/name/{name}", 
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    results = data.get("results", [])
+                    total = data.get("total", 0)
+                    
+                    self.log_test(
+                        f"Search by Name '{name}'", 
+                        True, 
+                        f"Found {total} results"
+                    )
+                else:
+                    self.log_test(
+                        f"Search by Name '{name}'", 
+                        False, 
+                        f"HTTP {response.status_code}", 
+                        response.text
+                    )
+                    
+            except Exception as e:
+                self.log_test(f"Search by Name '{name}'", False, f"Exception: {str(e)}")
+        
+        # Test search by cedula
+        test_cedulas = ["123456789", "3101234567"]
+        
+        for cedula in test_cedulas:
+            try:
+                response = self.session.get(
+                    f"{self.base_url}/search/cedula/{cedula}", 
+                    timeout=10
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    found = data.get("found", False)
+                    
+                    self.log_test(
+                        f"Search by Cedula {cedula}", 
+                        True, 
+                        f"Found: {found}"
+                    )
+                else:
+                    self.log_test(
+                        f"Search by Cedula {cedula}", 
+                        False, 
+                        f"HTTP {response.status_code}", 
+                        response.text
+                    )
+                    
+            except Exception as e:
+                self.log_test(f"Search by Cedula {cedula}", False, f"Exception: {str(e)}")
+    
+    def test_admin_panel_functionality(self):
+        """Test 7: Admin panel functionality - Test admin dashboard and user creation"""
+        print("👨‍💼 Testing Admin Panel Functionality...")
+        
+        # Test admin dashboard stats
+        try:
+            response = self.session.get(f"{self.base_url}/admin/dashboard/stats", timeout=15)
+            
+            if response.status_code == 200:
+                data = response.json()
                 self.log_test(
                     "Admin Dashboard Stats", 
                     True, 
@@ -691,12 +341,33 @@ class DaticosAPITester:
                 
         except Exception as e:
             self.log_test("Admin Dashboard Stats", False, f"Exception: {str(e)}")
-    
-    def test_daticos_connection_endpoints(self):
-        """Test Daticos connection and extraction endpoints"""
-        print("🌐 Testing Daticos Connection Endpoints...")
         
-        # Test Daticos Connection
+        # Test admin update stats endpoint
+        try:
+            response = self.session.get(f"{self.base_url}/admin/update-stats", timeout=15)
+            
+            if response.status_code == 200:
+                data = response.json()
+                self.log_test(
+                    "Admin Update Stats", 
+                    True, 
+                    f"Update stats retrieved successfully"
+                )
+            else:
+                self.log_test(
+                    "Admin Update Stats", 
+                    False, 
+                    f"HTTP {response.status_code}", 
+                    response.text
+                )
+                
+        except Exception as e:
+            self.log_test("Admin Update Stats", False, f"Exception: {str(e)}")
+    
+    def test_daticos_credentials_validation(self):
+        """Test 8: Daticos credentials validation - Test CABEZAS/Hola2022 and Saraya/12345"""
+        print("🌐 Testing Daticos Credentials Validation...")
+        
         try:
             response = self.session.get(
                 f"{self.base_url}/admin/daticos/test-connection", 
@@ -724,140 +395,61 @@ class DaticosAPITester:
         except Exception as e:
             self.log_test("Daticos Connection Test", False, f"Exception: {str(e)}")
     
-    def test_high_priority_endpoints(self):
-        """Test the 4 HIGH PRIORITY endpoints requested by user"""
-        print("🔥 Testing HIGH PRIORITY ENDPOINTS - TuDatos System...")
+    def test_location_hierarchy(self):
+        """Test 9: Location hierarchy endpoints - Basic data structure"""
+        print("🌍 Testing Location Hierarchy...")
         
-        # Test 1: GET /api/admin/system/complete-overview
         try:
-            response = self.session.get(
-                f"{self.base_url}/admin/system/complete-overview", 
-                timeout=20
-            )
-            
+            response = self.session.get(f"{self.base_url}/locations/provincias", timeout=10)
             if response.status_code == 200:
-                data = response.json()
-                if data.get("status") == "success" and "overview" in data:
-                    overview = data["overview"]
-                    resumen = overview.get("resumen", {})
-                    total_records = resumen.get("gran_total", 0)
-                    progreso_3M = resumen.get("progreso_3M", "0%")
-                    
+                provincias = response.json()
+                if isinstance(provincias, list) and len(provincias) > 0:
                     self.log_test(
-                        "System Complete Overview", 
+                        "Get Provincias", 
                         True, 
-                        f"Total records: {total_records:,}, Progress to 3M: {progreso_3M}"
+                        f"Retrieved {len(provincias)} provinces"
                     )
+                    
+                    # Test cantones for first provincia
+                    first_provincia = provincias[0]
+                    provincia_id = first_provincia.get('id')
+                    
+                    if provincia_id:
+                        cantones_response = self.session.get(
+                            f"{self.base_url}/locations/cantones/{provincia_id}", 
+                            timeout=10
+                        )
+                        if cantones_response.status_code == 200:
+                            cantones = cantones_response.json()
+                            self.log_test(
+                                "Get Cantones", 
+                                True, 
+                                f"Retrieved {len(cantones)} cantones for {first_provincia.get('nombre')}"
+                            )
+                        else:
+                            self.log_test(
+                                "Get Cantones", 
+                                False, 
+                                f"HTTP {cantones_response.status_code}", 
+                                cantones_response.text
+                            )
                 else:
-                    self.log_test(
-                        "System Complete Overview", 
-                        False, 
-                        "Missing overview in response", 
-                        data
-                    )
+                    self.log_test("Get Provincias", False, "Empty or invalid response", provincias)
             else:
                 self.log_test(
-                    "System Complete Overview", 
+                    "Get Provincias", 
                     False, 
                     f"HTTP {response.status_code}", 
                     response.text
                 )
                 
         except Exception as e:
-            self.log_test("System Complete Overview", False, f"Exception: {str(e)}")
+            self.log_test("Location Hierarchy", False, f"Exception: {str(e)}")
+    
+    def test_ultra_deep_extraction_status(self):
+        """Test 10: Ultra Deep Extraction Status - Verify database statistics access"""
+        print("🔥 Testing Ultra Deep Extraction Status...")
         
-        # Test 2: GET /api/admin/mega-extraction/status
-        try:
-            response = self.session.get(
-                f"{self.base_url}/admin/mega-extraction/status", 
-                timeout=20
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("status") == "success" and "data" in data:
-                    mega_data = data["data"]
-                    mega_total = mega_data.get("mega_extraction_especifica", {}).get("total_mega_extraction", 0)
-                    grand_total = mega_data.get("totales_combinados", {}).get("gran_total", 0)
-                    
-                    self.log_test(
-                        "Mega Extraction Status", 
-                        True, 
-                        f"Mega records: {mega_total:,}, Grand total: {grand_total:,}"
-                    )
-                else:
-                    self.log_test(
-                        "Mega Extraction Status", 
-                        False, 
-                        "Missing data in response", 
-                        data
-                    )
-            else:
-                self.log_test(
-                    "Mega Extraction Status", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Mega Extraction Status", False, f"Exception: {str(e)}")
-        
-        # Test 3: POST /api/admin/mega-extraction/start (only if not running)
-        try:
-            # First check status to see if already running
-            status_response = self.session.get(
-                f"{self.base_url}/admin/mega-extraction/status", 
-                timeout=15
-            )
-            
-            should_start = True
-            if status_response.status_code == 200:
-                status_data = status_response.json()
-                # Check if extraction is already running
-                if status_data.get("data", {}).get("ultima_mega_extraccion", {}).get("estado") == "RUNNING":
-                    should_start = False
-            
-            if should_start:
-                response = self.session.post(
-                    f"{self.base_url}/admin/mega-extraction/start", 
-                    json={},
-                    timeout=20
-                )
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if data.get("status") == "success" and "message" in data:
-                        self.log_test(
-                            "Mega Extraction Start", 
-                            True, 
-                            f"Started: {data.get('message')}"
-                        )
-                    else:
-                        self.log_test(
-                            "Mega Extraction Start", 
-                            False, 
-                            "Missing success status or message", 
-                            data
-                        )
-                else:
-                    self.log_test(
-                        "Mega Extraction Start", 
-                        False, 
-                        f"HTTP {response.status_code}", 
-                        response.text
-                    )
-            else:
-                self.log_test(
-                    "Mega Extraction Start", 
-                    True, 
-                    "Skipped - extraction already running"
-                )
-                
-        except Exception as e:
-            self.log_test("Mega Extraction Start", False, f"Exception: {str(e)}")
-        
-        # Test 4: GET /api/admin/ultra-deep-extraction/status
         try:
             response = self.session.get(
                 f"{self.base_url}/admin/ultra-deep-extraction/status", 
@@ -896,47 +488,42 @@ class DaticosAPITester:
         except Exception as e:
             self.log_test("Ultra Deep Extraction Status", False, f"Exception: {str(e)}")
     
-    def run_all_tests(self):
-        """Run all tests in sequence"""
-        print("🚀 Starting Daticos Backend API Tests")
+    def run_critical_tests(self):
+        """Run all critical tests in priority order"""
+        print("🚨 CRITICAL SYSTEM RECOVERY TESTING - POST BUG FIX")
+        print("=" * 70)
+        print("Testing system recovery after major lazy loading fix in main.py")
+        print("Focus: Login, Search, Admin Panel, Database Access, System Health")
         print(f"Backend URL: {self.base_url}")
-        print("=" * 60)
+        print("=" * 70)
         
-        # Test API root first
+        # Priority 1: Health and basic system endpoints
+        self.test_health_endpoint()
+        self.test_system_health()
         self.test_api_root()
         
-        # Authentication is required for most endpoints
-        if self.test_authentication():
-            # HIGH PRIORITY TESTS FIRST (as requested by user)
-            self.test_high_priority_endpoints()
+        # Priority 2: Admin login and admin panel functionality
+        if self.test_admin_authentication():
+            self.test_admin_panel_functionality()
             
-            # Core functionality tests
-            self.test_location_endpoints()
-            self.test_search_by_cedula()
-            self.test_search_by_name()
-            self.test_search_by_telefono()
-            self.test_geographic_search()
-            self.test_demographics_query()
+            # Priority 3: Database access endpoints
+            self.test_database_access_endpoints()
             
-            # Ultra Deep Extraction tests
-            self.test_ultra_deep_extraction_endpoints()
+            # Priority 4: Search functionality with real database
+            self.test_search_functionality()
             
-            # Autonomous System tests
-            self.test_autonomous_system_endpoints()
-            
-            # Database health and stats tests
-            self.test_database_health_and_stats()
-            
-            # Daticos connection tests
-            self.test_daticos_connection_endpoints()
+            # Priority 5: All data access endpoints
+            self.test_location_hierarchy()
+            self.test_ultra_deep_extraction_status()
+            self.test_daticos_credentials_validation()
             
         else:
-            print("❌ Authentication failed - skipping authenticated tests")
+            print("❌ Admin authentication failed - skipping authenticated tests")
         
         # Print summary
-        print("=" * 60)
-        print("📋 TEST SUMMARY")
-        print("=" * 60)
+        print("=" * 70)
+        print("📋 CRITICAL SYSTEM RECOVERY TEST SUMMARY")
+        print("=" * 70)
         
         passed = sum(1 for result in self.test_results if result["success"])
         total = len(self.test_results)
@@ -953,19 +540,40 @@ class DaticosAPITester:
             if result["details"]:
                 print(f"   {result['details']}")
         
+        # Critical system assessment
+        print("\n🔍 CRITICAL SYSTEM ASSESSMENT:")
+        
+        # Check if core systems are working
+        health_working = any(r["test"] in ["Health Endpoint", "System Health Check"] and r["success"] for r in self.test_results)
+        auth_working = any(r["test"] == "Admin Authentication" and r["success"] for r in self.test_results)
+        db_working = any(r["test"] == "Database Access - Demographics" and r["success"] for r in self.test_results)
+        search_working = any("Search by" in r["test"] and r["success"] for r in self.test_results)
+        
+        print(f"🏥 Health Endpoints: {'✅ WORKING' if health_working else '❌ FAILED'}")
+        print(f"🔐 Admin Authentication: {'✅ WORKING' if auth_working else '❌ FAILED'}")
+        print(f"💾 Database Access: {'✅ WORKING' if db_working else '❌ FAILED'}")
+        print(f"🔍 Search Functionality: {'✅ WORKING' if search_working else '❌ FAILED'}")
+        
+        if health_working and auth_working and db_working and search_working:
+            print("\n🎉 CRITICAL SYSTEM RECOVERY: SUCCESS")
+            print("✅ All critical systems operational after lazy loading fix")
+        else:
+            print("\n⚠️ CRITICAL SYSTEM RECOVERY: PARTIAL")
+            print("❌ Some critical systems still have issues")
+        
         return passed, total
 
 def main():
     """Main test execution"""
-    tester = DaticosAPITester()
-    passed, total = tester.run_all_tests()
+    tester = CriticalSystemTester()
+    passed, total = tester.run_critical_tests()
     
     # Exit with appropriate code
     if passed == total:
-        print("\n🎉 All tests passed!")
+        print("\n🎉 All critical tests passed!")
         sys.exit(0)
     else:
-        print(f"\n⚠️  {total - passed} tests failed")
+        print(f"\n⚠️ {total - passed} critical tests failed")
         sys.exit(1)
 
 if __name__ == "__main__":

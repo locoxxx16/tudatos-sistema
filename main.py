@@ -101,6 +101,55 @@ users_database = {
         "last_login": None
     }
 }
+# =============================================================================
+# SISTEMA DE EMAILS Y NOTIFICACIONES
+# =============================================================================
+
+def send_email_notification(to_email: str, subject: str, body: str, html_body: str = None):
+    """Enviar notificación por email"""
+    try:
+        # Configuración de email (puedes configurar SMTP más adelante)
+        logger.info(f"📧 NOTIFICACIÓN EMAIL: {subject}")
+        logger.info(f"📧 Para: {to_email}")
+        logger.info(f"📧 Mensaje: {body}")
+        
+        # Por ahora solo loggeamos, después puedes configurar SMTP
+        return True
+    except Exception as e:
+        logger.error(f"❌ Error enviando email: {e}")
+        return False
+
+def notify_new_user_registration(user_data: Dict):
+    """Notificar registro de nuevo usuario al propietario"""
+    subject = f"🚨 NUEVO REGISTRO - TuDatos Sistema"
+    
+    body = f"""
+    NUEVO USUARIO REGISTRADO EN TuDatos:
+    
+    📋 DATOS DEL USUARIO:
+    • Nombre: {user_data.get('nombre_completo', 'N/A')}
+    • Email: {user_data.get('email', 'N/A')}
+    • Teléfono: {user_data.get('telefono', 'N/A')}
+    • Plan Solicitado: {user_data.get('plan_solicitado', 'N/A')}
+    • Empresa: {user_data.get('empresa', 'N/A')}
+    • Motivo de uso: {user_data.get('motivo_uso', 'N/A')}
+    
+    🕐 Fecha: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+    
+    ACCIÓN REQUERIDA:
+    - Contactar al usuario para activar su cuenta
+    - Crear credenciales de acceso
+    - Configurar plan de créditos solicitado
+    """
+    
+    return send_email_notification(OWNER_EMAIL, subject, body)
+
+# =============================================================================
+# REGISTRO DE USUARIOS CON PLANES
+# =============================================================================
+
+# Base de datos temporal para solicitudes de registro
+registration_requests = []
 
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()

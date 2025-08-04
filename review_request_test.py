@@ -190,19 +190,19 @@ class ReviewRequestTester:
             if response.status_code == 200:
                 data = response.json()
                 
-                # Check for profiles data
+                # Check for profiles data - updated to match actual response structure
                 has_profiles = False
                 profiles_count = 0
                 
-                if isinstance(data, list):
+                if isinstance(data, dict) and data.get("success") and "sample_profiles" in data:
+                    has_profiles = True
+                    profiles_count = len(data["sample_profiles"])
+                elif isinstance(data, list):
                     has_profiles = True
                     profiles_count = len(data)
                 elif isinstance(data, dict) and "profiles" in data:
                     has_profiles = True
                     profiles_count = len(data["profiles"])
-                elif isinstance(data, dict) and "success" in data:
-                    has_profiles = data.get("success", False)
-                    profiles_count = data.get("total", 0)
                 
                 if has_profiles and profiles_count > 0:
                     self.log_test(

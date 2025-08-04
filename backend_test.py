@@ -68,6 +68,8 @@ class UltraCompleteSystemTester:
                     total_records = data["total_records"]
                 elif "registros_totales" in data:
                     total_records = data["registros_totales"]
+                elif "database" in data and "personas_completas" in data["database"]:
+                    total_records = data["database"]["personas_completas"]
                 elif "database_stats" in data:
                     db_stats = data["database_stats"]
                     if isinstance(db_stats, dict):

@@ -508,47 +508,54 @@ class CriticalSystemTester:
         except Exception as e:
             self.log_test("Location Hierarchy", False, f"Exception: {str(e)}")
     
-    def test_ultra_deep_extraction_status(self):
-        """Test 10: Ultra Deep Extraction Status - Verify database statistics access"""
-        print("🔥 Testing Ultra Deep Extraction Status...")
+    def test_user_creation_capability(self):
+        """Test 10: User creation capability - Verify admin can create users"""
+        print("👥 Testing User Creation Capability...")
         
+        # Test creating a test user
         try:
-            response = self.session.get(
-                f"{self.base_url}/admin/ultra-deep-extraction/status", 
-                timeout=20
+            test_user_data = {
+                "username": "test_user_recovery",
+                "email": "test@recovery.cr",
+                "password": "TestPass123",
+                "plan": "Básico",
+                "customCredits": "50"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/admin/users/create",
+                json=test_user_data,
+                timeout=15
             )
             
             if response.status_code == 200:
                 data = response.json()
-                if data.get("status") == "success" and "data" in data:
-                    ultra_data = data["data"]
-                    registros_actuales = ultra_data.get("registros_actuales", {})
-                    total_principal = registros_actuales.get("total_principal", 0)
-                    objetivo_3M = ultra_data.get("objetivo_3M", {})
-                    progreso = objetivo_3M.get("progreso_porcentaje", 0)
+                if data.get("success"):
+                    username = data.get("username", "unknown")
+                    credits = data.get("credits", 0)
                     
                     self.log_test(
-                        "Ultra Deep Extraction Status", 
+                        "User Creation Test", 
                         True, 
-                        f"Total: {total_principal:,}, Progress: {progreso}% toward 3M goal"
+                        f"Successfully created user '{username}' with {credits} credits"
                     )
                 else:
                     self.log_test(
-                        "Ultra Deep Extraction Status", 
+                        "User Creation Test", 
                         False, 
-                        "Missing data in response", 
+                        f"User creation failed: {data.get('message')}", 
                         data
                     )
             else:
                 self.log_test(
-                    "Ultra Deep Extraction Status", 
+                    "User Creation Test", 
                     False, 
                     f"HTTP {response.status_code}", 
                     response.text
                 )
                 
         except Exception as e:
-            self.log_test("Ultra Deep Extraction Status", False, f"Exception: {str(e)}")
+            self.log_test("User Creation Test", False, f"Exception: {str(e)}")
     
     def run_critical_tests(self):
         """Run all critical tests in priority order"""

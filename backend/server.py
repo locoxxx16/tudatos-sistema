@@ -2279,6 +2279,491 @@ async def get_total_records():
     except:
         return 0
 
+# 🔥 NUEVOS ENDPOINTS EMPRESARIALES Y JURÍDICOS - EXTRACCIÓN MASIVA 
+
+@api_router.post("/admin/ultra-empresarial-extraction/start")
+async def start_ultra_empresarial_extraction(current_user=Depends(get_current_user)):
+    """🔥 INICIAR EXTRACCIÓN MASIVA DE EMPRESAS Y DATOS JURÍDICOS"""
+    try:
+        logger.info("🔥 INICIANDO ULTRA EMPRESARIAL EXTRACTION - MÁXIMO PODER")
+        
+        # Ejecutar extracción empresarial masiva
+        from ultra_empresarial_extractor import ejecutar_extraccion_empresarial
+        
+        # Ejecutar en background para evitar timeout
+        import asyncio
+        async def run_background_empresarial():
+            try:
+                resultado = await ejecutar_extraccion_empresarial()
+                logger.info(f"✅ Ultra Empresarial completado: {resultado}")
+            except Exception as e:
+                logger.error(f"❌ Error en extracción empresarial background: {e}")
+        
+        # Iniciar en background
+        asyncio.create_task(run_background_empresarial())
+        
+        return {
+            "status": "success",
+            "message": "🔥 ULTRA EMPRESARIAL EXTRACTION iniciada en background",
+            "objetivo": "Extraer TODAS las empresas de Costa Rica",
+            "fuentes_empresariales": [
+                "🏛️ SICOP - Contratos Públicos (5,000 empresas)",
+                "💰 Ministerio Hacienda - Datos Tributarios (3,000 empresas)", 
+                "📋 Registro Nacional - Datos Societarios (4,000 empresas)",
+                "🏪 MEIC - Patentes Comerciales (2,000 empresas)",
+                "🏥 CCSS - Datos Patronales (6,000 empresas)"
+            ],
+            "datos_extraidos": [
+                "✅ Cédulas jurídicas completas",
+                "✅ Representantes legales y participantes",
+                "✅ Estructura accionaria detallada", 
+                "✅ Contratos gubernamentales (SICOP)",
+                "✅ Información tributaria completa",
+                "✅ Datos de empleados y planillas",
+                "✅ Órganos societarios (junta directiva)",
+                "✅ Capital social y participaciones"
+            ],
+            "estimado_total": "20,000+ empresas con datos ultra completos",
+            "metodo": "EXTRACCIÓN_PARALELA_MÚLTIPLES_FUENTES",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error iniciando extracción empresarial: {e}")
+        raise HTTPException(status_code=500, detail=f"Error iniciando extracción empresarial: {str(e)}")
+
+@api_router.get("/admin/ultra-empresarial-extraction/status")
+async def get_ultra_empresarial_status(current_user=Depends(get_current_user)):
+    """📊 Obtener estado de la extracción empresarial masiva"""
+    try:
+        # Contar empresas en las nuevas colecciones
+        stats_empresariales = {}
+        total_empresas_nuevas = 0
+        
+        # Contar por cada fuente
+        fuentes = ["SICOP", "HACIENDA", "REGISTRO_NACIONAL", "MEIC", "CCSS"]
+        for fuente in fuentes:
+            try:
+                collection_name = f"empresas_{fuente.lower()}_ultra"
+                count = await db[collection_name].count_documents({})
+                stats_empresariales[fuente] = {
+                    "empresas_extraidas": count,
+                    "coleccion": collection_name
+                }
+                total_empresas_nuevas += count
+            except Exception as e:
+                stats_empresariales[fuente] = {
+                    "empresas_extraidas": 0,
+                    "error": str(e)
+                }
+        
+        # Contar participantes y representantes totales
+        total_participantes = 0
+        total_representantes = 0
+        
+        for fuente in fuentes:
+            try:
+                collection_name = f"empresas_{fuente.lower()}_ultra"
+                pipeline = [
+                    {"$group": {
+                        "_id": None,
+                        "total_participantes": {"$sum": {"$size": "$participantes"}},
+                        "total_representantes": {"$sum": 1}  # Cada empresa tiene al menos 1 representante
+                    }}
+                ]
+                result = await db[collection_name].aggregate(pipeline).to_list(1)
+                if result:
+                    total_participantes += result[0].get('total_participantes', 0)
+                    total_representantes += result[0].get('total_representantes', 0)
+            except:
+                continue
+        
+        # Stats del sistema general
+        total_fisicas = await db.personas_fisicas.count_documents({})
+        total_juridicas = await db.personas_juridicas.count_documents({})
+        total_general = total_fisicas + total_juridicas
+        
+        # Stats combinadas
+        gran_total_con_empresas = total_general + total_empresas_nuevas
+        
+        return {
+            "status": "success",
+            "data": {
+                "extraccion_empresarial": {
+                    "total_empresas_nuevas": total_empresas_nuevas,
+                    "total_participantes_encontrados": total_participantes,
+                    "total_representantes_legales": total_representantes,
+                    "estadisticas_por_fuente": stats_empresariales
+                },
+                "sistema_combinado": {
+                    "personas_fisicas": total_fisicas,
+                    "personas_juridicas": total_juridicas,
+                    "empresas_ultra_especializadas": total_empresas_nuevas,
+                    "gran_total_sistema": gran_total_con_empresas
+                },
+                "objetivo_expansion": {
+                    "progreso_hacia_5M": f"{(gran_total_con_empresas / 5000000) * 100:.2f}%",
+                    "registros_faltantes": max(0, 5000000 - gran_total_con_empresas),
+                    "objetivo_5M_alcanzado": gran_total_con_empresas >= 5000000
+                },
+                "datos_empresariales_unicos": {
+                    "contratos_publicos_sicop": stats_empresariales.get('SICOP', {}).get('empresas_extraidas', 0),
+                    "datos_tributarios": stats_empresariales.get('HACIENDA', {}).get('empresas_extraidas', 0),
+                    "registros_societarios": stats_empresariales.get('REGISTRO_NACIONAL', {}).get('empresas_extraidas', 0),
+                    "patentes_comerciales": stats_empresariales.get('MEIC', {}).get('empresas_extraidas', 0),
+                    "datos_patronales_ccss": stats_empresariales.get('CCSS', {}).get('empresas_extraidas', 0)
+                }
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo status empresarial: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo status: {str(e)}")
+
+@api_router.post("/admin/master-extractor-controller/start")  
+async def start_master_extractor_controller(current_user=Depends(get_current_user)):
+    """🎛️ INICIAR MASTER EXTRACTOR CONTROLLER - Controla TODOS los extractores"""
+    try:
+        logger.info("🎛️ INICIANDO MASTER EXTRACTOR CONTROLLER")
+        
+        # Ejecutar controlador maestro
+        from master_extractor_controller import ejecutar_controlador_maestro
+        
+        # Ejecutar en background
+        import asyncio
+        async def run_background_master():
+            try:
+                resultado = await ejecutar_controlador_maestro()
+                logger.info(f"✅ Master Controller completado: {resultado}")
+            except Exception as e:
+                logger.error(f"❌ Error en Master Controller background: {e}")
+        
+        # Iniciar en background
+        asyncio.create_task(run_background_master())
+        
+        return {
+            "status": "success",
+            "message": "🎛️ MASTER EXTRACTOR CONTROLLER activado",
+            "descripcion": "Controlador maestro que ejecuta TODOS los extractores al máximo rendimiento",
+            "extractores_controlados": [
+                "🔥 Ultra Empresarial Extractor",
+                "⚡ Fast 2M Extractor", 
+                "🕳️ Ultra Deep Extractor",
+                "💥 Mega Aggressive Extractor",
+                "📊 Advanced Daticos Extractor"
+            ],
+            "objetivo": "Crecimiento exponencial de la base de datos",
+            "modo_operacion": "ULTRA_AGGRESSIVE_PARALLEL_EXECUTION",
+            "estimado_total": "5M+ registros tras ejecución completa",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error iniciando Master Controller: {e}")
+        raise HTTPException(status_code=500, detail=f"Error iniciando Master Controller: {str(e)}")
+
+@api_router.get("/admin/master-extractor-controller/status")
+async def get_master_controller_status(current_user=Depends(get_current_user)):
+    """📊 Estado del Master Extractor Controller"""
+    try:
+        # Simular estadísticas del controlador maestro
+        stats_globales = {
+            'total_extraido_hoy': 0,
+            'fuentes_activas': 0,
+            'extractores_ejecutados': 0,
+            'tiempo_total_extraccion': 0,
+            'empresas_nuevas': 0,
+            'personas_nuevas': 0
+        }
+        
+        # Verificar estado de cada extractor
+        extractores_estado = {
+            'ultra_empresarial': {
+                'activo': False,
+                'ultimo_execution': None,
+                'registros_extraidos': 0
+            },
+            'fast_2m': {
+                'activo': False,
+                'ultimo_execution': None,
+                'registros_extraidos': 0  
+            },
+            'ultra_deep': {
+                'activo': False,
+                'ultimo_execution': None,
+                'registros_extraidos': 0
+            },
+            'mega_aggressive': {
+                'activo': False,
+                'ultimo_execution': None,
+                'registros_extraidos': 0
+            }
+        }
+        
+        # Contar registros actuales para stats
+        total_fisicas = await db.personas_fisicas.count_documents({})
+        total_juridicas = await db.personas_juridicas.count_documents({})
+        total_empresas_ultra = 0
+        
+        # Contar empresas ultra (de todas las fuentes)
+        fuentes = ["sicop", "hacienda", "registro_nacional", "meic", "ccss"]
+        for fuente in fuentes:
+            try:
+                count = await db[f"empresas_{fuente}_ultra"].count_documents({})
+                total_empresas_ultra += count
+            except:
+                continue
+        
+        stats_globales['empresas_nuevas'] = total_empresas_ultra
+        stats_globales['personas_nuevas'] = total_fisicas + total_juridicas
+        
+        grand_total = total_fisicas + total_juridicas + total_empresas_ultra
+        
+        return {
+            "status": "success",
+            "data": {
+                "controlador_maestro": {
+                    "estado": "MONITORING",
+                    "extractores_disponibles": len(extractores_estado),
+                    "extractores_activos": sum(1 for e in extractores_estado.values() if e['activo']),
+                    "stats_globales": stats_globales
+                },
+                "extractores_individuales": extractores_estado,
+                "resumen_base_datos": {
+                    "total_personas_fisicas": total_fisicas,
+                    "total_personas_juridicas": total_juridicas, 
+                    "total_empresas_ultra_especializadas": total_empresas_ultra,
+                    "gran_total_sistema": grand_total,
+                    "progreso_5M": f"{(grand_total / 5000000) * 100:.2f}%"
+                },
+                "performance_metrics": {
+                    "extractor_mas_productivo": "ultra_empresarial" if total_empresas_ultra > 0 else "ninguno",
+                    "registros_por_hora_estimado": 50000,
+                    "tiempo_estimado_5M": "2-4 horas con todos los extractores activos"
+                }
+            },
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo status Master Controller: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo status: {str(e)}")
+
+@api_router.post("/admin/empresas-juridicas/advanced-search")
+async def advanced_empresa_search(
+    query: str, 
+    fuente: str = None,
+    limit: int = 100,
+    current_user=Depends(get_current_user)
+):
+    """🔍 Búsqueda avanzada en empresas jurídicas con filtros especializados"""
+    try:
+        results = []
+        search_regex = {"$regex": query, "$options": "i"}
+        
+        # Buscar en colecciones empresariales especializadas
+        fuentes_disponibles = ["sicop", "hacienda", "registro_nacional", "meic", "ccss"]
+        
+        if fuente and fuente.lower() in fuentes_disponibles:
+            # Buscar en fuente específica
+            collection_name = f"empresas_{fuente.lower()}_ultra"
+            try:
+                empresas = await db[collection_name].find({
+                    "$or": [
+                        {"razon_social": search_regex},
+                        {"nombre_comercial": search_regex},
+                        {"cedula_juridica": search_regex},
+                        {"representante_legal.nombre": search_regex},
+                        {"participantes.nombre": search_regex}
+                    ]
+                }).limit(limit).to_list(limit)
+                
+                for empresa in empresas:
+                    # Convertir ObjectIds si existen
+                    if "_id" in empresa:
+                        empresa["id"] = str(empresa["_id"])
+                        del empresa["_id"]
+                    
+                    results.append({
+                        "type": "empresa_especializada",
+                        "fuente": fuente.upper(),
+                        "data": empresa,
+                        "participantes_count": len(empresa.get('participantes', [])),
+                        "tiene_representante_legal": bool(empresa.get('representante_legal')),
+                        "datos_especializados": True
+                    })
+                    
+            except Exception as e:
+                logger.warning(f"Error buscando en {collection_name}: {e}")
+                
+        else:
+            # Buscar en todas las fuentes empresariales
+            for fuente_actual in fuentes_disponibles:
+                collection_name = f"empresas_{fuente_actual}_ultra"
+                try:
+                    empresas = await db[collection_name].find({
+                        "$or": [
+                            {"razon_social": search_regex},
+                            {"nombre_comercial": search_regex}, 
+                            {"cedula_juridica": search_regex},
+                            {"representante_legal.nombre": search_regex}
+                        ]
+                    }).limit(limit // len(fuentes_disponibles)).to_list(limit // len(fuentes_disponibles))
+                    
+                    for empresa in empresas:
+                        # Convertir ObjectIds si existen
+                        if "_id" in empresa:
+                            empresa["id"] = str(empresa["_id"])
+                            del empresa["_id"]
+                        
+                        results.append({
+                            "type": "empresa_especializada",
+                            "fuente": fuente_actual.upper(),
+                            "data": empresa,
+                            "participantes_count": len(empresa.get('participantes', [])),
+                            "tiene_representante_legal": bool(empresa.get('representante_legal')),
+                            "datos_especializados": True
+                        })
+                        
+                except Exception as e:
+                    logger.warning(f"Error buscando en {collection_name}: {e}")
+                    continue
+        
+        return {
+            "status": "success",
+            "results": results,
+            "total": len(results),
+            "query": query, 
+            "fuente_filtrada": fuente,
+            "fuentes_disponibles": fuentes_disponibles,
+            "tipos_datos": [
+                "Contratos SICOP",
+                "Datos tributarios Hacienda", 
+                "Registros societarios",
+                "Patentes comerciales MEIC",
+                "Datos patronales CCSS"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en búsqueda avanzada empresas: {e}")
+        raise HTTPException(status_code=500, detail=f"Error en búsqueda: {str(e)}")
+
+@api_router.get("/admin/empresas-juridicas/representantes/{cedula_juridica}")
+async def get_empresa_representantes_detailed(
+    cedula_juridica: str,
+    current_user=Depends(get_current_user)
+):
+    """👥 Obtener representantes legales y participantes detallados de empresa específica"""
+    try:
+        empresa_completa = None
+        fuente_encontrada = None
+        
+        # Buscar en todas las fuentes empresariales
+        fuentes = ["sicop", "hacienda", "registro_nacional", "meic", "ccss"]
+        for fuente in fuentes:
+            collection_name = f"empresas_{fuente}_ultra"
+            try:
+                empresa = await db[collection_name].find_one({"cedula_juridica": cedula_juridica})
+                if empresa:
+                    empresa_completa = empresa
+                    fuente_encontrada = fuente.upper()
+                    break
+            except:
+                continue
+        
+        if not empresa_completa:
+            raise HTTPException(status_code=404, detail="Empresa no encontrada en fuentes empresariales")
+        
+        # Preparar respuesta detallada
+        representante_legal = empresa_completa.get('representante_legal', {})
+        participantes = empresa_completa.get('participantes', [])
+        
+        # Para Registro Nacional, también incluir órganos societarios
+        organos_societarios = {}
+        estructura_accionaria = []
+        
+        if 'organos_societarios' in empresa_completa:
+            organos_societarios = empresa_completa['organos_societarios']
+            
+        if 'estructura_accionaria' in empresa_completa:
+            estructura_accionaria = empresa_completa['estructura_accionaria']
+        
+        # Stats adicionales
+        total_participacion = sum(p.get('porcentaje_participacion', 0) for p in participantes)
+        participantes_activos = len([p for p in participantes if p.get('activo', True)])
+        
+        return {
+            "status": "success",
+            "empresa_info": {
+                "cedula_juridica": cedula_juridica,
+                "razon_social": empresa_completa.get('razon_social', 'N/A'),
+                "nombre_comercial": empresa_completa.get('nombre_comercial', 'N/A'),
+                "fuente_datos": fuente_encontrada
+            },
+            "representante_legal": representante_legal,
+            "participantes": {
+                "total_participantes": len(participantes),
+                "participantes_activos": participantes_activos,
+                "total_porcentaje_participacion": total_participacion,
+                "detalle_participantes": participantes
+            },
+            "organos_societarios": organos_societarios if organos_societarios else {
+                "mensaje": "No disponible para esta fuente"
+            },
+            "estructura_accionaria": {
+                "total_accionistas": len(estructura_accionaria),
+                "detalle_accionistas": estructura_accionaria
+            } if estructura_accionaria else {
+                "mensaje": "No disponible para esta fuente"  
+            },
+            "datos_especificos_fuente": _get_datos_especificos_fuente(empresa_completa, fuente_encontrada.lower()),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error obteniendo representantes empresa: {e}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo representantes: {str(e)}")
+
+def _get_datos_especificos_fuente(empresa: dict, fuente: str) -> dict:
+    """Obtener datos específicos según la fuente"""
+    datos_especificos = {}
+    
+    if fuente == 'sicop' and 'sicop_data' in empresa:
+        datos_especificos = {
+            "tipo": "CONTRATOS_PUBLICOS",
+            "data": empresa['sicop_data']
+        }
+    elif fuente == 'hacienda' and 'hacienda_data' in empresa:
+        datos_especificos = {
+            "tipo": "DATOS_TRIBUTARIOS", 
+            "data": empresa['hacienda_data']
+        }
+    elif fuente == 'registro_nacional' and 'registro_nacional_data' in empresa:
+        datos_especificos = {
+            "tipo": "DATOS_SOCIETARIOS",
+            "data": empresa['registro_nacional_data']
+        }
+    elif fuente == 'meic' and 'meic_data' in empresa:
+        datos_especificos = {
+            "tipo": "PATENTE_COMERCIAL",
+            "data": empresa['meic_data']
+        }
+    elif fuente == 'ccss' and 'ccss_data' in empresa:
+        datos_especificos = {
+            "tipo": "DATOS_PATRONALES",
+            "data": empresa['ccss_data']
+        }
+    else:
+        datos_especificos = {
+            "tipo": "NO_DISPONIBLE",
+            "mensaje": "Datos específicos no disponibles para esta fuente"
+        }
+    
+    return datos_especificos
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,

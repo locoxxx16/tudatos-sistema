@@ -177,42 +177,75 @@ def authenticate_admin(token: str):
 # =============================================================================
 
 def buscar_en_base_completa(query: str, limit: int = 10):
-    """Buscar en la base de datos COMPLETA REAL - 2.8M+ registros"""
+    """🌟 BÚSQUEDA ULTRA COMPLETA - La base de datos más grande de Costa Rica
+    
+    FUSIONA datos de TODAS las fuentes:
+    - 2.67M personas físicas (fast2m)
+    - 668K personas jurídicas (fast2m)  
+    - 611K datos TSE híbridos
+    - 310K personas físicas adicionales
+    - 19K extracciones ultra profundas
+    - Verificación WhatsApp automática
+    - Análisis crediticio completo
+    - Redes sociales integradas
+    - Fotos múltiples fuentes
+    """
     try:
-        # Usar sistema integrado de 2.8M+ registros
-        results = search_all_data_sync(query, limit)
-        logger.info(f"🔍 Búsqueda integrada: '{query}' - {len(results)} resultados encontrados")
-        return results
+        logger.info(f"🚀 INICIANDO BÚSQUEDA ULTRA COMPLETA: '{query}'")
+        
+        # SISTEMA ULTRA COMPLETO - Fusión inteligente de TODAS las fuentes
+        result = perform_ultra_search_sync(query)
+        
+        if result["success"]:
+            logger.info(f"✅ BÚSQUEDA ULTRA COMPLETADA: {result['total_profiles']} perfiles súper completos")
+            logger.info(f"📊 Fuentes consultadas: {result['search_stats']['sources_consulted']}")
+            logger.info(f"🔍 Registros raw analizados: {result['search_stats']['total_raw_records']:,}")
+            
+            return result["profiles"][:limit]
+        else:
+            logger.warning(f"❌ Búsqueda ultra sin resultados: {query}")
+            return []
+            
     except Exception as e:
-        logger.error(f"Error en búsqueda integrada: {e}")
-        # Fallback to database_real
-        from database_real import get_database
-        database = get_database()
+        logger.error(f"❌ Error en búsqueda ultra completa: {e}")
         
-        query_lower = query.lower()
-        results = []
-        
-        for persona in database:
-            # Buscar en TODOS los campos
-            campos_busqueda = [
-                persona.get("nombre_completo", ""),
-                persona.get("cedula", ""),
-                persona.get("primer_nombre", ""),
-                " ".join([tel.get("numero", "") for tel in persona.get("telefonos_todos", [])]),
-                " ".join([email.get("email", "") for email in persona.get("emails_todos", [])]),
-                persona.get("empresa_actual_completa", {}).get("nombre", ""),
-                persona.get("padre_nombre_completo", ""),
-                persona.get("madre_nombre_completo", "")
-            ]
+        # FALLBACK a sistema integrado básico
+        try:
+            logger.info("🔄 Usando fallback - búsqueda integrada básica")
+            results = search_all_data_sync(query, limit)
+            return results
+        except Exception as e2:
+            logger.error(f"❌ Error en fallback: {e2}")
             
-            texto_busqueda = " ".join([str(campo) if campo is not None else "" for campo in campos_busqueda]).lower()
+            # FALLBACK FINAL a database_real
+            logger.info("🔄 Usando fallback final - database_real")
+            from database_real import get_database
+            database = get_database()
             
-            if query_lower in texto_busqueda:
-                results.append(persona)
-                if len(results) >= limit:
-                    break
-        
-        return results
+            query_lower = query.lower()
+            results = []
+            
+            for persona in database:
+                # Buscar en TODOS los campos
+                campos_busqueda = [
+                    persona.get("nombre_completo", ""),
+                    persona.get("cedula", ""),
+                    persona.get("primer_nombre", ""),
+                    " ".join([tel.get("numero", "") for tel in persona.get("telefonos_todos", [])]),
+                    " ".join([email.get("email", "") for email in persona.get("emails_todos", [])]),
+                    persona.get("empresa_actual_completa", {}).get("nombre", ""),
+                    persona.get("padre_nombre_completo", ""),
+                    persona.get("madre_nombre_completo", "")
+                ]
+                
+                texto_busqueda = " ".join([str(campo) if campo is not None else "" for campo in campos_busqueda]).lower()
+                
+                if query_lower in texto_busqueda:
+                    results.append(persona)
+                    if len(results) >= limit:
+                        break
+            
+            return results
 
 # =============================================================================
 # ENDPOINTS PRINCIPALES

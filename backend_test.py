@@ -283,53 +283,87 @@ class CriticalSystemTester:
         """Test 6: Search functionality - Verify search endpoints work with lazy loading"""
         print("🔍 Testing Search Functionality...")
         
-        # Test the main search endpoint that exists in main.py
-        test_queries = ["Maria", "Jose", "Carlos"]
+        # First, create a test user for search testing
+        test_user_data = {
+            "username": "search_test_user",
+            "email": "search@test.cr",
+            "password": "SearchTest123",
+            "plan": "Básico",
+            "customCredits": "10"
+        }
         
-        for query in test_queries:
-            try:
-                response = self.session.get(
-                    f"{self.base_url}/search/complete?q={query}&limit=5", 
+        try:
+            # Create user
+            create_response = self.session.post(
+                f"{self.base_url}/admin/users/create",
+                json=test_user_data,
+                timeout=15
+            )
+            
+            if create_response.status_code == 200 and create_response.json().get("success"):
+                # Now login as the user
+                user_session = requests.Session()
+                login_response = user_session.post(
+                    f"{self.base_url}/user/login",
+                    json={"username": "search_test_user", "password": "SearchTest123"},
                     timeout=10
                 )
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    if data.get("success"):
-                        total = data.get("total", 0)
-                        results = data.get("data", [])
+                if login_response.status_code == 200:
+                    login_data = login_response.json()
+                    if login_data.get("success"):
+                        user_token = login_data.get("token")
+                        user_session.headers.update({
+                            "Authorization": f"Bearer {user_token}"
+                        })
                         
-                        self.log_test(
-                            f"Search Complete '{query}'", 
-                            True, 
-                            f"Found {total} results"
-                        )
+                        # Test search with user token
+                        test_queries = ["Maria", "Jose"]
+                        
+                        for query in test_queries:
+                            try:
+                                response = user_session.get(
+                                    f"{self.base_url}/search/complete?q={query}&limit=5", 
+                                    timeout=10
+                                )
+                                
+                                if response.status_code == 200:
+                                    data = response.json()
+                                    if data.get("success"):
+                                        total = data.get("total", 0)
+                                        
+                                        self.log_test(
+                                            f"Search Complete '{query}'", 
+                                            True, 
+                                            f"Found {total} results"
+                                        )
+                                    else:
+                                        message = data.get("message", "")
+                                        self.log_test(
+                                            f"Search Complete '{query}'", 
+                                            False, 
+                                            f"Search failed: {message}", 
+                                            data
+                                        )
+                                else:
+                                    self.log_test(
+                                        f"Search Complete '{query}'", 
+                                        False, 
+                                        f"HTTP {response.status_code}", 
+                                        response.text
+                                    )
+                                    
+                            except Exception as e:
+                                self.log_test(f"Search Complete '{query}'", False, f"Exception: {str(e)}")
                     else:
-                        # Check if it's a credits/auth issue (which means search is working)
-                        message = data.get("message", "")
-                        if "créditos" in message.lower() or "token" in message.lower():
-                            self.log_test(
-                                f"Search Complete '{query}'", 
-                                True, 
-                                f"Search endpoint working (auth/credits issue expected): {message}"
-                            )
-                        else:
-                            self.log_test(
-                                f"Search Complete '{query}'", 
-                                False, 
-                                f"Search failed: {message}", 
-                                data
-                            )
+                        self.log_test("User Login for Search", False, f"Login failed: {login_data.get('message')}")
                 else:
-                    self.log_test(
-                        f"Search Complete '{query}'", 
-                        False, 
-                        f"HTTP {response.status_code}", 
-                        response.text
-                    )
-                    
-            except Exception as e:
-                self.log_test(f"Search Complete '{query}'", False, f"Exception: {str(e)}")
+                    self.log_test("User Login for Search", False, f"HTTP {login_response.status_code}")
+            else:
+                self.log_test("Create Search Test User", False, "Failed to create test user")
+                
+        except Exception as e:
+            self.log_test("Search Functionality Setup", False, f"Exception: {str(e)}")
         
         # Test user dashboard page (which contains search functionality)
         try:

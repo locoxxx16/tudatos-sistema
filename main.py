@@ -32,12 +32,43 @@ app = FastAPI(
 security = HTTPBearer()
 
 # =============================================================================
-# CREDENCIALES ADMIN (SIN MOSTRAR EN PÁGINA)
+# CONFIGURACIÓN ADMIN Y EMAILS
 # =============================================================================
 
 ADMIN_CREDENTIALS = {
     "username": "master_admin",
     "password": "TuDatos2025!Ultra"
+}
+
+# Email del propietario del sistema para notificaciones
+OWNER_EMAIL = "jykinternacional@mail.com"
+
+# Planes de créditos disponibles
+CREDIT_PLANS = {
+    "basico": {
+        "nombre": "Plan Básico",
+        "creditos": 100,
+        "precio_usd": 29,
+        "descripcion": "Ideal para consultas ocasionales"
+    },
+    "profesional": {
+        "nombre": "Plan Profesional", 
+        "creditos": 500,
+        "precio_usd": 99,
+        "descripcion": "Para empresas y uso profesional"
+    },
+    "premium": {
+        "nombre": "Plan Premium",
+        "creditos": 1500,
+        "precio_usd": 249,
+        "descripcion": "Acceso completo y consultas ilimitadas"
+    },
+    "corporativo": {
+        "nombre": "Plan Corporativo",
+        "creditos": 5000,
+        "precio_usd": 599,
+        "descripcion": "Solución empresarial completa"
+    }
 }
 
 # =============================================================================

@@ -781,11 +781,17 @@ def perform_ultra_search_sync(query: str):
     """Realizar búsqueda ultra completa de forma síncrona"""
     try:
         import asyncio
+        print(f"🔄 INICIANDO BÚSQUEDA SÍNCRONA PARA: {query}")
+        
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         result = loop.run_until_complete(perform_ultra_search(query))
         loop.close()
+        
+        print(f"✅ BÚSQUEDA SÍNCRONA COMPLETADA: SUCCESS={result.get('success')}")
+        logger.info(f"✅ Stats síncronos: búsqueda completada para {query}")
         return result
     except Exception as e:
-        logger.error(f"Error en búsqueda ultra completa: {e}")
+        print(f"❌ ERROR EN BÚSQUEDA SÍNCRONA: {e}")
+        logger.error(f"❌ Error en búsqueda síncrona: {e}")
         return {"success": False, "error": str(e), "query": query}

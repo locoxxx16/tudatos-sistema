@@ -92,34 +92,42 @@ def authenticate_admin(token: str):
 # =============================================================================
 
 def buscar_en_base_completa(query: str, limit: int = 10):
-    """Buscar en la base de datos COMPLETA REAL"""
-    from database_real import get_database
-    database = get_database()
-    
-    query_lower = query.lower()
-    results = []
-    
-    for persona in database:
-        # Buscar en TODOS los campos
-        campos_busqueda = [
-            persona.get("nombre_completo", ""),
-            persona.get("cedula", ""),
-            persona.get("primer_nombre", ""),
-            " ".join([tel.get("numero", "") for tel in persona.get("telefonos_todos", [])]),
-            " ".join([email.get("email", "") for email in persona.get("emails_todos", [])]),
-            persona.get("empresa_actual_completa", {}).get("nombre", ""),
-            persona.get("padre_nombre_completo", ""),
-            persona.get("madre_nombre_completo", "")
-        ]
+    """Buscar en la base de datos COMPLETA REAL - 2.8M+ registros"""
+    try:
+        # Usar sistema integrado de 2.8M+ registros
+        results = search_all_data_sync(query, limit)
+        logger.info(f"🔍 Búsqueda integrada: '{query}' - {len(results)} resultados encontrados")
+        return results
+    except Exception as e:
+        logger.error(f"Error en búsqueda integrada: {e}")
+        # Fallback to database_real
+        from database_real import get_database
+        database = get_database()
         
-        texto_busqueda = " ".join([str(campo) if campo is not None else "" for campo in campos_busqueda]).lower()
+        query_lower = query.lower()
+        results = []
         
-        if query_lower in texto_busqueda:
-            results.append(persona)
-            if len(results) >= limit:
-                break
-    
-    return results
+        for persona in database:
+            # Buscar en TODOS los campos
+            campos_busqueda = [
+                persona.get("nombre_completo", ""),
+                persona.get("cedula", ""),
+                persona.get("primer_nombre", ""),
+                " ".join([tel.get("numero", "") for tel in persona.get("telefonos_todos", [])]),
+                " ".join([email.get("email", "") for email in persona.get("emails_todos", [])]),
+                persona.get("empresa_actual_completa", {}).get("nombre", ""),
+                persona.get("padre_nombre_completo", ""),
+                persona.get("madre_nombre_completo", "")
+            ]
+            
+            texto_busqueda = " ".join([str(campo) if campo is not None else "" for campo in campos_busqueda]).lower()
+            
+            if query_lower in texto_busqueda:
+                results.append(persona)
+                if len(results) >= limit:
+                    break
+        
+        return results
 
 # =============================================================================
 # ENDPOINTS PRINCIPALES

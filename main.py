@@ -85,10 +85,13 @@ def authenticate_admin(token: str):
 
 def buscar_en_base_completa(query: str, limit: int = 10):
     """Buscar en la base de datos COMPLETA REAL"""
+    from database_real import get_database
+    database = get_database()
+    
     query_lower = query.lower()
     results = []
     
-    for persona in DATABASE_REAL_COMPLETE:
+    for persona in database:
         # Buscar en TODOS los campos
         campos_busqueda = [
             persona.get("nombre_completo", ""),

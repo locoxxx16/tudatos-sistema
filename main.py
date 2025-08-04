@@ -128,9 +128,14 @@ def buscar_en_base_completa(query: str, limit: int = 10):
 @app.get("/")
 async def pagina_principal():
     """Página principal SIN credenciales visibles"""
-    # Get stats using lazy loading
-    from database_real import get_stats
-    stats = get_stats()
+    # Get stats using integrated 2.8M+ database
+    try:
+        stats = get_stats_sync()
+        logger.info(f"🎯 Estadísticas integradas: {stats['total_personas']:,} registros")
+    except Exception as e:
+        logger.error(f"Error obteniendo estadísticas integradas: {e}")
+        # Fallback a database_real
+        stats = get_stats()
     
     return HTMLResponse(content=f"""
 <!DOCTYPE html>

@@ -130,29 +130,30 @@ class CriticalSystemTester:
         
         try:
             response = self.session.post(
-                f"{self.base_url}/auth/login",
+                f"{self.base_url}/admin/login",
                 json=ADMIN_CREDENTIALS,
                 timeout=10
             )
             
             if response.status_code == 200:
                 data = response.json()
-                if "access_token" in data and "user" in data:
-                    self.auth_token = data["access_token"]
+                if data.get("success") and "token" in data:
+                    self.auth_token = data["token"]
                     self.session.headers.update({
                         "Authorization": f"Bearer {self.auth_token}"
                     })
+                    admin_info = data.get("admin", {})
                     self.log_test(
                         "Admin Authentication", 
                         True, 
-                        f"Successfully logged in as {data['user']['username']}"
+                        f"Successfully logged in as {admin_info.get('username', 'admin')}"
                     )
                     return True
                 else:
                     self.log_test(
                         "Admin Authentication", 
                         False, 
-                        "Missing access_token or user in response", 
+                        "Missing success or token in response", 
                         data
                     )
             else:

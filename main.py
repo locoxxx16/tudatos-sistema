@@ -410,6 +410,8 @@ async def admin_login(request: Request):
 @app.get("/user/dashboard")
 async def user_dashboard():
     """Panel usuario con consultas REALES funcionando"""
+    stats = get_stats()
+    
     return HTMLResponse(content=f"""
 <!DOCTYPE html>
 <html lang="es">

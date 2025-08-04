@@ -15,7 +15,7 @@ import os
 from typing import Dict, List, Any
 
 # Configuration - Updated with correct credentials from review request
-BACKEND_URL = "https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagent.com/api"
+BACKEND_URL = "https://f4a6491c-d5f2-4d11-ac86-be231aaccdad.preview.emergentagent.com/api"
 
 # Admin credentials from review request
 ADMIN_CREDENTIALS = {
@@ -323,7 +323,7 @@ class UltraCompleteSystemTester:
         print("📊 Testing Admin Dashboard with Real Statistics...")
         
         try:
-            response = self.session.get(f"https://332af799-0cb6-41e3-b677-b093ae8e52d4.preview.emergentagent.com/admin/dashboard", timeout=15)
+            response = self.session.get(f"https://f4a6491c-d5f2-4d11-ac86-be231aaccdad.preview.emergentagent.com/admin/dashboard", timeout=15)
             
             if response.status_code == 200:
                 content = response.text

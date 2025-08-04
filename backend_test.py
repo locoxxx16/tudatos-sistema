@@ -202,53 +202,7 @@ class CriticalSystemTester:
         """Test 5: Database access endpoints - Verify 5000-record database access"""
         print("💾 Testing Database Access Endpoints...")
         
-        # Test search endpoint to verify database access
-        try:
-            # Use the search endpoint to verify database connectivity
-            response = self.session.get(
-                f"{self.base_url}/search/complete?q=test&limit=1",
-                timeout=15
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                if data.get("success"):
-                    total = data.get("total", 0)
-                    results = data.get("data", [])
-                    
-                    self.log_test(
-                        "Database Access - Search Test", 
-                        True, 
-                        f"Database accessible, search returned {total} results"
-                    )
-                else:
-                    # Check if it's a credits issue (which means DB is accessible)
-                    message = data.get("message", "")
-                    if "créditos" in message.lower():
-                        self.log_test(
-                            "Database Access - Search Test", 
-                            True, 
-                            f"Database accessible (credits issue expected): {message}"
-                        )
-                    else:
-                        self.log_test(
-                            "Database Access - Search Test", 
-                            False, 
-                            f"Search failed: {message}", 
-                            data
-                        )
-            else:
-                self.log_test(
-                    "Database Access - Search Test", 
-                    False, 
-                    f"HTTP {response.status_code}", 
-                    response.text
-                )
-                
-        except Exception as e:
-            self.log_test("Database Access - Search Test", False, f"Exception: {str(e)}")
-        
-        # Test user profile endpoint to verify user database access
+        # Test database access through user profile (which should work with admin token)
         try:
             response = self.session.get(f"{self.base_url}/user/profile", timeout=10)
             
@@ -278,6 +232,46 @@ class CriticalSystemTester:
                 
         except Exception as e:
             self.log_test("Database Access - User Profile", False, f"Exception: {str(e)}")
+        
+        # Test database lazy loading by checking if get_database() works
+        try:
+            # Import and test the lazy loading functions directly
+            import sys
+            sys.path.append('/app')
+            from database_real import get_database, get_stats
+            
+            # Test lazy loading
+            database = get_database()
+            stats = get_stats()
+            
+            if database and len(database) > 0:
+                self.log_test(
+                    "Database Lazy Loading", 
+                    True, 
+                    f"Database loaded successfully with {len(database)} records"
+                )
+            else:
+                self.log_test(
+                    "Database Lazy Loading", 
+                    False, 
+                    "Database is empty or failed to load"
+                )
+                
+            if stats and "total_personas" in stats:
+                self.log_test(
+                    "Stats Calculator", 
+                    True, 
+                    f"Stats calculated: {stats['total_personas']} personas"
+                )
+            else:
+                self.log_test(
+                    "Stats Calculator", 
+                    False, 
+                    "Stats calculation failed"
+                )
+                
+        except Exception as e:
+            self.log_test("Database Lazy Loading Test", False, f"Exception: {str(e)}")
     
     def test_search_functionality(self):
         """Test 6: Search functionality - Verify search endpoints work with lazy loading"""

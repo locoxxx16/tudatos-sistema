@@ -65,6 +65,8 @@ class FinalDeployVerification:
                     total_records = data["registros_totales"]
                 elif "system_overview" in data and "total_records" in data["system_overview"]:
                     total_records = data["system_overview"]["total_records"]
+                elif "database" in data and "personas_completas" in data["database"]:
+                    total_records = data["database"]["personas_completas"]
                 
                 # Check if we have the expected 4.2M+ records
                 expected_records = 4283709

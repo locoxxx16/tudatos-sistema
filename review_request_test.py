@@ -297,7 +297,7 @@ class ReviewRequestTester:
             "empresa": "Test Company Ultra",
             "email": "test@company.cr",
             "telefono": "+506-8888-9999",
-            "plan": "profesional"
+            "plan_solicitado": "profesional"
         }
         
         try:

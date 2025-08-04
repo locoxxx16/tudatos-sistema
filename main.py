@@ -1484,6 +1484,73 @@ async def change_admin_password(request: Request):
     except Exception as e:
         return {"success": False, "message": str(e)}
 
+# =============================================================================
+# ENDPOINTS DE REGISTRO DE USUARIOS
+# =============================================================================
+
+@app.post("/api/user/register-request")
+async def register_user_request(request: Request):
+    """Endpoint para solicitudes de registro de usuarios"""
+    try:
+        data = await request.json()
+        
+        # Validar datos requeridos
+        required_fields = ['nombre_completo', 'email', 'telefono', 'plan_solicitado']
+        for field in required_fields:
+            if not data.get(field):
+                return {"success": False, "message": f"Campo requerido: {field}"}
+        
+        # Validar que el plan existe
+        if data['plan_solicitado'] not in CREDIT_PLANS:
+            return {"success": False, "message": "Plan no válido"}
+        
+        # Crear solicitud de registro
+        registration_data = {
+            "id": str(uuid.uuid4()),
+            "nombre_completo": data['nombre_completo'],
+            "email": data['email'],
+            "telefono": data['telefono'],
+            "empresa": data.get('empresa', ''),
+            "plan_solicitado": data['plan_solicitado'],
+            "motivo_uso": data.get('motivo_uso', ''),
+            "fecha_solicitud": datetime.utcnow().isoformat(),
+            "estado": "pendiente"
+        }
+        
+        # Guardar solicitud
+        registration_requests.append(registration_data)
+        
+        # Notificar al propietario
+        notify_new_user_registration(registration_data)
+        
+        logger.info(f"✅ Nueva solicitud de registro: {data['email']} - Plan: {data['plan_solicitado']}")
+        
+        return {
+            "success": True,
+            "message": "Solicitud enviada correctamente. Nos pondremos en contacto contigo pronto.",
+            "solicitud_id": registration_data["id"]
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error en registro: {e}")
+        return {"success": False, "message": "Error interno del servidor"}
+
+@app.get("/api/admin/registration-requests")
+async def get_registration_requests():
+    """Obtener todas las solicitudes de registro (solo admin)"""
+    return {
+        "success": True,
+        "requests": registration_requests,
+        "total": len(registration_requests)
+    }
+
+@app.get("/api/credit-plans")
+async def get_credit_plans():
+    """Obtener planes de créditos disponibles"""
+    return {
+        "success": True,
+        "plans": CREDIT_PLANS
+    }
 # Health check
 @app.get("/api/health")
 async def health_check():

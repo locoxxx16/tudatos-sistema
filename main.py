@@ -44,7 +44,7 @@ ADMIN_CREDENTIALS = {
 }
 
 # Email del propietario del sistema para notificaciones
-OWNER_EMAIL = "jykinternacional@mail.com"
+OWNER_EMAIL = "jykinternacional@gmail.com"
 
 # Planes de créditos disponibles
 CREDIT_PLANS = {

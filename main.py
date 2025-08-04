@@ -10,7 +10,9 @@ import hashlib
 import logging
 import secrets
 import os
-# Import for lazy loading - keeping legacy import for fallbacks
+# Import para integración completa de 2.8M+ registros
+from database_integration import get_stats_sync, search_all_data_sync
+# Import para lazy loading - keeping legacy import for fallbacks
 from database_real import get_database, get_stats
 try:
     from database_real import DATABASE_REAL_COMPLETE, STATS_CALCULATOR

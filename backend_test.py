@@ -29,7 +29,7 @@ NOTIFICATION_EMAIL = "jykinternacional@gmail.com"
 
 class UltraEmpresarialSystemTester:
     def __init__(self):
-        self.base_url = BACKEND_URL
+        self.base_url = API_URL
         self.session = requests.Session()
         self.auth_token = None
         self.test_results = []

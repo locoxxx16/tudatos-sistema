@@ -15,38 +15,6 @@ import time
 LOCAL_MONGO = "mongodb://localhost:27017"
 LOCAL_DB = "test_database"
 
-def get_heroku_config():
-    """Obtiene la URL de ObjectRocket desde Heroku"""
-    try:
-        print("🔍 Obteniendo credenciales de Heroku...")
-        
-        # Ejecutar heroku config para obtener las variables
-        result = subprocess.run(['heroku', 'config', '--app', 'datatico-db', '--json'], 
-                               capture_output=True, text=True)
-        
-        if result.returncode != 0:
-            print("❌ Error ejecutando heroku config:")
-            print(result.stderr)
-            return None
-            
-        config = json.loads(result.stdout)
-        
-        # Buscar la URL de ObjectRocket
-        objectrocket_url = None
-        for key, value in config.items():
-            if 'OBMONGO' in key and 'URL' in key:
-                objectrocket_url = value
-                print(f"✅ Encontrada URL: {key}")
-                break
-                
-        return objectrocket_url
-        
-    except FileNotFoundError:
-        print("❌ Heroku CLI no encontrado. Instalando...")
-        return None
-    except Exception as e:
-        print(f"❌ Error obteniendo config: {e}")
-        return None
 
 # URLs de ObjectRocket obtenidas de Heroku
 OBJECTROCKET_RS_URL = "mongodb://iad2-c19-0.mongo.objectrocket.com:52752,iad2-c19-1.mongo.objectrocket.com:52752,iad2-c19-2.mongo.objectrocket.com:52752/?replicaSet=592734bd19354a7d81c1402dd6eed9f4&ssl=true"

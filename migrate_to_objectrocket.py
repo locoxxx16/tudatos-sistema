@@ -117,13 +117,17 @@ def migrate_database():
     print("🚀 INICIANDO MIGRACIÓN A OBJECTROCKET")
     print("=" * 50)
     
-    # Obtener URL de ObjectRocket
-    objectrocket_url = get_heroku_config()
+    # Obtener credenciales de ObjectRocket
+    objectrocket_url, database_name = get_objectrocket_credentials()
     
     if not objectrocket_url:
-        print("❌ No se pudo obtener la URL de ObjectRocket")
-        print("📋 Intenta manualmente con:")
-        print("   heroku config --app datatico-db")
+        print("❌ No se pudieron obtener las credenciales de ObjectRocket")
+        return
+    
+    # Probar conexión antes de continuar
+    if not test_connection(objectrocket_url, database_name):
+        print("❌ No se pudo conectar a ObjectRocket")
+        print("💡 Verifica las credenciales e intenta nuevamente")
         return
     
     print(f"🔗 URL ObjectRocket: {objectrocket_url[:50]}...")
@@ -135,13 +139,6 @@ def migrate_database():
     
     print("🔌 Conectando a ObjectRocket...")
     objectrocket_client = pymongo.MongoClient(objectrocket_url)
-    
-    # Extraer nombre de base de datos de la URL
-    # URL format: mongodb://user:pass@host/database_name
-    database_name = objectrocket_url.split('/')[-1].split('?')[0]
-    if database_name in ['', 'YOUR_DATABASE_NAME']:
-        database_name = "datatico_cr"  # nombre por defecto
-    
     objectrocket_db = objectrocket_client[database_name]
     
     print(f"📊 Base de datos ObjectRocket: {database_name}")

@@ -2036,72 +2036,32 @@ async def get_credit_plans():
         "plans": CREDIT_PLANS
     }
 # Health check
+# =============================================================================
+# HEALTH CHECK CON CONTEO REAL
+# =============================================================================
+
 @app.get("/api/health")
-async def health_check():
-    """Health check del sistema COMPLETO y FUNCIONANDO"""
+async def health():
+    """Health check con estadísticas REALES de la base de datos"""
     try:
-        # Get stats using integrated 2.8M+ database
-        stats = get_stats_sync()
-        logger.info(f"🎯 Health check con {stats['total_personas']:,} registros integrados")
+        # Usar la función real de conteo
+        from database_integration import get_real_database_count
+        db_stats = get_real_database_count()
         
         return {
             "status": "SISTEMA_ULTRA_FUNCIONANDO_COMPLETO",
-            "version": "6.0.0",
+            "total_records": db_stats["total_personas"],
+            "database_healthy": db_stats["database_healthy"],
+            "collections_found": db_stats["collections_found"],
             "timestamp": datetime.utcnow().isoformat(),
-            "database": {
-                "personas_completas": stats["total_personas"],
-                "fotos_integradas": stats["total_fotos"],
-                "telefonos_registrados": stats["total_telefonos"],
-                "emails_registrados": stats["total_emails"]
-            },
-            "system": {
-                "login_usuarios_funcionando": True,
-                "consultas_reales_funcionando": True,
-                "panel_admin_funcionando": True,
-                "credenciales_admin_ocultas": True,
-                "base_datos_completa": True,
-                "fotos_daticos_integradas": True,
-                "extractores_configurados": True,
-                "sistema_creditos_funcionando": True
-            },
-            "daticos": {
-                "cuenta_cabezas": DATICOS_REAL["CABEZAS"]["consultas_hoy"],
-                "cuenta_saraya": DATICOS_REAL["Saraya"]["consultas_hoy"],
-                "ambas_activas": True
-            }
+            "message": f"Sistema funcionando con {db_stats['total_personas']:,} registros"
         }
     except Exception as e:
-        # Fallback to get_stats if integration fails
-        try:
-            stats = get_stats()
-        except:
-            stats = {"total_personas": 5000, "total_fotos": 15000, "total_telefonos": 8000, "total_emails": 7500}
-        
+        logger.error(f"❌ Error en health check: {e}")
         return {
-            "status": "SISTEMA_ULTRA_FUNCIONANDO_COMPLETO",
-            "version": "6.0.0",
-            "timestamp": datetime.utcnow().isoformat(),
-            "database": {
-                "personas_completas": stats["total_personas"],
-                "fotos_integradas": stats["total_fotos"],
-                "telefonos_registrados": stats["total_telefonos"],
-                "emails_registrados": stats["total_emails"]
-            },
-            "system": {
-                "login_usuarios_funcionando": True,
-                "consultas_reales_funcionando": True,
-                "panel_admin_funcionando": True,
-                "credenciales_admin_ocultas": True,
-                "base_datos_completa": True,
-                "fotos_daticos_integradas": True,
-                "extractores_configurados": True,
-                "sistema_creditos_funcionando": True
-            },
-            "daticos": {
-                "cuenta_cabezas": DATICOS_REAL["CABEZAS"]["consultas_hoy"],
-                "cuenta_saraya": DATICOS_REAL["Saraya"]["consultas_hoy"],
-                "ambas_activas": True
-            }
+            "status": "ERROR", 
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
         }
 
 # =============================================================================

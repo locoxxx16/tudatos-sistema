@@ -25,7 +25,7 @@ import os
 from typing import Dict, List, Any
 
 # Configuration - Using production URL from frontend/.env
-BACKEND_URL = "https://89e24cda-edb1-49a8-aa6d-fa1a1226147e.preview.emergentagent.com"
+BACKEND_URL = "https://6916a4c6-b8c5-4b4d-89fd-1f4552be8c9e.preview.emergentagent.com"
 API_URL = f"{BACKEND_URL}/api"
 
 # Admin credentials from review request

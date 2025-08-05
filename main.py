@@ -525,40 +525,49 @@ async def pagina_principal():
 # Login endpoints y TODOS los endpoints completos
 @app.post("/api/user/login")
 async def user_login(request: Request):
-    """Login de usuario REAL"""
+    """Login de usuario REAL con sesión única"""
     data = await request.json()
     username = data.get("username", "")
     password = data.get("password", "")
     
     # Buscar usuario
     user = None
-    for user_data in users_database.values():
-        if user_data.get("username") == username:
+    user_id = None
+    for uid, user_data in users_database.items():
+        if user_data.get("username") == username and user_data.get("role") == "user":
             user = user_data
+            user_id = uid
             break
     
     if user and verify_password(password, user["password_hash"]):
         if not user["is_active"]:
             return {"success": False, "message": "Usuario inactivo"}
         
+        # Generar nuevo token único
+        new_token = f"{user_id}_token_{secrets.token_hex(8)}"
+        
+        # Crear nueva sesión (invalidando la anterior)
+        create_user_session(user_id, new_token)
+        
         # Actualizar último login
         user["last_login"] = datetime.utcnow().isoformat()
         
         return {
             "success": True,
-            "token": f"{user['id']}_token",
+            "token": new_token,
             "user": {
                 "username": user["username"],
                 "credits": user["credits"],
                 "plan": user["plan"]
-            }
+            },
+            "message": "Sesión única activada - si tenías otra sesión, fue cerrada automáticamente"
         }
     
     return {"success": False, "message": "Credenciales incorrectas"}
 
 @app.post("/api/admin/login")
 async def admin_login(request: Request):
-    """Login de admin SIN mostrar credenciales"""
+    """Login de admin SIN mostrar credenciales con sesión única"""
     data = await request.json()
     username = data.get("username", "")
     password = data.get("password", "")
@@ -566,13 +575,20 @@ async def admin_login(request: Request):
     if (username == ADMIN_CREDENTIALS["username"] and 
         password == ADMIN_CREDENTIALS["password"]):
         
+        # Generar nuevo token único
+        new_token = f"admin_master_token_{secrets.token_hex(8)}"
+        
+        # Crear nueva sesión admin (invalidando la anterior)
+        create_admin_session("master_admin", new_token)
+        
         # Actualizar login
         users_database["master_admin"]["last_login"] = datetime.utcnow().isoformat()
         
         return {
             "success": True,
-            "token": "admin_master_token",
-            "admin": {"username": username, "role": "admin"}
+            "token": new_token,
+            "admin": {"username": username, "role": "admin"},
+            "message": "Sesión única admin activada - sesiones anteriores invalidadas"
         }
     
     return {"success": False, "message": "Credenciales admin incorrectas"}

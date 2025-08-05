@@ -91,6 +91,14 @@ DATICOS_REAL = {
 # SISTEMA DE USUARIOS COMPLETO
 # =============================================================================
 
+# =============================================================================
+# SISTEMA DE USUARIOS COMPLETO CON SESIÓN ÚNICA
+# =============================================================================
+
+# Almacenar tokens activos para sesión única
+active_user_tokens = {}  # user_id: token_actual
+active_admin_tokens = {}  # admin: token_actual
+
 users_database = {
     "master_admin": {
         "id": "master_admin",
@@ -102,7 +110,8 @@ users_database = {
         "plan": "Admin",
         "is_active": True,
         "created_at": datetime.utcnow().isoformat(),
-        "last_login": None
+        "last_login": None,
+        "session_token": None  # Token de sesión actual
     }
 }
 # =============================================================================

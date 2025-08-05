@@ -1216,7 +1216,7 @@ async def ultra_complete_search(query: str):
                 "search_type": result.get("search_type", "general"),
                 "profiles": result["profiles"],
                 "stats": {
-                    "database_size": "4,283,709 registros",
+                    "database_size": f"{db_stats['total_personas']:,} registros" if db_stats else "5,947,094 registros",
                     "sources_consulted": result["search_stats"]["sources_consulted"],
                     "raw_records_analyzed": result["search_stats"]["total_raw_records"],
                     "data_fusion_applied": result["search_stats"]["data_fusion_applied"],

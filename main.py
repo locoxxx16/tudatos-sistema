@@ -171,17 +171,47 @@ def verify_password(password: str, hashed: str) -> bool:
     return hash_password(password) == hashed
 
 def authenticate_user(token: str):
-    """Autenticar usuario por token"""
+    """Autenticar usuario por token con sesión única"""
     for user_id, user in users_database.items():
-        if f"{user_id}_token" == token and user["is_active"]:
-            return user
+        expected_token = f"{user_id}_token"
+        if expected_token == token and user["is_active"]:
+            # Verificar que sea el token de sesión actual
+            if active_user_tokens.get(user_id) == token:
+                return user
     return None
 
 def authenticate_admin(token: str):
-    """Autenticar admin"""
+    """Autenticar admin con sesión única"""
     if token == "admin_master_token":
-        return users_database["master_admin"]
+        admin_user = users_database["master_admin"]
+        # Verificar que sea el token de sesión actual
+        if active_admin_tokens.get("master_admin") == token:
+            return admin_user
     return None
+
+def invalidate_user_session(user_id: str):
+    """Invalidar sesión actual del usuario"""
+    if user_id in active_user_tokens:
+        del active_user_tokens[user_id]
+    if user_id in active_admin_tokens:
+        del active_admin_tokens[user_id]
+
+def create_user_session(user_id: str, token: str):
+    """Crear nueva sesión para usuario (invalidando la anterior)"""
+    # Invalidar sesión anterior si existe
+    invalidate_user_session(user_id)
+    # Crear nueva sesión
+    active_user_tokens[user_id] = token
+    users_database[user_id]["session_token"] = token
+
+def create_admin_session(admin_id: str, token: str):
+    """Crear nueva sesión para admin (invalidando la anterior)"""
+    # Invalidar sesión anterior si existe
+    if admin_id in active_admin_tokens:
+        del active_admin_tokens[admin_id]
+    # Crear nueva sesión
+    active_admin_tokens[admin_id] = token
+    users_database[admin_id]["session_token"] = token
 
 # =============================================================================
 # BÚSQUEDA COMPLETA EN BASE DE DATOS REAL

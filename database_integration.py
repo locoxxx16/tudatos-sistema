@@ -211,6 +211,59 @@ def get_stats_sync():
             "total_emails": 6425563
         }
 
+def get_real_database_count():
+    """Obtener conteo real de la base de datos de forma síncrona"""
+    try:
+        import pymongo
+        client = pymongo.MongoClient('mongodb://localhost:27017')
+        db = client['test_database']
+        
+        collections_to_check = [
+            'personas_fisicas_fast2m',     # 4M+ registros
+            'personas_juridicas_fast2m',   # 1M+ registros
+            'tse_datos_hibridos',          # 611K registros
+            'personas_fisicas',            # 310K registros
+            'personas_juridicas',          # registros adicionales
+            'ultra_deep_extraction',       # registros ultra
+            'daticos_datos_masivos',
+            'mega_extraction_data',
+            'portal_datos_abiertos',
+            'colegios_profesionales',
+            'registro_nacional_data'
+        ]
+        
+        total_count = 0
+        collection_counts = {}
+        
+        for collection_name in collections_to_check:
+            try:
+                count = db[collection_name].count_documents({})
+                if count > 0:
+                    collection_counts[collection_name] = count
+                    total_count += count
+                    logger.info(f"📊 {collection_name}: {count:,} registros")
+            except Exception as e:
+                logger.debug(f"⚠️  Colección {collection_name} no encontrada: {e}")
+        
+        client.close()
+        logger.info(f"🎯 TOTAL REAL DATABASE: {total_count:,} registros")
+        
+        return {
+            "total_personas": total_count,
+            "collection_counts": collection_counts,
+            "database_healthy": True,
+            "collections_found": len(collection_counts)
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error contando base de datos real: {e}")
+        return {
+            "total_personas": 0,
+            "collection_counts": {},
+            "database_healthy": False,
+            "error": str(e)
+        }
+
 def search_all_data_sync(query: str, limit: int = 10):
     """Buscar datos de forma síncrona (para compatibilidad)"""
     try:

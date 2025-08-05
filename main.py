@@ -172,11 +172,11 @@ def verify_password(password: str, hashed: str) -> bool:
 
 def authenticate_user(token: str):
     """Autenticar usuario por token con sesión única"""
-    for user_id, user in users_database.items():
-        expected_token = f"{user_id}_token"
-        if expected_token == token and user["is_active"]:
-            # Verificar que sea el token de sesión actual
-            if active_user_tokens.get(user_id) == token:
+    # Verificar si el token está en las sesiones activas de usuario
+    for user_id, active_token in active_user_tokens.items():
+        if active_token == token:
+            user = users_database.get(user_id)
+            if user and user["is_active"]:
                 return user
     return None
 

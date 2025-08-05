@@ -182,11 +182,10 @@ def authenticate_user(token: str):
 
 def authenticate_admin(token: str):
     """Autenticar admin con sesión única"""
-    if token == "admin_master_token":
-        admin_user = users_database["master_admin"]
-        # Verificar que sea el token de sesión actual
-        if active_admin_tokens.get("master_admin") == token:
-            return admin_user
+    # Verificar si el token está en las sesiones activas de admin
+    for admin_id, active_token in active_admin_tokens.items():
+        if active_token == token:
+            return users_database.get(admin_id)
     return None
 
 def invalidate_user_session(user_id: str):

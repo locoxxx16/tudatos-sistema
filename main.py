@@ -1194,6 +1194,14 @@ async def ultra_complete_search(query: str):
     try:
         logger.info(f"🌟 BÚSQUEDA ULTRA COMPLETA INICIADA: '{query}'")
         
+        # Obtener estadísticas REALES de la base de datos
+        try:
+            from database_integration import get_real_database_count
+            db_stats = get_real_database_count()
+        except Exception as e:
+            logger.warning(f"No se pudieron obtener estadísticas reales: {e}")
+            db_stats = None
+        
         # Realizar búsqueda ultra completa ASYNC
         from ultra_complete_search import perform_ultra_search
         result = await perform_ultra_search(query)

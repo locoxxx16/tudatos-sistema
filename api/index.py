@@ -1,24 +1,31 @@
+"""
+HANDLER PARA VERCEL - Aplicación ligera serverless
+Evita problemas de importación y base de datos pesada
+"""
 import sys
 import os
 
-# Agregar el directorio padre al path para poder importar main.py
+# Configurar path para importaciones
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.insert(0, parent_dir)
+sys.path.insert(0, current_dir)
 
 try:
-    from main import app
-    print("✅ Aplicación importada exitosamente")
+    # Importar aplicación ligera para Vercel
+    from vercel_app import app
+    print("✅ Aplicación Vercel ligera importada exitosamente")
 except ImportError as e:
-    print(f"❌ Error importando main.py: {e}")
-    sys.path.append("/var/task")  # Vercel specific path
+    print(f"❌ Error importando vercel_app: {e}")
+    # Fallback a aplicación principal si es necesario
+    parent_dir = os.path.dirname(current_dir)
+    sys.path.insert(0, parent_dir)
     from main import app
+    print("⚠️ Usando aplicación principal como fallback")
 
-# Vercel serverless handler - Esto es lo que Vercel busca
-app_handler = app
-
-# También mantener 'app' para compatibilidad
+# Handler para Vercel serverless
 handler = app
+
+# También exportar como 'app' para compatibilidad
+app_handler = app
 
 # Para desarrollo local
 if __name__ == "__main__":

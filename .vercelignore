@@ -1,18 +1,64 @@
-# Archivos pesados que no necesita Vercel
+# CONFIGURACIÓN OPTIMIZADA PARA VERCEL - SOLO /api/ ES NECESARIO
+
+# Excluir carpetas pesadas completas
 backend/
 frontend/
 tests/
 scripts/
+railway_files/
+
+# Excluir archivos de logs pesados
 *.log
+extraction_logs/
+daily_extractions/
+update_reports/
+
+# Excluir archivos Python compilados
 *.pyc
+*.pyo
 __pycache__/
+.pytest_cache/
+
+# Excluir archivos de configuración local
 .env
-database_integration.py
+.env.local
+.env.development
+.env.production
+
+# Excluir archivos del sistema principal (no necesarios para Vercel)
 main.py
+main_*.py
+database_integration.py
+database_real.py
 ultra_complete_search.py
 auto_regeneration_system.py
-database_real.py
+cedula_*.py
+comprehensive_*.py
+ultra_*.py
+final_*.py
+find_*.py
+
+# Excluir archivos de documentación
 *.md
-railway_files/
+README.*
+
+# Excluir dependencias de Node.js si existen
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Excluir archivos de control de versiones
 .git/
+.gitignore
 .emergent/
+
+# Excluir archivos de configuración de otros servicios
+railway.json
+docker-compose*.yml
+Dockerfile*
+yarn.lock
+
+# Excluir archivos de configuración mixta
+vercel_*.json
+*_backup.*

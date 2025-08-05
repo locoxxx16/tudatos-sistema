@@ -1,5 +1,25 @@
 {
   "version": 2,
-  "builds": [{"src": "api/single.py", "use": "@vercel/python"}],
-  "routes": [{"src": "/(.*)", "dest": "api/single.py"}]
+  "builds": [
+    {
+      "src": "api/single.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/single.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "api/single.py"
+    }
+  ],
+  "env": {
+    "MONGO_URL": "@mongo_url"
+  }
 }

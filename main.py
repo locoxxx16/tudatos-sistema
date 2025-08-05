@@ -591,7 +591,97 @@ async def admin_login(request: Request):
             "message": "Sesión única admin activada - sesiones anteriores invalidadas"
         }
     
-    return {"success": False, "message": "Credenciales admin incorrectas"}
+@app.post("/api/user/logout")
+async def user_logout(request: Request):
+    """Cerrar sesión de usuario"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return {"success": False, "message": "Token requerido"}
+        
+        token = auth_header.split(" ")[1]
+        
+        # Encontrar usuario por token
+        for user_id, active_token in active_user_tokens.items():
+            if active_token == token:
+                invalidate_user_session(user_id)
+                return {"success": True, "message": "Sesión cerrada exitosamente"}
+        
+        return {"success": False, "message": "Sesión no encontrada"}
+        
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@app.post("/api/admin/logout")
+async def admin_logout(request: Request):
+    """Cerrar sesión de admin"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            return {"success": False, "message": "Token requerido"}
+        
+        token = auth_header.split(" ")[1]
+        
+        # Verificar token admin
+        for admin_id, active_token in active_admin_tokens.items():
+            if active_token == token:
+                invalidate_user_session(admin_id)
+                return {"success": True, "message": "Sesión admin cerrada exitosamente"}
+        
+        return {"success": False, "message": "Sesión admin no encontrada"}
+        
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+
+@app.get("/api/admin/active-sessions")
+async def get_active_sessions(request: Request):
+    """Ver sesiones activas (solo admin)"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token admin requerido")
+        
+        token = auth_header.split(" ")[1]
+        admin = authenticate_admin(token)
+        
+        if not admin:
+            raise HTTPException(status_code=401, detail="Token admin inválido")
+        
+        active_sessions = {
+            "user_sessions": len(active_user_tokens),
+            "admin_sessions": len(active_admin_tokens),
+            "user_details": [],
+            "admin_details": []
+        }
+        
+        # Detalles de sesiones de usuario
+        for user_id, token in active_user_tokens.items():
+            user = users_database.get(user_id)
+            if user:
+                active_sessions["user_details"].append({
+                    "username": user["username"],
+                    "last_login": user["last_login"],
+                    "session_active": True
+                })
+        
+        # Detalles de sesiones admin
+        for admin_id, token in active_admin_tokens.items():
+            admin_user = users_database.get(admin_id)
+            if admin_user:
+                active_sessions["admin_details"].append({
+                    "username": admin_user["username"], 
+                    "last_login": admin_user["last_login"],
+                    "session_active": True
+                })
+        
+        return {
+            "success": True,
+            "data": active_sessions,
+            "message": f"Sistema de sesión única: {active_sessions['user_sessions']} usuarios, {active_sessions['admin_sessions']} admins"
+        }
+        
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
 # =============================================================================
 # PANEL DE USUARIO CON CONSULTAS REALES FUNCIONANDO

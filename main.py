@@ -1696,6 +1696,48 @@ async def list_users(request: Request):
     except Exception as e:
         return {"success": False, "message": str(e)}
 
+@app.get("/api/admin/users/list")
+async def list_users(request: Request):
+    """Listar todos los usuarios (solo admin)"""
+    try:
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token admin requerido")
+        
+        token = auth_header.split(" ")[1]
+        admin = authenticate_admin(token)
+        
+        if not admin:
+            raise HTTPException(status_code=401, detail="Token admin inválido")
+        
+        # Filtrar solo usuarios (no admin)
+        user_list = []
+        for user_id, user_data in users_database.items():
+            if user_data.get("role") == "user":
+                user_list.append({
+                    "id": user_data["id"],
+                    "username": user_data["username"],
+                    "email": user_data["email"],
+                    "credits": user_data["credits"],
+                    "plan": user_data["plan"],
+                    "is_active": user_data["is_active"],
+                    "created_at": user_data["created_at"],
+                    "last_login": user_data.get("last_login"),
+                    "session_active": user_data["id"] in active_user_tokens
+                })
+        
+        return {
+            "success": True,
+            "users": user_list,
+            "total_users": len(user_list),
+            "active_sessions": len(active_user_tokens),
+            "message": f"Total de usuarios: {len(user_list)}, Sesiones activas: {len(active_user_tokens)}"
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Error listando usuarios: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/admin/users/create")
 async def create_user_admin(request: Request):
     """Crear usuario desde admin"""

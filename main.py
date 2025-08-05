@@ -1697,7 +1697,7 @@ async def list_users(request: Request):
         return {"success": False, "message": str(e)}
 
 @app.get("/api/admin/users/list")
-async def list_users(request: Request):
+async def get_users_list(request: Request):
     """Listar todos los usuarios (solo admin)"""
     try:
         auth_header = request.headers.get("authorization")

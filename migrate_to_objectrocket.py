@@ -48,6 +48,71 @@ def get_heroku_config():
         print(f"❌ Error obteniendo config: {e}")
         return None
 
+# URLs de ObjectRocket obtenidas de Heroku
+OBJECTROCKET_RS_URL = "mongodb://iad2-c19-0.mongo.objectrocket.com:52752,iad2-c19-1.mongo.objectrocket.com:52752,iad2-c19-2.mongo.objectrocket.com:52752/?replicaSet=592734bd19354a7d81c1402dd6eed9f4&ssl=true"
+OBJECTROCKET_URL = "mongodb://iad2-c19-0.mongo.objectrocket.com:52752?ssl=true"
+
+def get_objectrocket_credentials():
+    """Solicita las credenciales de ObjectRocket"""
+    print("🔍 NECESITAMOS LAS CREDENCIALES DE OBJECTROCKET")
+    print("=" * 50)
+    print("Las URLs de ObjectRocket no incluyen usuario y contraseña.")
+    print("Necesitas obtenerlas desde ObjectRocket directamente.")
+    print("")
+    print("Opciones:")
+    print("1. Ir a: https://app.objectrocket.com")
+    print("2. Login con tu cuenta")
+    print("3. Ir a tu instancia MongoDB")
+    print("4. Buscar 'Database Users' o 'Users'")
+    print("5. Crear un usuario si no existe")
+    print("")
+    
+    username = input("👤 Usuario de ObjectRocket: ").strip()
+    password = input("🔐 Contraseña de ObjectRocket: ").strip()
+    database = input("🗄️  Nombre de la base de datos (presiona Enter para 'datatico_cr'): ").strip()
+    
+    if not database:
+        database = "datatico_cr"
+    
+    # Construir URL completa con credenciales
+    if username and password:
+        # Usar la URL con replica set para mejor performance
+        url_with_creds = OBJECTROCKET_RS_URL.replace("mongodb://", f"mongodb://{username}:{password}@")
+        # Agregar el nombre de la base de datos
+        url_with_creds = url_with_creds.replace("/?", f"/{database}?")
+        return url_with_creds, database
+    else:
+        print("❌ Credenciales vacías")
+        return None, None
+
+def test_connection(url, database):
+    """Testa la conexión a ObjectRocket"""
+    try:
+        print("🔌 Probando conexión a ObjectRocket...")
+        client = pymongo.MongoClient(url, serverSelectionTimeoutMS=5000)
+        
+        # Test de conexión
+        client.admin.command('ping')
+        
+        # Test de acceso a la base de datos
+        db = client[database]
+        collections = db.list_collection_names()
+        
+        print(f"✅ Conexión exitosa!")
+        print(f"📊 Base de datos: {database}")
+        print(f"📁 Colecciones existentes: {len(collections)}")
+        
+        client.close()
+        return True
+        
+    except Exception as e:
+        print(f"❌ Error de conexión: {e}")
+        print("💡 Verifica:")
+        print("   - Usuario y contraseña correctos")
+        print("   - Nombre de base de datos correcto")
+        print("   - Permisos de acceso configurados")
+        return False
+
 def migrate_database():
     print("🚀 INICIANDO MIGRACIÓN A OBJECTROCKET")
     print("=" * 50)

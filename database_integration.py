@@ -172,10 +172,33 @@ def get_stats_sync():
     """Obtener estadísticas de forma síncrona (para compatibilidad)"""
     try:
         import asyncio
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        stats = loop.run_until_complete(get_integrated_stats())
-        loop.close()
+        # Verificar si ya hay un loop ejecutándose
+        try:
+            loop = asyncio.get_running_loop()
+            # Si hay un loop corriendo, usar create_task
+            import concurrent.futures
+            import threading
+            
+            def run_in_thread():
+                new_loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(new_loop)
+                try:
+                    stats = new_loop.run_until_complete(get_integrated_stats())
+                    return stats
+                finally:
+                    new_loop.close()
+            
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(run_in_thread)
+                stats = future.result(timeout=10)
+                
+        except RuntimeError:
+            # No hay loop corriendo, podemos crear uno
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            stats = loop.run_until_complete(get_integrated_stats())
+            loop.close()
+            
         logger.info(f"✅ Stats síncronos: {stats['total_personas']:,} registros")
         return stats
     except Exception as e:

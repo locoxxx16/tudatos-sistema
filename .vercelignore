@@ -1,0 +1,18 @@
+# Archivos pesados que no necesita Vercel
+backend/
+frontend/
+tests/
+scripts/
+*.log
+*.pyc
+__pycache__/
+.env
+database_integration.py
+main.py
+ultra_complete_search.py
+auto_regeneration_system.py
+database_real.py
+*.md
+railway_files/
+.git/
+.emergent/

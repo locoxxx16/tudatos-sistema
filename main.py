@@ -1739,7 +1739,8 @@ async def create_user_admin(request: Request):
             "is_active": True,
             "created_at": datetime.utcnow().isoformat(),
             "last_login": None,
-            "created_by_admin": True
+            "created_by_admin": True,
+            "session_token": None  # Sin sesión inicial
         }
         
         users_database[user_id] = new_user

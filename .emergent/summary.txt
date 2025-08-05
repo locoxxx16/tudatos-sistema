@@ -1,63 +1,53 @@
 <analysis>
-The previous AI engineer successfully stabilized and significantly expanded the application from MVP to a robust, feature-rich system. Initial efforts involved resolving critical Vercel deployment issues by meticulously refactoring  and configuring  to manage eager loading and  conflicts. Subsequently, the database was scaled from 5,000 to over 4.2 million real records through the integration of multiple MongoDB collections via . Key functionalities such as an Ultra Complete Search, a user registration system with email notifications, and an automated auto-regeneration system were then implemented. The most recent and significant task, as per the user's shifted priority, was the implementation of comprehensive enterprise and juridical data extraction. This involved creating and populating  and , and integrating six new API endpoints into . Extensive backend testing confirmed the successful operation of these new features, extracting data for over 20,000 companies. The previous engineer declared this mission completed, documenting all progress in .
+The previous AI engineer diligently addressed critical Vercel deployment failures (404/500) caused by excessive package size. Initial efforts involved optimizing the  file and streamlining the application for serverless deployment using , successfully reducing the deployment size from ~440MB to 12KB, enabling a basic functional deployment.
+
+Following this, the focus shifted to re-integrating the full application functionality, specifically the 5.9M+ record MongoDB database. The core challenge became establishing a suitable cloud MongoDB hosting solution, as the local MongoDB setup was incompatible with Vercel. Multiple attempts with MongoDB Atlas and DigitalOcean failed due to region-specific billing restrictions and payment card acceptance issues (Costa Rica). The AI engineer systematically guided the user through alternative hosting options, ultimately recommending Railway as the most reliable solution for the user's specific payment constraints. The current state is poised to set up MongoDB on Railway.
 </analysis>
 
 <product_requirements>
-The core product goal is to establish Costa Rica's leading data search and analysis tool, surpassing existing solutions like Daticos.com. This requires expanding the database significantly to 3-5 million+ records (currently 4.2 million+) by integrating diverse Costa Rican data sources (e.g., Sicop, Ministry of Finance, National Registry, TSE, COSEVI, Portal Datos Abiertos, Colegios Profesionales) using ultra aggressive and deep extraction methodologies. The system must support automated daily updates via an AI-driven automatic improvement process and maintain 24/7 resilience. The frontend is required to display comprehensive data (emails, phones, family, credit, mercantile, social media, employment, photos) upon search queries. An administrative panel is essential for data visualization, user management (creation, deletion, password, email), and branding customization, with payment functionalities explicitly removed. User registration with credit plans and email notifications (to ) has been implemented. The immediate focus, now completed, was on extracting comprehensive enterprise and juridical data, including company ownership and participants, from sources like Sicop and the Ministry of Finance, running all extractors at maximum performance.
+The application aims to be Costa Rica's leading data search and analysis tool, surpassing competitors like Daticos.com. This requires a database exceeding 5 million records, integrated from diverse Costa Rican sources (Sicop, Ministry of Finance, National Registry, TSE). Key features include automated daily updates via an AI-driven automatic improvement process, 24/7 resilience, and a frontend displaying comprehensive user/company data (emails, phones, family, credit, mercantile, social media, employment, photos) upon search. An administrative panel is needed for data visualization, user management (creation, deletion, password, email), and branding customization, with payment functionalities removed. User registration with credit plans and email notifications is implemented. The immediate past priority was comprehensive enterprise and juridical data extraction, which is completed on the backend.
 </product_requirements>
 
 <key_technical_concepts>
--   **FastAPI**: Python web framework for the backend.
--   **React**: JavaScript library for frontend UI development.
--   **MongoDB**: NoSQL database for data persistence using  and .
--   **Vercel**: Serverless platform for application deployment, configured with .
--   ****: Python's asynchronous I/O framework for concurrent operations.
--   **JWT Authentication**: Token-based security for user and admin logins.
--   **Task Scheduling**: Utilizes libraries like  and  for daily auto-regeneration.
--   **Tailwind CSS**: Utility-first CSS framework for efficient styling.
+-   **FastAPI**: Python web framework for backend, including .
+-   **React**: JavaScript library for frontend UI.
+-   **MongoDB**: NoSQL database for persistence, using  and .
+-   **Vercel**: Serverless platform for deployment, managed via  and .
+-   ** & **: Python concurrency for long-running tasks.
+-   **JWT Authentication**: Token-based security.
 </key_technical_concepts>
 
 <code_architecture>
-The application utilizes a FastAPI backend and a React frontend, with MongoDB for data persistence.
+The application uses a FastAPI backend and React frontend with MongoDB.
 
 
 
--   ****: The primary FastAPI application. Extensively modified to resolve Vercel deployment issues, integrate the  for 4.2M+ records, implement Ultra Complete Search, user registration with email notifications, and auto-regeneration features. It involved significant refactoring of data access and search logic.
--   ****: Introduced as a Vercel-specific entry point, importing  to enable serverless deployment.
--   ****: A new module created to unify data access from multiple MongoDB collections (e.g., , , ), enabling the application to access over 4.2 million records.
--   ****: A new module that performs intelligent data fusion from various sources to generate comprehensive user profiles.
--   ****: A newly added module for daily automatic data improvements and quality optimization.
--   ****: A new file created and completed to handle the extraction of comprehensive enterprise and juridical data, including company ownership, participants, and contracts, from sources like Sicop, Hacienda, Registro Nacional, MEIC, and CCSS.
--   ****: A new file created and completed to control and optimize the performance of all data extractors, manage concurrency, and provide real-time statistics.
--   ****: The main backend server file. Modified to include six new API endpoints for controlling and querying the new enterprise and master extractor functionalities:
-    -   
-    -   
-    -   
-    -   
-    -   
-    -   
--   ****: The root React component, updated to incorporate new pages, components (Admin/User Dashboards, Registration, Login), and routing for enhanced features.
--   **, , , **: New React components supporting the UI/UX for administration, user queries, registration, and authentication.
--   ****: Modified to correctly handle routing for Vercel deployments, pointing to .
--   ****: Updated with  to ensure connection to the correct MongoDB instance.
--   ****: Continuously updated to document the user's problem statement, testing data, previous agent communications, and most recently, details on the newly implemented enterprise functionalities and an updated test plan.
+-   ****: The primary FastAPI application. It was refactored for Vercel compatibility, integrated  for large datasets, implemented Ultra Complete Search, user registration, and a single-session authentication system. Recent changes include  for extractors and HTML templating fixes.
+-   ****: A Vercel-specific entry point, previously importing , now simplified to import  for a lighter application.
+-   ****: Manages unified data access from multiple MongoDB collections. Modified to resolve  conflicts and provide accurate real-time record counts (5.9M+).
+-   ****: *NEW*. A lightweight FastAPI application, created to optimize for Vercel by stripping heavy logic.
+-   ****: *NEW, Modified*. An even more minimalist FastAPI application, initially intended as a single file with embedded HTML and minimal dependencies for Vercel. It was recently modified to include MongoDB connection logic for the full application.
+-   ****: *NEW*. A pared-down  with essential dependencies for Vercel deployments (e.g., , , , ).
+-   ****: Stores , which was updated to the external preview URL to resolve frontend-backend connectivity issues.
+-   ****: Vercel deployment configuration, continuously modified to adapt routing and build processes, most recently pointing to .
+-   ****: *NEW, Modified*. Crucial for Vercel deployment. Initially introduced to ignore large files. It was extensively refined to exclude , , log files, and  to reduce deployment size from ~440MB to 12KB, resolving  errors.
+-   ****: *NEW*. A Python script prepared for migrating the 5.9M+ local MongoDB records to a cloud MongoDB Atlas instance.
 </code_architecture>
 
 <pending_tasks>
-Based on the final summary provided by the previous AI engineer in Chat Message 38, the tasks related to comprehensive enterprise and juridical data extraction, including the implementation of  and , have been declared as **completed**. No explicit pending tasks remain from the prior conversation.
+-   Establish a suitable cloud MongoDB instance (Railway is the current proposed solution) to host the 5.9M+ records.
+-   Migrate the existing local MongoDB data (2.32 GB) to the newly configured cloud MongoDB instance.
+-   Configure the Vercel deployment to connect to the new cloud MongoDB instance using the correct  environment variable.
 </pending_tasks>
 
 <current_work>
-Immediately prior to this summary, the AI engineer successfully concluded the implementation of a high-priority directive: expanding the application's data pool with comprehensive **enterprise and juridical data**. The system was already fully operational with over 4.2 million records, an Ultra Complete Search feature, an automated daily auto-regeneration system, and a complete user registration system including email notifications.
+Immediately before this summary, the AI engineer successfully resolved the critical Vercel deployment issues. The application's core logic, Ultra Complete Search, auto-regeneration, user registration, and single-session authentication are confirmed operational locally.
 
-The recently completed work includes:
-1.  **Enterprise Data Extraction Logic**: The file  was fully implemented to extract data for over 20,000 companies from five distinct sources: SICOP, Ministry of Finance, Registro Nacional, MEIC, and CCSS. This extraction includes detailed information such as legal representatives, comprehensive participant lists, detailed shareholder structures, public contracts, and tax-related data.
-2.  **Master Extractor Controller**: The  was developed to manage and optimize the execution of all data extractors. It ensures parallel processing, allows control over extractor concurrency (up to 5 extractors), and provides real-time statistics and advanced logging.
-3.  **New API Endpoints**: Six new API endpoints were integrated into the main backend server via  to expose the functionalities of the new enterprise extraction and the master controller. These endpoints are: , , , , , and .
+The Vercel deployment now successfully deploys a minimalist version (via ) with a total size of 12KB, confirming that the packaging issues (excessive file size from , , logs, ) have been resolved.
 
-Backend tests confirmed that all these new functionalities are working correctly. The system currently holds 4,283,709 base records, and the new enterprise system is ready to extract more data, moving towards the 5M+ records goal. The admin login credentials () are confirmed to be functional. All work, including the new features, was meticulously documented and updated in . The previous engineer declared the implementation of the enterprise system completed.
+The current focus is on migrating the 5,947,607 real records (totaling 2.32 GB) from the local MongoDB to a cloud-hosted solution so the full application functionality can be deployed on Vercel. Attempts to set up MongoDB Atlas (M10 plan) failed due to a region-specific billing restriction and then general credit card acceptance issues with Costa Rican cards. A subsequent attempt with DigitalOcean Managed MongoDB also failed for the same payment reason. The AI engineer has identified Railway as the next viable MongoDB hosting option, as it is known to accept international cards, including those from Costa Rica, and offers competitive pricing. The user has agreed to proceed with Railway.
 </current_work>
 
 <optional_next_step>
-The previous engineer declared the enterprise data extraction and controller implementation as completed. Therefore, there are no immediate pending tasks from the prior conversation.
+Set up a MongoDB Managed Database on Railway, including account creation, payment configuration, and initial database setup.
 </optional_next_step>

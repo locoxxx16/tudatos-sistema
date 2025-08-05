@@ -1,64 +1,58 @@
-# CONFIGURACIÓN OPTIMIZADA PARA VERCEL - SOLO /api/ ES NECESARIO
+# CONFIGURACIÓN OPTIMIZADA PARA VERCEL - SOLO api/single.py + vercel.json
 
-# Excluir carpetas pesadas completas
+# === EXCLUSIONES COMPLETAS ===
+# Carpetas pesadas completas
 backend/
 frontend/
 tests/
 scripts/
 railway_files/
 
-# Excluir archivos de logs pesados
+# Archivos de logs pesados
 *.log
 extraction_logs/
 daily_extractions/
 update_reports/
 
-# Excluir archivos Python compilados
+# Archivos Python compilados
 *.pyc
 *.pyo
 __pycache__/
 .pytest_cache/
 
-# Excluir archivos de configuración local
-.env
-.env.local
-.env.development
-.env.production
-
-# Excluir archivos del sistema principal (no necesarios para Vercel)
+# === ARCHIVOS RAÍZ INNECESARIOS ===
+# Sistema principal completo (no necesario para Vercel)
 main.py
 main_*.py
 database_integration.py
 database_real.py
 ultra_complete_search.py
 auto_regeneration_system.py
-cedula_*.py
+test_*.py
+backend_test.py
 comprehensive_*.py
 ultra_*.py
 final_*.py
 find_*.py
+cedula_*.py
+requirements.txt
 
-# Excluir archivos de documentación
-*.md
-README.*
-
-# Excluir dependencias de Node.js si existen
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Excluir archivos de control de versiones
-.git/
-.gitignore
-.emergent/
-
-# Excluir archivos de configuración de otros servicios
+# Archivos de configuración local
+.env*
 railway.json
 docker-compose*.yml
 Dockerfile*
 yarn.lock
 
-# Excluir archivos de configuración mixta
+# Documentación
+*.md
+README.*
+
+# Control de versiones
+.git/
+.gitignore
+.emergent/
+
+# Configuraciones mixtas
 vercel_*.json
 *_backup.*

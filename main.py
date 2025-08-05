@@ -1099,43 +1099,56 @@ async def get_user_profile(request: Request):
 # =============================================================================
 
 @app.get("/api/admin/system/complete-overview")
-async def admin_system_complete_overview():
-    """Dashboard completo del sistema con estadísticas en tiempo real"""
+async def system_complete_overview(request: Request):
+    """Vista completa del sistema REAL con estadísticas actualizadas"""
     try:
-        stats = get_stats_sync()
+        auth_header = request.headers.get("authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Token admin requerido")
+        
+        token = auth_header.split(" ")[1]
+        admin = authenticate_admin(token)
+        
+        if not admin:
+            raise HTTPException(status_code=401, detail="Token admin inválido")
+        
+        # Obtener estadísticas REALES de la base de datos
+        from database_integration import get_real_database_count
+        db_stats = get_real_database_count()
         
         return {
             "success": True,
             "system_overview": {
-                "total_records": stats['total_personas'],
-                "total_photos": stats['total_fotos'],
-                "total_phones": stats['total_telefonos'],
-                "total_emails": stats['total_emails'],
-                "collections_breakdown": stats.get('collections_breakdown', {}),
+                "total_records": db_stats["total_personas"],
+                "collections_active": db_stats["collections_found"],
+                "database_health": "healthy" if db_stats["database_healthy"] else "warning",
                 "system_status": "SISTEMA_ULTRA_FUNCIONANDO_COMPLETO",
-                "version": "6.0.0 - Ultra Complete",
                 "last_updated": datetime.utcnow().isoformat()
             },
             "database_health": {
-                "status": "healthy",
+                "status": "healthy" if db_stats["database_healthy"] else "warning",
                 "connection": "active",
-                "query_performance": "optimal"
+                "query_performance": "optimal",
+                "collections_breakdown": db_stats.get("collection_counts", {})
             },
-            "sources_active": [
-                "personas_fisicas_fast2m (2.67M)",
-                "personas_juridicas_fast2m (668K)", 
-                "tse_datos_hibridos (611K)",
-                "personas_fisicas (310K)",
-                "ultra_deep_extraction (19K)",
-                "daticos_datos_masivos (396)"
-            ]
+            "milestone_status": {
+                "objetivo_5M": db_stats["total_personas"] >= 5000000,
+                "progreso_hacia_6M": round((db_stats["total_personas"] / 6000000) * 100, 2),
+                "crecimiento_vs_inicial": round(((db_stats["total_personas"] - 4283709) / 4283709) * 100, 2)
+            },
+            "competitive_advantage": [
+                f"📊 {db_stats['total_personas']:,} registros - Más completo que Daticos",
+                "🏛️ Datos oficiales del Registro Nacional",
+                "👨‍⚕️ Profesionales colegiados integrados",
+                "🔍 Búsqueda ultra-completa disponible",
+                "⚡ Sistema ultra-optimizado"
+            ],
+            "timestamp": datetime.utcnow().isoformat()
         }
+        
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e),
-            "message": "Error obteniendo overview del sistema"
-        }
+        logger.error(f"❌ Error en system overview: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/search/ultra-complete")
 async def ultra_complete_search(query: str):
